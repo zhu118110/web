@@ -1,0 +1,55 @@
+/* 轮播 */
+.mui-slider .my-slider-group .my-slider-item{
+	height: 250px;
+	font-size: 0;
+}
+.mui-slider .my-slider-group .my-slider-item>a{
+	display: inline !important;
+}
+.my-slider-item img{
+	height: 100%;
+	width: 100%;
+}
+
+.my-slider-indicator .my-indicator{
+	width: 10px;
+	height: 10px;
+}
+
+
+/* 导航列表 */
+.list{
+	width: 100%;
+}
+.list ul{
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	flex-wrap: wrap;
+	
+	background-color: #fff;
+}
+.list ul li{
+	text-align: center;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+}
+.list ul a{
+	display: block;
+	width: 25%;
+	min-height: 50px;
+	margin: 10px 0;
+}
+.list ul li div:first-child{
+	border-radius: 50%;
+	padding: 10px;
+	font-size: 25px;
+	background-color: #007AFF;
+}
+.list ul li div:not(.iconfont){
+	margin-top: 5px;
+	font-size: 14px;
+}
