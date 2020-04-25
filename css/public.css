@@ -4,9 +4,12 @@
 	
 }
 
-body,ul,ol{
+body,ul,ol,dl{
 	padding: 0;
 	margin: 0;
+	
+}
+ul,ol{
 	list-style: none;
 }
 p{
@@ -16,5 +19,12 @@ input{
 	outline: none;
 }
 a{
+	color: #000;
 	text-decoration: none;
+}
+
+
+.mui-table-view-cell > a:not(.mui-btn).mui-active
+{
+    background-color: inherit;
 }

@@ -6,29 +6,33 @@
     <title>底部选项卡</title>
     <script src="js/mui.min.js"></script>
     <link href="css/mui.min.css" rel="stylesheet"/>
+	<link rel="stylesheet" type="text/css" href="fonts/font.css"/>
     <style type="text/css">
-    	html{
-    	   touch-action:none;
-    	}
+    	.mui-bar-tab .mui-tab-item.mui-active{
+			color: red;
+		}
+		.my-mui-bar{
+			border-top: 1px solid #c8c7cc;
+		}
     </style>
 </head>
 <body>
 	
-		<nav class="mui-bar mui-bar-tab">
+		<nav class="mui-bar mui-bar-tab my-mui-bar">
 			<a id="defaultTab" class="mui-tab-item mui-active" href="pages/index/index.html" data-id="index">
 				<span class="mui-icon mui-icon-home"></span>
 				<span class="mui-tab-label">首页</span>
 			</a>
-			<a class="mui-tab-item" href="pages/classify.html" data-id="classify">
-				<span class="mui-icon mui-icon-email"></span>
+			<a class="mui-tab-item" href="pages/classify/classify.html" data-id="classify">
+				<span class="mui-icon mui-icon-list"></span>
 				<span class="mui-tab-label">分类</span>
 			</a>
 			<a class="mui-tab-item" href="pages/shopCar.html" data-id="shopCar">
-				<span class="mui-icon mui-icon-contact"></span>
+				<span class="mui-icon iconfont icon-gouwuchekong"></span>
 				<span class="mui-tab-label"> 购物车</span>
 			</a>
-			<a class="mui-tab-item" href="pages/aboutMe.html" data-id="aboutMe">
-				<span class="mui-icon mui-icon-gear"></span>
+			<a class="mui-tab-item" href="pages/aboutMe/aboutMe.html" data-id="aboutMe">
+				<span class="mui-icon mui-icon-contact"></span>
 				<span class="mui-tab-label">我的</span>
 			</a>
 		</nav>
@@ -41,7 +45,7 @@
 			var self = plus.webview.currentWebview();  
 			var styles = {  
 				top: '0',  
-				bottom: '44px',
+				bottom: '50px',
 			};  
 			// 子窗口属性
 			var tabsConfig = {  
@@ -51,7 +55,7 @@
 					default: true  
 				},  
 				classify: {  
-					url: 'pages/classify.html',  
+					url: 'pages/classify/classify.html',  
 					styles: styles  
 				},  
 				shopCar: {  
@@ -59,7 +63,7 @@
 					styles: styles  
 				},  
 				aboutMe: {  
-					url: 'pages/aboutMe.html',  
+					url: 'pages/aboutMe/aboutMe.html',  
 					styles: styles  
 				}  
 			};  
