@@ -2318,10 +2318,10 @@ input[type='submit']:enabled:active, input[type='submit'].mui-active:enabled,
 {
     background-color: #eee;
 }
-.mui-table-view-cell:last-child:before, .mui-table-view-cell:last-child:after
+/* .mui-table-view-cell:last-child:before, .mui-table-view-cell:last-child:after
 {
     height: 0;
-}
+} */
 .mui-table-view-cell > a:not(.mui-btn)
 {
     position: relative;

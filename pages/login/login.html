@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>登录页面</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.css" rel="stylesheet" />
+	<link rel="stylesheet" type="text/css" href="../../css/public.css"/>
+	<link rel="stylesheet" type="text/css" href="../../fonts/font.css"/>
+	<style type="text/css">
+		
+		html,body,.mui-content{
+			height: 100%;
+		}
+		.mui-table-view:before,.mui-input-group:before,.mui-table-view:after,.mui-input-group:after{
+			height: 0;
+		}
+		.mui-content{
+			background-color: #fff;
+		}
+		.box{
+			width:90%;
+			min-height: 100px;
+			margin: 0 auto;
+			/* border: 1px solid #aaa; */
+		}
+		.img{
+			border-radius: 50%;
+			overflow: hidden;
+			max-width: 70px;
+			height: 70px;
+			text-align: center;
+			margin: 0 auto;
+			padding: 0;
+		}
+		.img img{
+			width: 100%;
+			height: 100%;
+		}
+		.inp{
+			margin-top: 30px;
+		}
+			
+		.inp .mui-input-row label{
+			text-align: center;
+			width: 30%;
+		}
+		.inp .mui-input-row input{
+			width: 70%;
+		}
+		.inp .mui-input-row span.mui-icon-eye,.inp .mui-input-row span.mui-icon-clear{
+			right:25px;
+		}
+		.mui-input-group .mui-input-row:after{
+			background-image: linear-gradient(to right, #e66465, #d01c10);
+			left: 0;
+		}
+		.myBtn{
+			border: none;
+			border-radius: 15px;
+			padding: 5px 0;
+			color: #fff;
+			background-image: linear-gradient(to right, #e66465, #d01c10);
+		}
+		
+		.myBtnOpcity{
+			opacity: 0.5;
+		}
+		.myBtnNoOpcity{
+			opacity: 1!important;
+		}
+		
+		.mui-content-padded{
+			margin-top: 20px;
+		}
+		.link-area{
+			text-align: center;
+			margin-top: 20px;
+		}
+	</style>
+</head>
+
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<h1 class="mui-title">登录</h1>
+	</header>
+	<div class="mui-content">
+		<div class="box mui-table-view">
+			<div class="img mui-table-view-cell">
+				<img src="../../img/0.jpg" >
+			</div>
+			<div class="inp">
+				<form id='login-form' class="mui-input-group">
+					<div class="mui-input-row">
+						<label>账号</label>
+						<input id='account' type="text" class="mui-input-clear mui-input" v-model="account" placeholder="请输入账号">
+					</div>
+					<div class="mui-input-row">
+						<label>密码</label>
+						<input id='password' type="password" class="mui-input-password mui-input" v-model="passworld" placeholder="请输入密码">
+					</div>
+					
+				</form>
+			</div>
+			<div class="mui-content-padded">
+				<button type="button" class="mui-btn myBtn mui-btn-block" :disabled="btnCol" :class="{'myBtnNoOpcity':btnCol,'myBtnOpcity':!btnCol}">登录</button>
+				<div class="link-area"><a id='reg'>注册账号</a> <span class="spliter">|</span> <a id='forgetPassword'>忘记密码</a>
+				</div>
+			</div>
+			
+			<!-- <div class="others"> -->
+				<!-- <span class="iconfont icon-icon-weixin"></span>
+				<span class="iconfont icon-qq"></span>
+				<span class="iconfont icon-weibo"></span> -->
+				<!-- <span class="mui-icon mui-icon-weixin"></span>
+				<span class="mui-icon mui-icon-qq"></span>
+				<span class="mui-icon mui-icon-weibo"></span> -->
+			<!-- </div> -->
+		</div>
+	</div>
+</body>
+<script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+<script src="../../js/mui.js"></script>
+<script type="text/javascript">
+	mui.init({});
+	mui.ajax('http://127.0.0.1:3200/add',{
+		dataType:'json',//服务器返回json格式数据
+		type:'POST',//HTTP请求类型
+		timeout:10000,//超时时间设置为10秒；
+		success:function(data){
+			console.log(data)
+		},
+		error:function(xhr,type,errorThrown){
+		}
+	});
+	
+	var login=new Vue({
+		el:".box",
+		data:{
+			
+			account:"",
+			passworld:""
+		},
+		computed:{
+			// 动态切换按钮
+			btnCol:function(){
+				if(this.account.trim().length>0&&this.passworld.trim().length>0){
+					return true
+				}else{
+					return false
+				}
+			}
+		},
+		methods:{
+			
+		}
+	})
+</script>
+</html>

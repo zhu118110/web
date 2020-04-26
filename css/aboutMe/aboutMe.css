@@ -1,4 +1,51 @@
-/* 头像区域 */
+/* 侧滑菜单样式 */
+.myinnerwrap{
+	background-color: #efeff4;
+}
+.mui-fullscreen{
+	position: absolute;
+}
+.mui-off-canvas-wrap{
+	overflow: auto;
+}
+.myaside{
+	background-color: #efeff4;
+}
+.myaside_header{
+	padding:30px 65px 27px 16px;
+	background-color: #fff;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+}
+.myaside_header p{
+	margin-left: 15px;
+	font-size: 18px;
+}
+.myaside_header img{
+	max-width: 50px;
+	height:50px
+}
+.myaside>ul:last-child li{
+	justify-content: center;
+}
+.myaside>ul{
+	margin-top: 10px;
+}
+.myaside>ul li{
+	display: flex;
+	justify-content: space-between;
+	font-size: 16px;
+	
+}
+.myaside>ul li span.iconfont{
+	font-size: 20px;
+}
+a:active{
+	color: #000;
+}
+
+/* 主页头像区域 */
 .my_infor>ul{
 	background-color:rgba(208,28,39,0.5);
 	background-image: linear-gradient(to right, #e66465, #d01c27);
