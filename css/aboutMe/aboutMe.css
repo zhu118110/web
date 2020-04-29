@@ -85,7 +85,7 @@ a:active{
 	font-size: 12px;
 }
 .myCardContent{
-	padding: 15px 0;
+	padding: 20px 0;
 }
 .myCardContent ul{
 	display: flex;
@@ -112,10 +112,10 @@ a:active{
 
 /* 推荐样式 */
 .recommend{
-	background-color: #fff;
+	
 }
 .recommend>p{
-
+	background-color: #fff;
 	margin: 0;
 	display: flex;
 	align-items: center;
@@ -137,6 +137,33 @@ a:active{
 	color: #000000;
 	margin-top: 0;
 }
+.my-table-view{
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+	background-color: transparent;
+}
+.my-table-view>li{
+	width: 49%;
+	
+	background-color: #fff;
+	margin: 2px 0px;
+	padding: 5px;
+	text-align: center;
+}
+.mui-table-view-cell>a:not(.mui-btn){
+	margin: 0;
+	white-space: normal;
+}
+
+.mui-table-view-cell:after,.mui-table-view:before{
+	height: 0;
+}
+.my-table-view li img{
+	width: 100%;
+	height: auto;
+	
+}
 .my-table-view .mui-media-body p{
 	margin: 5px 0;
 	text-align: left;
@@ -145,19 +172,22 @@ a:active{
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
 	 display: -webkit-box;
+	 
 }
 
 .price{
 	display: flex;
 	justify-content: space-between;
+	
 }
 .price li span:first-child{
 	font-size: 10px;
 }
 .price li:first-child{
 	color: red;
-	
+	text-align: left;
 }
 .price li:last-child{
 	color: #bbb;
+	text-align: right;
 }

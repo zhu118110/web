@@ -11,107 +11,63 @@
 	<link rel="stylesheet" type="text/css" href="../../../fonts/font.css" />
 	<link rel="stylesheet" type="text/css" href="../../../css/public.css" />
 	<style type="text/css">
-		html,body,.box{
-			height: auto;
-		}
-		.mui-scroll-wrapper{
-			overflow: auto;
-		}
-		.main{
-			margin-top: 5px;
-		}
-		.mui-table-view.mui-grid-view .mui-table-view-cell .mui-media-body{
-			height: auto;
-			text-overflow: inherit;
-			overflow: auto;
-			white-space: normal;
-			text-align: left;
-			padding: 0 5px;
-			color: #000000;
-			margin-top: 0;
-		}
-		.my-table-view .mui-media-body p{
-			margin: 5px 0;
-			text-align: left;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			-webkit-line-clamp: 2;
-			-webkit-box-orient: vertical;
-			 display: -webkit-box;
-		}
 		
-		.price{
-			display: flex;
-			justify-content: space-between;
-		}
-		.price li span:first-child{
-			font-size: 10px;
-		}
-		.price li:first-child{
-			color: red;
-			
-		}
-		.price li:last-child{
-			color: #bbb;
-		}
 	</style>
 <body style="line-height: none;">
-	<div class="box">
-	
-
+<div class="box">
 	<div id="upLoad" class="mui-content mui-scroll-wrapper">
 		<div class="mui-scroll">
-		<!-- 轮播图 -->
-		<div id="slider" class="mui-slider">
+			<!-- 轮播图 -->
+			<div id="slider" class="mui-slider">
 
-			<div class="mui-slider-group mui-slider-loop my-slider-group">
-				<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
-				<div class="mui-slider-item my-slider-item mui-slider-item-duplicate">
-					<a href="#">
-						<img src="../../../img/top02.jpg">
-					</a>
+				<div class="mui-slider-group mui-slider-loop my-slider-group">
+					<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+					<div class="mui-slider-item my-slider-item mui-slider-item-duplicate">
+						<a href="#">
+							<img src="../../../img/top02.jpg">
+						</a>
+					</div>
+					<!-- 第一张图片 -->
+					<div class="mui-slider-item my-slider-item">
+						<a href="#"><img src="../../../img/top01.jpg"></a>
+					</div>
+
+					<div class="mui-slider-item  my-slider-item">
+						<a href="#"><img src="../../../img/top02.jpg"></a>
+					</div>
+
+					<div class="mui-slider-item  my-slider-item">
+						<a href="#"><img src="../../../img/top03.jpg"></a>
+					</div>
+					<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+					<div class="mui-slider-item my-slider-item mui-slider-item-duplicate">
+						<a href="#">
+							<img src="../../../img/top01.jpg">
+						</a>
+					</div>
 				</div>
-				<!-- 第一张图片 -->
-				<div class="mui-slider-item my-slider-item">
-					<a href="#"><img src="../../../img/top01.jpg"></a>
+				<!-- 轮播图原点 -->
+				<div class="mui-slider-indicator my-slider-indicator">
+					<div class="mui-indicator my-indicator mui-active"></div>
+					<div class="mui-indicator my-indicator"></div>
+					<div class="mui-indicator my-indicator"></div>
 				</div>
-
-				<div class="mui-slider-item  my-slider-item">
-					<a href="#"><img src="../../../img/top02.jpg"></a>
-				</div>
-
-				<div class="mui-slider-item  my-slider-item">
-					<a href="#"><img src="../../../img/top03.jpg"></a>
-				</div>
-				<!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
-				<div class="mui-slider-item my-slider-item mui-slider-item-duplicate">
-					<a href="#">
-						<img src="../../../img/top01.jpg">
-					</a>
-				</div>
-			</div>
-			<!-- 轮播图原点 -->
-			<div class="mui-slider-indicator my-slider-indicator">
-				<div class="mui-indicator my-indicator mui-active"></div>
-				<div class="mui-indicator my-indicator"></div>
-				<div class="mui-indicator my-indicator"></div>
-			</div>
-		</div><!-- .mui-slider轮播图 -->
+			</div><!-- .mui-slider轮播图 -->
 
 
-		<!-- 导航列表 -->
-		<nav class="list">
-			<ul></ul>
-		</nav>
+			<!-- 导航列表 -->
+			<nav class="list">
+				<ul></ul>
+			</nav>
 
 
-		<!-- 主要内容 -->
-		<div class="main">
+			<!-- 主要内容 -->
+			<div class="main">
 			
-			<ul class="mui-table-view mui-grid-view my-table-view">
-				<li class="mui-table-view-cell mui-media mui-col-xs-6">
+				<ul class="mui-table-view my-table-view">
+				<li class="mui-table-view-cell">
 					<a href="#">
-						<img class="mui-media-object" src="../../../img/bd1.jpg">
+						<img class="" src="../../../img/bd1.jpg">
 						<div class="mui-media-body">
 							<p>2020春夏新款运动裤女装宽松显瘦半袖宅女休闲瘦半袖宅女休闲</p>
 							<ul class="price">
@@ -124,9 +80,9 @@
 						
 					</a>
 				</li>
-				<li class="mui-table-view-cell mui-media mui-col-xs-6">
+				<li class="mui-table-view-cell">
 					<a href="#">
-						<img class="mui-media-object" src="../../../img/bd2.jpg">
+						<img class="" src="../../../img/bd2.jpg">
 						<div class="mui-media-body">
 							<p>2020春夏新款运动裤女装宽松显瘦半袖宅女休闲瘦半袖宅女休闲</p>
 							<ul class="price">
@@ -138,9 +94,9 @@
 						</div>
 					</a>
 				</li>
-				<li class="mui-table-view-cell mui-media mui-col-xs-6">
+				<li class="mui-table-view-cell">
 					<a href="#">
-						<img class="mui-media-object" src="../../../img/bd3.jpg">
+						<img class="" src="../../../img/bd3.jpg">
 						<div class="mui-media-body">
 							<p>2020春夏新款运动裤女装宽松显瘦半袖宅女休闲瘦半袖宅女休闲</p>
 							<ul class="price">
@@ -152,9 +108,9 @@
 						</div>
 					</a>
 				</li>
-				<li class="mui-table-view-cell mui-media mui-col-xs-6">
+				<li class="mui-table-view-cell">
 					<a href="#">
-						<img class="mui-media-object" src="../../../img/bd4.jpg">
+						<img class="" src="../../../img/bd4.jpg">
 						<div class="mui-media-body">
 							<p>2020春夏新款运动裤女装宽松显瘦半袖宅女休闲瘦半袖宅女休闲</p>
 							<ul class="price">
@@ -168,73 +124,84 @@
 					</a>
 				</li>
 			</ul>
-		</div>		
+			</div>		
 				
-	</div>
-</div>
+		</div><!-- .mui-scroll -->
+	</div><!-- #upLoad -->
 
-</div>
-	</body>
-	<script src="../../../js/mui.min.js"></script>
-	<script src="../../../js/webviewGroup.js" type="text/javascript" charset="utf-8"></script>
-	<script type="text/javascript">
-		mui.init()
+</div><!-- .box -->
+</body>
+<script src="../../../js/mui.min.js"></script>
+<script src="../../../js/webviewGroup.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	mui.init()
 
-		var slider = mui("#slider");
-		slider.slider({
-			/*自动轮播图的间隔时间*/
-			interval: 3000
-		});
+	var slider = mui("#slider");
+	slider.slider({
+		/*自动轮播图的间隔时间*/
+		interval: 3000
+	});
 
-		// 循环添加导航列表内容
-		function nav() {
-			var navList = [{
-				title: "厨房",
-				bgcolr: "yellow",
-				icon: "icon-chufang"
-			}, {
-				title: "3C电子",
-				bgcolr: "pink",
-				icon: "icon-dianzi"
-			}, {
-				title: "汽车周边",
-				bgcolr: "blue",
-				icon: "icon-Car"
-			}, {
-				title: "珠宝配饰",
-				bgcolr: "red",
-				icon: "icon-zhubao"
-			}, {
-				title: "美容护肤",
-				bgcolr: "green",
-				icon: "icon-hufupin"
-			}, {
-				title: "服饰鞋子",
-				bgcolr: "grey",
-				icon: "icon-fushi-nanzhuang-duosexianmian"
-			}, {
-				title: "手表眼镜",
-				bgcolr: "#aaaa00",
-				icon: "icon-yanjing"
-			}, {
-				title: "个护保健",
-				bgcolr: "#457812",
-				icon: "icon-baojianpin"
-			}];
-			let ul = mui(".list ul")[0];
-			navList.forEach((val, index, arr) => {
+	// 循环添加导航列表内容
+	function nav() {
+		var navList = [{
+			title: "厨房",
+			bgcolr: "yellow",
+			icon: "icon-chufang"
+		}, {
+			title: "3C电子",
+			bgcolr: "pink",
+			icon: "icon-dianzi"
+		}, {
+			title: "汽车周边",
+			bgcolr: "blue",
+			icon: "icon-Car"
+		}, {
+			title: "珠宝配饰",
+			bgcolr: "red",
+			icon: "icon-zhubao"
+		}, {
+			title: "美容护肤",
+			bgcolr: "green",
+			icon: "icon-hufupin"
+		}, {
+			title: "服饰鞋子",
+			bgcolr: "grey",
+			icon: "icon-fushi-nanzhuang-duosexianmian"
+		}, {
+			title: "手表眼镜",
+			bgcolr: "#aaaa00",
+			icon: "icon-yanjing"
+		}, {
+			title: "个护保健",
+			bgcolr: "#457812",
+			icon: "icon-baojianpin"
+		}];
+		let ul = mui(".list ul")[0];
+		navList.forEach((val, index, arr) => {
 
-				ul.innerHTML +=
-					` <a href="#">
-									<li>
-										
-										<div style='background-color:${val.bgcolr}' class='iconfont ${val.icon}'></div>
-										<div>${val.title}</div>
-										
-									</li>
-								</a>`
-			})
-		}
-		nav();
-	</script>
+			ul.innerHTML +=
+				` <a href="#">
+								<li>
+									
+									<div style='background-color:${val.bgcolr}' class='iconfont ${val.icon}'></div>
+									<div>${val.title}</div>
+									
+								</li>
+							</a>`
+		})
+	}
+	nav();
+	
+	
+	mui(".my-table-view").on("tap","a",function(){
+		mui.openWindow({
+			url:"../../detail/detail.html",
+			id:"detail.html",
+			extras:{
+				id:"嘿嘿额黑恶"
+			},
+		})
+	})
+</script>
 </html>

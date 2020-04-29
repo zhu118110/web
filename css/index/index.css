@@ -1,10 +1,13 @@
-/* .my-mui-slider{
-	top: 44px;
-} */
+html,body,.box{
+	height: auto;
+}
+.mui-scroll-wrapper{
+	overflow: auto;
+}
 
 /* 轮播 */
 .mui-slider .my-slider-group .my-slider-item{
-	height: 250px;
+	height: 200px;
 	font-size: 0;
 }
 .mui-slider .my-slider-group .my-slider-item>a{
@@ -56,4 +59,75 @@
 .list ul li div:not(.iconfont){
 	margin-top: 5px;
 	font-size: 14px;
+}
+
+
+
+
+.main{
+	margin-top: 5px;
+}
+.mui-table-view.mui-grid-view .mui-table-view-cell .mui-media-body{
+	height: auto;
+	text-overflow: inherit;
+	overflow: auto;
+	white-space: normal;
+	text-align: left;
+	padding: 0 5px;
+	color: #000000;
+	margin-top: 0;
+}
+.my-table-view{
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+	background-color: transparent;
+}
+.my-table-view>li{
+	width: 49%;
+	
+	background-color: #fff;
+	margin: 2px 0px;
+	padding: 5px;
+	text-align: center;
+}
+.mui-table-view-cell>a:not(.mui-btn){
+	margin: 0;
+	white-space: normal;
+}
+
+.mui-table-view-cell:after,.mui-table-view:before{
+	height: 0;
+}
+.my-table-view li img{
+	width: 100%;
+	height: auto;
+	
+}
+.my-table-view .mui-media-body p{
+	margin: 5px 0;
+	text-align: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	 display: -webkit-box;
+	 
+}
+
+.price{
+	display: flex;
+	justify-content: space-between;
+	
+}
+.price li span:first-child{
+	font-size: 10px;
+}
+.price li:first-child{
+	color: red;
+	text-align: left;
+}
+.price li:last-child{
+	color: #bbb;
+	text-align: right;
 }

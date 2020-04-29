@@ -59,9 +59,12 @@
 		.myBtn{
 			border: none;
 			border-radius: 15px;
-			padding: 5px 0;
+			
 			color: #fff;
 			background-image: linear-gradient(to right, #e66465, #d01c10);
+			width: 100%;
+			padding: 10px 0;
+			font-size: 16px;
 		}
 		
 		.myBtnOpcity{
@@ -105,7 +108,7 @@
 				</form>
 			</div>
 			<div class="mui-content-padded">
-				<button type="button" class="mui-btn myBtn mui-btn-block" :disabled="btnCol" :class="{'myBtnNoOpcity':btnCol,'myBtnOpcity':!btnCol}">登录</button>
+				<button type="button" data-loading-icon="mui-spinner mui-spinner-custom" class="mui-btn myBtn" :disabled="!btnCol" :class="{'myBtnNoOpcity':btnCol,'myBtnOpcity':!btnCol}">登录</button>
 				<div class="link-area"><a id='reg'>注册账号</a> <span class="spliter">|</span> <a id='forgetPassword'>忘记密码</a>
 				</div>
 			</div>
@@ -135,6 +138,14 @@
 		error:function(xhr,type,errorThrown){
 		}
 	});
+	mui(document.body).on('tap', '.mui-btn', function(e) {
+	    mui(this).button('loading');
+	    setTimeout(function() {
+	        mui(this).button('reset');
+	    }.bind(this), 2000);
+	});
+	
+	
 	
 	var login=new Vue({
 		el:".box",
@@ -144,14 +155,22 @@
 			passworld:""
 		},
 		computed:{
-			// 动态切换按钮
+			// 动态切换按钮样式
 			btnCol:function(){
+				// 如果账号和密码去除空格后长度>0,改变登录按钮的透明度,解除按钮禁用效果
 				if(this.account.trim().length>0&&this.passworld.trim().length>0){
+					console.log(111)
 					return true
 				}else{
 					return false
 				}
 			}
+		},
+		created() {
+			
+		},
+		mounted() {
+			
 		},
 		methods:{
 			
