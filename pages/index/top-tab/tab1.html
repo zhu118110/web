@@ -57,73 +57,32 @@
 
 			<!-- 导航列表 -->
 			<nav class="list">
-				<ul></ul>
+				<ul>
+				</ul>
 			</nav>
 
 
 			<!-- 主要内容 -->
 			<div class="main">
-			
-				<ul class="mui-table-view my-table-view">
-				<li class="mui-table-view-cell">
-					<a href="#">
-						<img class="" src="../../../img/bd1.jpg">
-						<div class="mui-media-body">
-							<p>2020春夏新款运动裤女装宽松显瘦半袖宅女休闲瘦半袖宅女休闲</p>
-							<ul class="price">
-								<li>
-									<span>￥</span><span>39.9</span>
-								</li>
-								<li><span>100人付款</span></li>
-							</ul>
-						</div>
-						
-					</a>
-				</li>
-				<li class="mui-table-view-cell">
-					<a href="#">
-						<img class="" src="../../../img/bd2.jpg">
-						<div class="mui-media-body">
-							<p>2020春夏新款运动裤女装宽松显瘦半袖宅女休闲瘦半袖宅女休闲</p>
-							<ul class="price">
-								<li>
-									<span>￥</span><span>39.9</span>
-								</li>
-								<li><span>100人付款</span></li>
-							</ul>
-						</div>
-					</a>
-				</li>
-				<li class="mui-table-view-cell">
-					<a href="#">
-						<img class="" src="../../../img/bd3.jpg">
-						<div class="mui-media-body">
-							<p>2020春夏新款运动裤女装宽松显瘦半袖宅女休闲瘦半袖宅女休闲</p>
-							<ul class="price">
-								<li>
-									<span>￥</span><span>39.9</span>
-								</li>
-								<li><span>100人付款</span></li>
-							</ul>
-						</div>
-					</a>
-				</li>
-				<li class="mui-table-view-cell">
-					<a href="#">
-						<img class="" src="../../../img/bd4.jpg">
-						<div class="mui-media-body">
-							<p>2020春夏新款运动裤女装宽松显瘦半袖宅女休闲瘦半袖宅女休闲</p>
-							<ul class="price">
-								<li>
-									<span>￥</span><span>39.9</span>
-								</li>
-								<li><span>100人付款</span></li>
-							</ul>
-							
-						</div>
-					</a>
-				</li>
-			</ul>
+				<p v-if="prdList.length==0" style="text-align: center;color: #C8C7CC;">
+					暂无更多数据....
+				</p>
+				<ul v-else class="mui-table-view my-table-view">
+					<li class="mui-table-view-cell" v-for="(item,index) in prdList" :data-id="item._id" @click="toDeatail(item._id)">
+						<a>
+							<img class="" :src="item.img">
+							<div class="mui-media-body">
+								<p>{{item.title}}</p>
+								<ul class="price">
+									<li>
+										<span>￥</span><span>{{item.price}}</span>
+									</li>
+									<li><span>{{item.buy}}人付款</span></li>
+								</ul>
+							</div>
+						</a>
+					</li>
+				</ul>
 			</div>		
 				
 		</div><!-- .mui-scroll -->
@@ -133,14 +92,10 @@
 </body>
 <script src="../../../js/mui.min.js"></script>
 <script src="../../../js/webviewGroup.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
 <script type="text/javascript">
-	mui.init()
-
-	var slider = mui("#slider");
-	slider.slider({
-		/*自动轮播图的间隔时间*/
-		interval: 3000
-	});
+	
+	
 
 	// 循环添加导航列表内容
 	function nav() {
@@ -179,29 +134,115 @@
 		}];
 		let ul = mui(".list ul")[0];
 		navList.forEach((val, index, arr) => {
-
 			ul.innerHTML +=
-				` <a href="#">
-								<li>
-									
-									<div style='background-color:${val.bgcolr}' class='iconfont ${val.icon}'></div>
-									<div>${val.title}</div>
-									
-								</li>
-							</a>`
+				`<a>
+					<li>
+						
+						<div style='background-color:${val.bgcolr}' class='iconfont ${val.icon}'></div>
+						<div>${val.title}</div>
+						
+					</li>
+				</a>`
 		})
 	}
 	nav();
-	
-	
-	mui(".my-table-view").on("tap","a",function(){
-		mui.openWindow({
-			url:"../../detail/detail.html",
-			id:"detail.html",
-			extras:{
-				id:"嘿嘿额黑恶"
+
+	const tabPage=new Vue({
+		el:".box",
+		data:{
+			prdList:[]
+		},
+		
+		created() {
+			this.getPrdList();
+		},
+		mounted() {
+			this.muiInit()
+			
+		},
+		methods:{
+			muiInit(){
+				let that=this;
+				let loadNum=0
+				mui.init({
+					pullRefresh:{
+						container:".main",
+						down :{
+							style:'circle',//必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+							  color:'#c8c7cc', //可选，默认“#2BD009” 下拉刷新控件颜色
+							  height:'50px',//可选,默认50px.下拉刷新控件的高度,
+							  range:'200px', //可选 默认100px,控件可下拉拖拽的范围
+							  offset:'0px', //可选 默认0px,下拉刷新控件的起始位置
+							  auto: false,//可选,默认false.首次加载自动上拉刷新一次
+							  callback :function(){  //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+							  loadNum++;
+								setTimeout(function(){
+									that.getPrdList();
+									mui('.main').pullRefresh().endPulldown();
+								},2000)
+							  } 
+						},
+						up:{
+							style:'circle',//必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+							 
+							  height:'100px',//可选,默认50px.下拉刷新控件的高度,
+							  contentrefresh : "正在加载...",//可选，正在加载状态时，上拉加载控件上显示的标题内容
+							  contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+							  auto: false,//可选,默认false.首次加载自动上拉刷新一次
+							  callback :function(){  //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+								loadNum++;
+								setTimeout(function(){
+									that.getPrdList();
+									mui('.main').pullRefresh().endPullupToRefresh(false); //参数为true代表没有更多数据了。
+									if(loadNum>3){
+										mui('.main').pullRefresh().endPullupToRefresh(true); //参数为true代表没有更多数据了。
+									}
+								},2000)
+							  } 
+						}
+					}
+				});
 			},
-		})
+			
+			// 页面刚加载时请求数据
+			getPrdList(){
+				let that=this;
+				mui.ajax("http://192.168.88.69:3200/prdList",{
+					data:{},
+					type:'get',//HTTP请求类型
+					timeout:10000,//超时时间设置为10秒；
+					success:function(data){
+						if(data.statu=="success"){
+							that.prdList.push(...data.data);
+						}else{
+							mui.toast("数据请求失败",{ duration:'short', type:'div' });
+						}
+						
+					},
+					error:function(xhr,type,errorThrown){
+						that.prdList=that.prdList;
+						mui.toast("连接失败，稍后再试",{ duration:'short', type:'div' });
+					}
+				})
+			},
+			// 点击产品时跳转至详情页面
+			// @prd_id : 点击的产品的id
+			toDeatail(prd_id){
+				mui.openWindow({
+					url:"../../detail/detail.html",
+					id:"detail.html",
+					extras:{
+						prd_id:prd_id
+					},
+				})
+				
+			}
+		},
 	})
+	var slider = mui("#slider");
+	slider.slider({
+		/*自动轮播图的间隔时间*/
+		interval: 3000
+	});
 </script>
 </html>

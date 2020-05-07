@@ -1,0 +1,111 @@
+html,body,.mui-content{
+			height: 100%;
+		}
+		.mui-table-view:before,.mui-input-group:before,.mui-table-view:after,.mui-input-group:after{
+			height: 0;
+		}
+		.mui-content{
+			background-color: #fff;
+		}
+		.box{
+			width:90%;
+			min-height: 100px;
+			margin: 0 auto;
+			/* border: 1px solid #aaa; */
+		}
+		.img{
+			border-radius: 50%;
+			overflow: hidden;
+			max-width: 70px;
+			height: 70px;
+			text-align: center;
+			margin: 0 auto;
+			padding: 0;
+		}
+		.img img{
+			width: 100%;
+			height: 100%;
+		}
+		.inp{
+			margin-top: 30px;
+		}
+			
+		.inp .mui-input-row label{
+			text-align: center;
+			width: 30%;
+		}
+		.inp .mui-input-row input{
+			width: 70%;
+		}
+		.inp .mui-input-row span.mui-icon-eye,.inp .mui-input-row span.mui-icon-clear{
+			right:25px;
+		}
+		.mui-input-group .mui-input-row:after{
+			background-image: linear-gradient(to right, #e66465, #d01c10);
+			left: 0;
+		}
+		.myBtn{
+			border: none;
+			border-radius: 15px;
+			color: #fff;
+			background-image: linear-gradient(to right, #e66465, #d01c10);
+			width: 100%;
+			padding: 10px 0;
+			font-size: 16px;
+		}
+		.myBtn:active{
+			opacity: 0.6;
+		}
+		.myBtnOpcity{
+			opacity: 0.5;
+		}
+		.myBtnNoOpcity{
+			opacity: 1;
+		}
+		
+		.mui-content-padded{
+			margin-top: 20px;
+		}
+		.link-area{
+			text-align: center;
+			margin-top: 20px;
+			font-size: 14px;
+		}
+		.reg{
+			margin-bottom: 20px;
+		}
+		.spliter{
+			color:#bbb;
+			padding: 0 8px;
+		}
+		.my_yzm input[type=text]{
+			width: 40%;
+			float: left;
+		}
+		.my_yzm .mui-btn{
+			width: 30%;
+			float: left;
+			border: none;
+			color: #d01c10;
+			line-height: 1.2;
+		}
+		.my_yzm .mui-btn:active{
+			color: #d01c10;
+			background-color: inherit;
+		}
+		.yzmAble{
+			opacity: 0.5 !important;
+		}
+		.yzmAbled{
+			opacity: 1 !important;
+		}
+		.loginMethod{
+			display: none;
+		}
+		input[type='button']:disabled, input[type='button'].mui-disabled, 
+		input[type='submit']:disabled, input[type='submit'].mui-disabled, 
+		input[type='reset']:disabled, input[type='reset'].mui-disabled, button:disabled, button.mui-disabled,
+		 .mui-btn:disabled,
+		 .mui-btn.mui-disabled{
+			opacity: none;
+		}

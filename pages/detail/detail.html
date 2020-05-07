@@ -27,10 +27,17 @@
 			width: 10px;
 			height: 10px;
 		}
+		.my-action-back{
+			position: relative;
+			left: 0;
+			top: 10px;
+			z-index: 1000;
+			color: #fff;
+		}
 	</style>
 	<body>
 		<div id="slider" class="mui-slider">
-		
+			<a class="mui-action-back my-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
 			<div class="mui-slider-group mui-slider-loop my-slider-group">
 				<!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
 				<div class="mui-slider-item my-slider-item mui-slider-item-duplicate">
@@ -65,11 +72,15 @@
 			</div>
 		</div><!-- .mui-slider轮播图 -->
 	</body>
+	<script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
 	<script src="../../js/mui.js"></script>
+
 	<script type="text/javascript">
 		mui.init();
+		let self;
 		mui.plusReady(function () {
-		    
+		    self=plus.webview.currentWebview();
 		})
+		
 	</script>
 </html>

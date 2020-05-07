@@ -8,79 +8,10 @@
 	<link href="../../css/mui.css" rel="stylesheet" />
 	<link rel="stylesheet" type="text/css" href="../../css/public.css"/>
 	<link rel="stylesheet" type="text/css" href="../../fonts/font.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/login/login.css"/>
 	<style type="text/css">
 		
-		html,body,.mui-content{
-			height: 100%;
-		}
-		.mui-table-view:before,.mui-input-group:before,.mui-table-view:after,.mui-input-group:after{
-			height: 0;
-		}
-		.mui-content{
-			background-color: #fff;
-		}
-		.box{
-			width:90%;
-			min-height: 100px;
-			margin: 0 auto;
-			/* border: 1px solid #aaa; */
-		}
-		.img{
-			border-radius: 50%;
-			overflow: hidden;
-			max-width: 70px;
-			height: 70px;
-			text-align: center;
-			margin: 0 auto;
-			padding: 0;
-		}
-		.img img{
-			width: 100%;
-			height: 100%;
-		}
-		.inp{
-			margin-top: 30px;
-		}
-			
-		.inp .mui-input-row label{
-			text-align: center;
-			width: 30%;
-		}
-		.inp .mui-input-row input{
-			width: 70%;
-		}
-		.inp .mui-input-row span.mui-icon-eye,.inp .mui-input-row span.mui-icon-clear{
-			right:25px;
-		}
-		.mui-input-group .mui-input-row:after{
-			background-image: linear-gradient(to right, #e66465, #d01c10);
-			left: 0;
-		}
-		.myBtn{
-			border: none;
-			border-radius: 15px;
-			
-			color: #fff;
-			background-image: linear-gradient(to right, #e66465, #d01c10);
-			width: 100%;
-			padding: 10px 0;
-			font-size: 16px;
-		}
 		
-		.myBtnOpcity{
-			opacity: 0.5;
-		}
-		.myBtnNoOpcity{
-			opacity: 1!important;
-		}
-		
-		.mui-content-padded{
-			margin-top: 20px;
-		}
-		.link-area{
-			text-align: center;
-			margin-top: 20px;
-		}
 	</style>
 </head>
 
@@ -90,27 +21,64 @@
 		<h1 class="mui-title">登录</h1>
 	</header>
 	<div class="mui-content">
+		
 		<div class="box mui-table-view">
+			<div class="link-area reg" style="text-align: right;" onclick="toRegist()">
+				<a id='reg'>注册</a>
+			</div>
 			<div class="img mui-table-view-cell">
 				<img src="../../img/0.jpg" >
 			</div>
 			<div class="inp">
-				<form id='login-form' class="mui-input-group">
+				<!-- 账号密码登录 -->
+				<form class="mui-input-group" :class="{'loginMethod':loginMethod}">
 					<div class="mui-input-row">
 						<label>账号</label>
 						<input id='account' type="text" class="mui-input-clear mui-input" v-model="account" placeholder="请输入账号">
 					</div>
 					<div class="mui-input-row">
 						<label>密码</label>
-						<input id='password' type="password" class="mui-input-password mui-input" v-model="passworld" placeholder="请输入密码">
+						<input id='password' type="password" class="mui-input-password mui-input" v-model="passWorld" placeholder="请输入密码">
 					</div>
-					
+					<div class="mui-content-padded loginBtn">
+						<button type="button" 
+						data-loading-icon-position="right"
+						class="mui-btn myBtn" 
+						:disabled="btnCol" 
+						ref="account"
+						:class="{'myBtnNoOpcity':btnCol==false,'myBtnOpcity':btnCol==true}"
+						@click="accountLogin"
+						>登录
+						</button>
+					</div>
+				</form>
+				<!-- 手机号登录 -->
+				<form class="mui-input-group" :class="{'loginMethod':!loginMethod}">
+					<div class="mui-input-row">
+						<label>手机号</label>
+						<input id='phone' type="number" class="mui-input-clear mui-input" v-model="phone" placeholder="请输入手机号">
+					</div>
+					<div class="mui-input-row my_yzm">
+						<label>验证码</label>
+						<input id='yzm' type="text" class="mui-input" v-model="yzm" placeholder="请输入验证码">
+						<button type="button" :disabled="yzmDisabled" class="mui-btn yzmBtn" :class="{'yzmAble':yzmDisabled,'yzmAbled':!yzmDisabled}" @click="sendyzm">发送验证码 <span v-if="timer==true">{{minute}}</span></button>
+					</div>
+					<div class="mui-content-padded loginBtn">
+						<button type="button" 
+						data-loading-icon-position="right"
+						class="mui-btn myBtn" 
+						:disabled="btnCol" 
+						ref="phone"
+						:class="{'myBtnNoOpcity':btnCol==false,'myBtnOpcity':btnCol==true}"
+						@click="phoneLogin"
+						>登录
+						</button>
+					</div>
 				</form>
 			</div>
-			<div class="mui-content-padded">
-				<button type="button" data-loading-icon="mui-spinner mui-spinner-custom" class="mui-btn myBtn" :disabled="!btnCol" :class="{'myBtnNoOpcity':btnCol,'myBtnOpcity':!btnCol}">登录</button>
-				<div class="link-area"><a id='reg'>注册账号</a> <span class="spliter">|</span> <a id='forgetPassword'>忘记密码</a>
-				</div>
+			
+			<div class="link-area">
+				<a id='toggle' @click="toggleLogin">切换登录方式</a> <span class="spliter">|</span> <a id='forgetPassword'>忘记密码</a>
 			</div>
 			
 			<!-- <div class="others"> -->
@@ -127,53 +95,168 @@
 <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
 <script src="../../js/mui.js"></script>
 <script type="text/javascript">
-	mui.init({});
-	mui.ajax('http://127.0.0.1:3200/add',{
-		dataType:'json',//服务器返回json格式数据
-		type:'POST',//HTTP请求类型
-		timeout:10000,//超时时间设置为10秒；
-		success:function(data){
-			console.log(data)
-		},
-		error:function(xhr,type,errorThrown){
-		}
-	});
-	mui(document.body).on('tap', '.mui-btn', function(e) {
-	    mui(this).button('loading');
-	    setTimeout(function() {
-	        mui(this).button('reset');
-	    }.bind(this), 2000);
-	});
-	
+	// 打开注册界面
+	function toRegist(){
+		mui.openWindow({
+			url:"./regist.html",
+			id:"regist",
+			show:{
+			  autoShow:true,//页面loaded事件发生后自动显示，默认为true
+			 
+			  duration:500//页面动画持续时间，Android平台默认100毫秒，iOS平台默认200毫秒；
+			},
+			
+		})
+	}
 	
 	
 	var login=new Vue({
 		el:".box",
 		data:{
-			
-			account:"",
-			passworld:""
+			account:"",   //账号
+			passWorld:"",   //密码
+			phone:"",  //手机号
+			yzm:""   ,//验证码
+			loginMethod:true,  //切换登录方式
+			yzmDisabled:true,   //验证码按钮样式
+			timer:false,   //DOM中显示倒计时的数字
+			minute:5,   //倒计时时间
+			roundNum:""   //发送的验证码
 		},
 		computed:{
-			// 动态切换按钮样式
-			btnCol:function(){
-				// 如果账号和密码去除空格后长度>0,改变登录按钮的透明度,解除按钮禁用效果
-				if(this.account.trim().length>0&&this.passworld.trim().length>0){
-					console.log(111)
-					return true
-				}else{
+			// 动态切换登录按钮样式
+			btnCol(){
+				if((this.account.trim().length>0&&this.passWorld.trim().length>0)||(this.phone.trim().length>0&&this.yzm.trim().length>0)){
 					return false
+				}else{
+					return true
+				}
+			},
+		},
+		watch:{
+			// 监听输入的手机号数据,如果不为空 验证码按钮就不禁用
+			"phone":function(newNum,oldNum){
+				if(newNum!==""){
+					this.yzmDisabled=false
+				}else{
+					this.yzmDisabled=true
 				}
 			}
 		},
 		created() {
-			
+			this.loginMethod=true;
 		},
 		mounted() {
-			
+			mui.init();
 		},
 		methods:{
+			// 切换登录方式时所有输入内容为空,登录按钮变为禁用
+			toggleLogin(){
+				this.account="";   //账号
+				this.passWorld="";   //密码
+				this.phone="";   //手机号
+				this.yzm=""; //验证码
+				this.loginMethod=!this.loginMethod
+			},
 			
+			// 模拟发送验证码
+			// 点击时出现倒计时，5秒回倒计时消失。
+			// 倒计时出现的时候验证码按钮禁止点击,倒计时消失后可以再次点击
+			sendyzm(){
+				this.roundNum=Math.floor(Math.random()*10*99999);   //验证码
+				// DOM中显示倒计时的数字
+				this.timer=true
+				this.minute=6;    //倒计时
+				// 每一秒-1
+				let timer=setInterval(()=>{
+					this.minute-=1;  
+					this.yzmDisabled=true;   //禁用发送验证码按钮
+					if(this.minute<0){
+						this.timer=false    // 隐藏倒计时数字
+						
+						this.yzmDisabled=false;  //取消禁用发送验证码按钮
+						clearInterval(timer)
+					}
+				},1000)
+				alert(this.roundNum);
+			},
+			
+			// 账号密码登录
+			accountLogin(){
+				let that=this;
+				mui(that.$refs.account).button('loading');//切换为loading状态
+				setTimeout(()=>{
+					mui.ajax('http://192.168.88.69:3200/accountLogin',{
+						data:{
+							account:that.account,
+							passWord:that.passWorld,
+						},
+
+						type:'post',//HTTP请求类型
+						timeout:10000,//超时时间设置为10秒；      
+						success:function(data){
+							mui(that.$refs.account).button('reset');
+							switch(data.statu){
+								case "success":
+									mui.toast(data.msg,{ duration:'short', type:'div' });
+								break;
+								case "error":
+									mui.toast(data.msg,{ duration:'short', type:'div' });
+								break;
+								case "faild":
+									mui.toast(data.msg,{ duration:'short', type:'div' });
+								break;
+							}
+						},
+						error:function(xhr,type,errorThrown){
+							mui(that.$refs.account).button('reset');
+							mui.toast("连接失败，稍后再试",{ duration:'short', type:'div' });
+						}
+					});
+				},2000)
+				
+			},
+			
+			// 使用手机号登陆;
+			// 先判断验证码是否正确;
+			phoneLogin(){
+				let that=this;
+				// 判断验证码是否正确;
+				if(that.yzm==that.roundNum){
+					mui(that.$refs.phone).button('loading');//切换为loading状态
+					setTimeout(()=>{
+						mui.ajax('http://192.168.88.69:3200/phoneLogin',{
+							data:{
+								phone:that.phone
+							},
+							type:'post',//HTTP请求类型
+							timeout:10000,//超时时间设置为10秒；      
+							success:function(data){
+								console.log(data)
+								mui(that.$refs.phone).button('reset');
+								switch(data.statu){
+									case "success":
+										mui.toast(data.msg,{ duration:'short', type:'div' });
+									break;
+									case "error":
+										mui.toast(data.msg,{ duration:'short', type:'div' });
+									break;
+									case "faild":
+										mui.toast(data.msg,{ duration:'short', type:'div' });
+									break;
+								}
+							},
+							error:function(xhr,type,errorThrown){
+								mui(that.$refs.phone).button('reset');
+								mui.toast("连接失败，稍后再试",{ duration:'short', type:'div' });
+							}
+						});
+					},2000)
+				}else{
+				
+					mui.toast('验证码错误',{ duration:'short', type:'div' }) 
+				}
+			}
 		}
 	})
 </script>
