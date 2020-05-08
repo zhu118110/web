@@ -11,6 +11,7 @@
 	</head>
 	<style type="text/css">
 		/* 轮播 */
+		
 		.mui-slider .my-slider-group .my-slider-item{
 			height: 200px;
 			font-size: 0;
@@ -34,8 +35,48 @@
 			z-index: 1000;
 			color: #fff;
 		}
+		
+		.my-mui-bar{
+			display: flex;
+			justify-content: space-between;
+		}
+		.tableft{
+			flex: 1;
+		}
+		.tabright{
+			flex: 2;
+			text-align: center;
+			display: inline-table;
+			align-self: center;
+		}
+		.tabright .mui-btn{
+			top: 0;
+			color: #fff;
+			padding: 13px 25px 11px;
+			border: none;
+		}
+		.tabright .mui-btn:first-child{
+			border-radius: 15px 0 0 15px;
+			border-right: 0px;
+			background-color: #ff9500;
+			
+			/* background-image: linear-gradient(to right,#ff9500,#ff5000); */
+		}
+		.tabright .mui-btn:last-child{
+			border-radius: 0px 15px 15px 0;
+			border-left: 0px;
+			background-color: #ff5000;
+			/* background-image: linear-gradient(to right,#ff5300, #e24b02); */
+		}
+		.mui-bar-tab .mui-tab-item.mui-active{
+			color: #929292;
+		}
+		.cellect{
+			color: #ff5900 !important;
+		}
 	</style>
 	<body>
+	 <div class="mui-content">
 		<div id="slider" class="mui-slider">
 			<a class="mui-action-back my-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
 			<div class="mui-slider-group mui-slider-loop my-slider-group">
@@ -71,16 +112,62 @@
 				<div class="mui-indicator my-indicator"></div>
 			</div>
 		</div><!-- .mui-slider轮播图 -->
+		
+		<footer class="mui-bar mui-bar-tab my-mui-bar">
+			<div class="tableft">
+				<a class="mui-tab-item">
+					<span class="mui-icon iconfont icon-service"></span>
+					<span class="mui-tab-label">客服</span>
+				</a>
+				<a class="mui-tab-item" @click="joinCollect" :class="{'cellect':collect.isCollect}">
+					<span class="mui-icon iconfont" :class="{'icon-lujing':collect.isCollect,'icon-shoucang1':!collect.isCollect}"></span>
+					<span class="mui-tab-label">收藏</span>
+				</a>
+			</div>
+			<div class="tabright">
+				<button type="button" class="mui-btn">
+					加入购物车
+				</button>
+				<button type="button" class="mui-btn">
+					立即购买
+				</button>
+			</div>
+			
+		</footer>
+	</div>
 	</body>
 	<script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
 	<script src="../../js/mui.js"></script>
 
 	<script type="text/javascript">
-		mui.init();
+		
 		let self;
 		mui.plusReady(function () {
 		    self=plus.webview.currentWebview();
+			console.log(self.prd_id)   //产品的id
 		})
-		
+		const myVue=new Vue({
+			el:".mui-content",
+			data:{
+				// 收藏
+				collect:{
+					collectData:[],     //收藏的数据
+					isCollect:false,   //控制是否收藏
+				}
+				
+			},
+			created() {
+				
+			},
+			mounted() {
+				mui.init();
+			},
+			methods:{
+				// 点击收藏改变收藏样式
+				joinCollect(){
+					this.collect.isCollect=!this.collect.isCollect
+				}
+			}
+		})
 	</script>
 </html>
