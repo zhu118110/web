@@ -92,6 +92,7 @@
 </body>
 <script src="../../../js/mui.min.js"></script>
 <script src="../../../js/webviewGroup.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/vue.js"></script>
 <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
 <script type="text/javascript">
 	
@@ -229,9 +230,10 @@
 			// 点击产品时跳转至详情页面
 			// @prd_id : 点击的产品的id
 			toDeatail(prd_id){
+				
 				mui.openWindow({
 					url:"../../detail/detail.html",
-					id:"detail.html",
+					id:"detail",
 					extras:{
 						prd_id:prd_id
 					},
