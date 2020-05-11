@@ -12,15 +12,15 @@
 	background-color: #efeff4;
 }
 .myaside_header{
-	padding:30px 65px 27px 16px;
+	padding:30px 30px 30px 16px;
 	background-color: #fff;
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
 }
 .myaside_header p{
-	margin-left: 15px;
-	font-size: 18px;
+	margin-left: 10px;
+	font-size: 14px;
 }
 .myaside_header img{
 	max-width: 50px;

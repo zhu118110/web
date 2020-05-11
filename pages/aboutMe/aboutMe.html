@@ -1,24 +1,25 @@
 <!Doctype html>
 <html>
 
-	<head>
-		<meta charset="utf-8">
-		<title>关于我</title>
-		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<link href="../../css/mui.css" rel="stylesheet" />
-		<link rel="stylesheet" type="text/css" href="../../css/public.css"/>
-		<link rel="stylesheet" type="text/css" href="../../css/aboutMe/aboutMe.css"/>
-		<link rel="stylesheet" type="text/css" href="../../fonts/font.css"/>
-		<style type="text/css">
-			
-			
-		</style>
-	</head>
-	<body>
+<head>
+	<meta charset="utf-8">
+	<title>关于我</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../css/mui.css" rel="stylesheet" />
+	<link rel="stylesheet" type="text/css" href="../../css/public.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/aboutMe/aboutMe.css"/>
+	<link rel="stylesheet" type="text/css" href="../../fonts/font.css"/>
+	<style type="text/css">
+	</style>
+</head>
+<body id="body">
+<div class="box">
+	
+
 		<!-- 侧滑导航根容器 -->
-	<div class="mui-off-canvas-wrap">
+	<div class="mui-off-canvas-wrap" ref="wrap" >
+		
 		  <!-- 侧滑菜单 -->
-		 
 		  <aside class="mui-off-canvas-left myaside">
 			  <!-- 侧滑头像 -->
 			<header class="myaside_header">
@@ -26,7 +27,7 @@
 					<img class="mui-media-object mui-pull-left" src="../../img/0.jpg">
 				</div>
 				<div class="mui-media-body">
-					<p>拼多多</p>
+					<p >{{userName}}</p>
 				</div>
 		    </header>
 			<ul class="mui-table-view">
@@ -75,18 +76,19 @@
 				</a>
 			</ul>
 			<ul class="mui-table-view">
-				<a onclick="toLogin()">
+				<a @click="toLogin()">
 					<li class="mui-table-view-cell">
 						退出登录
 					</li>
 				</a>
 			</ul>
 		  </aside>
+		  
 		  <!-- 主界面开始 -->
 		<div class="mui-content mui-inner-wrap"> 
 			
 			<!-- w我的信息开始 -->
-			<div class="my_infor">
+			<div class="my_infor"  @click="dragToggle()">
 				<ul class="mui-table-view mui-table-view-chevron">
 					<li class="mui-table-view-cell mui-media">
 						<a class="mui-navigate-right mytx">
@@ -95,12 +97,13 @@
 							</div>
 							
 							<div class="mui-media-body">
-								<p style="color: #fff;">拼多多</p>
+								<p style="color: #fff;">{{userName}}</p>
 							</div>
 						</a>
 					</li>
 				</ul>
 			</div><!-- w我的信息结束 -->
+			
 				<!-- 我的订单开始 -->
 			<div class="mui-card myCard" style="margin-top: 0;">
 				<div class="mui-card-header my-card-header">
@@ -288,33 +291,115 @@
 			</div>		
 			<div class="mui-off-canvas-backdrop" style="box-shadow: none;"></div>
 		</div> <!-- 主界面结束 -->
-		
 	</div><!-- 侧滑导航根容器 -->
+ 
+</div>
 </body>
 <script src="../../js/mui.js"></script>
+<script src="../../js/vue.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
-	mui.init();
-	
-	my_infor=document.querySelector(".my_infor");
-	
-	// 点击顶部我的信息显示侧滑导航，再点击时关闭
-	my_infor.addEventListener("tap",function(){
-		mui('.mui-off-canvas-wrap').offCanvas().toggle();
-	})
+	window.addEventListener('clearStorage',function(event){
+	  //获得事件参数
+	  var statu = event.detail.statu;
+	  if(statu!==true){
+		  plus.storage.removeItem("account");
+	  }
+	});
 	// 阻止主页面滑动触发侧滑导航
 	document.querySelector(".mui-inner-wrap").addEventListener("drag",function(){
 		  event.stopPropagation();
 	})
 	// 点击退出登录到登录页面
-	function toLogin(){
-		mui.openWindow({
-			url:"../login/login.html",
-			id:"login.html",
-			waiting:{
-			  autoShow:true,//自动显示等待框，默认为true
-			  title:'退出登录...',//等待对话框上显示的提示内容
+	const vue=new Vue({
+		el:".box",
+		data:{
+			userName:"请先登录",
+			
+		},
+		created() {
+			this.getStorage()
+		},
+		mounted() {
+			mui.init({
+				
+				 keyEventBind: {  
+				        backbutton: false,  //Boolean(默认true)关闭back按键监听  
+				        menubutton: true   //Boolean(默认true)关闭menu按键监听  
+				    }  
+			});
+		},
+		methods:{
+			// 获取本地存储的用户账号，
+			// 使用请求后台查找到昵称
+			getStorage(){
+				let idValue;  
+				let that=this;
+				mui.plusReady(function () {
+					// 得到存储的用户id的key,得到的是个数组
+				  let idKey=plus.storage.getAllKeys();
+				  // 通过key得到存储的用户id，，key必须是字符串
+				  idValue=plus.storage.getItem(`${idKey}`);
+				  console.log(`key是${idKey},value是${idValue}`);
+				  ajax(idValue)
+				});
+				
+				function ajax(id){
+					mui.ajax("http://192.168.88.69:3200/aboutMe",{
+						data:{
+							userId:id
+						},
+						type:"post",
+						timeout:10000,
+						success:function(data){
+							if(data.data){
+								let dataArr=[];
+								dataArr.push(...[data.data])
+								dataArr.forEach(val=>{
+									that.userName=val.userName;
+									// console.log("userName是"+that.userName)
+								})
+							}
+						},
+						error:function(xhr,type){
+							mui.toast("获取用户名错误")
+						}
+					})
+				}
+				
 			},
-		})
-	}
+			
+			// 点击退出登录跳转到登录页面
+			// 清除本地存储的用户id
+			toLogin(){
+				mui.openWindow({
+					url:"../login/login.html",
+					id:"login.html",
+					waiting:{
+					  autoShow:true,//自动显示等待框，默认为true
+					  title:'退出登录...',//等待对话框上显示的提示内容
+					},
+				});
+				mui.plusReady(function(){
+					//清除本地存储的用户id
+					plus.storage.removeItem("account");
+				})
+			},
+			
+			// 点击顶部我的信息显示侧滑导航，再点击时关闭
+			dragToggle(){
+				if(this.userName=="请先登录"){
+					// mui(this.$refs.wrap).offCanvas().close();
+					mui.openWindow({
+						url:"../login/login.html",
+						id:"login.html",
+						
+					});
+				}else{
+					mui(this.$refs.wrap).offCanvas().toggle();
+				}
+			}
+		}
+	})
+	
 </script>
 </html>

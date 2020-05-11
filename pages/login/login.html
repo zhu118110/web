@@ -23,7 +23,7 @@
 	<div class="mui-content">
 		
 		<div class="box mui-table-view">
-			<div class="link-area reg" style="text-align: right;" onclick="toRegist">
+			<div class="link-area reg" style="text-align: right;">
 				<a id='reg'>注册</a>
 			</div>
 			<div class="img mui-table-view-cell">
@@ -40,17 +40,7 @@
 						<label>密码</label>
 						<input id='password' type="password" class="mui-input-password mui-input" v-model="passWorld" placeholder="请输入密码">
 					</div>
-					<div class="mui-content-padded loginBtn">
-						<button type="button" 
-						data-loading-icon-position="right"
-						class="mui-btn myBtn" 
-						:disabled="btnCol" 
-						ref="account"
-						:class="{'myBtnNoOpcity':btnCol==false,'myBtnOpcity':btnCol==true}"
-						@click="accountLogin"
-						>登录
-						</button>
-					</div>
+					
 				</form>
 				<!-- 手机号登录 -->
 				<form class="mui-input-group" :class="{'loginMethod':!loginMethod}">
@@ -63,18 +53,18 @@
 						<input id='yzm' type="text" class="mui-input" v-model="yzm" placeholder="请输入验证码">
 						<button type="button" :disabled="yzmDisabled" class="mui-btn yzmBtn" :class="{'yzmAble':yzmDisabled,'yzmAbled':!yzmDisabled}" @click="sendyzm">发送验证码 <span v-if="timer==true">{{minute}}</span></button>
 					</div>
-					<div class="mui-content-padded loginBtn">
-						<button type="button" 
-						data-loading-icon-position="right"
-						class="mui-btn myBtn" 
-						:disabled="btnCol" 
-						ref="phone"
-						:class="{'myBtnNoOpcity':btnCol==false,'myBtnOpcity':btnCol==true}"
-						@click="phoneLogin"
-						>登录
-						</button>
-					</div>
 				</form>
+				<div class="mui-content-padded loginBtn">
+					<button type="submit" 
+					data-loading-icon-position="right"
+					class="mui-btn myBtn" 
+					:disabled="btnCol" 
+					ref="account"
+					:class="{'myBtnNoOpcity':btnCol==false,'myBtnOpcity':btnCol==true}"
+					@click="loginTo"
+					>登录
+					</button>
+				</div>
 			</div>
 			
 			<div class="link-area">
@@ -97,7 +87,7 @@
 <script src="../../js/vue.js"></script>
 <script type="text/javascript">
 	// 打开注册界面
-	function toRegist(){
+	mui(document.body).on("tap","#reg",function(){
 		mui.openWindow({
 			url:"./regist.html",
 			id:"regist",
@@ -106,12 +96,12 @@
 			 
 			  duration:500//页面动画持续时间，Android平台默认100毫秒，iOS平台默认200毫秒；
 			},
-			
 		})
-	}
+	})
 	
 	
-	var login=new Vue({
+	
+	const login=new Vue({
 		el:".box",
 		data:{
 			account:"",   //账号
@@ -146,9 +136,22 @@
 		},
 		created() {
 			this.loginMethod=true;
+			
 		},
 		mounted() {
-			mui.init();
+			mui.init({
+				beforeback:function(){
+					var aboutMe = plus.webview.getWebviewById('aboutMe');
+					// 返回前判断本地存储的用户id是否存在,不存在则返回到主页
+					let storage=plus.storage.getItem("account");
+					mui.fire(aboutMe,"clearStorage",{
+						statu:"false"
+					})
+					return true;
+				}
+				
+			});
+			
 		},
 		methods:{
 			// 切换登录方式时所有输入内容为空,登录按钮变为禁用
@@ -158,6 +161,52 @@
 				this.phone="";   //手机号
 				this.yzm=""; //验证码
 				this.loginMethod=!this.loginMethod
+			},
+			
+			
+			// 账号密码登录
+			accountLogin(){
+				let that=this;
+				mui(that.$refs.account).button('loading');//切换为loading状态
+				setTimeout(()=>{
+					mui.ajax('http://192.168.88.69:3200/accountLogin',{
+						data:{
+							account:that.account,
+							passWord:that.passWorld,
+						},
+
+						type:'post',//HTTP请求类型
+						timeout:10000,//超时时间设置为10秒；      
+						success:function(data){
+							/* console.log("账号"+data.data) */
+							
+							mui(that.$refs.account).button('reset');
+							switch(data.statu){
+								// 登陆成功,存到cookie
+								case "success":
+									that.setStorage(data.data)
+									mui.toast(data.msg);
+								break;
+								// 服务器查找失败
+								case "error":
+									mui.toast(data.msg);
+								break;
+								// 账号密码不一致时触发
+								case "faild":
+									mui.toast(data.msg);
+								break;
+								case "nothing":
+									mui.toast(data.msg);
+								break;
+							}
+						},
+						error:function(xhr,type,errorThrown){
+							mui(that.$refs.account).button('reset');
+							mui.toast("连接失败，稍后再试");
+						}
+					});
+				},2000)
+				
 			},
 			
 			// 模拟发送验证码
@@ -182,49 +231,14 @@
 				alert(this.roundNum);
 			},
 			
-			// 账号密码登录
-			accountLogin(){
-				let that=this;
-				mui(that.$refs.account).button('loading');//切换为loading状态
-				setTimeout(()=>{
-					mui.ajax('http://192.168.88.69:3200/accountLogin',{
-						data:{
-							account:that.account,
-							passWord:that.passWorld,
-						},
-
-						type:'post',//HTTP请求类型
-						timeout:10000,//超时时间设置为10秒；      
-						success:function(data){
-							mui(that.$refs.account).button('reset');
-							switch(data.statu){
-								case "success":
-									mui.toast(data.msg,{ duration:'short', type:'div' });
-								break;
-								case "error":
-									mui.toast(data.msg,{ duration:'short', type:'div' });
-								break;
-								case "faild":
-									mui.toast(data.msg,{ duration:'short', type:'div' });
-								break;
-							}
-						},
-						error:function(xhr,type,errorThrown){
-							mui(that.$refs.account).button('reset');
-							mui.toast("连接失败，稍后再试",{ duration:'short', type:'div' });
-						}
-					});
-				},2000)
-				
-			},
-			
 			// 使用手机号登陆;
 			// 先判断验证码是否正确;
+			// 验证码正确向后端发送手机号
 			phoneLogin(){
 				let that=this;
 				// 判断验证码是否正确;
 				if(that.yzm==that.roundNum){
-					mui(that.$refs.phone).button('loading');//切换为loading状态
+					mui(that.$refs.account).button('loading');//切换为loading状态
 					setTimeout(()=>{
 						mui.ajax('http://192.168.88.69:3200/phoneLogin',{
 							data:{
@@ -233,31 +247,64 @@
 							type:'post',//HTTP请求类型
 							timeout:10000,//超时时间设置为10秒；      
 							success:function(data){
-								console.log(data)
-								mui(that.$refs.phone).button('reset');
+								// console.log("手机号"+data.data)
+								mui(that.$refs.account).button('reset');
 								switch(data.statu){
+									// 可以正常登录,存到cookie
 									case "success":
-										mui.toast(data.msg,{ duration:'short', type:'div' });
+										that.setStorage(data.data);
+										mui.toast(data.msg);
+										
 									break;
-									case "error":
-										mui.toast(data.msg,{ duration:'short', type:'div' });
-									break;
+									// 没有找到手机号
 									case "faild":
-										mui.toast(data.msg,{ duration:'short', type:'div' });
+										mui.toast(data.msg);
 									break;
+									// 服务器有错误
+									case "error":
+										mui.toast(data.msg);
+									break;
+									
 								}
 							},
 							error:function(xhr,type,errorThrown){
-								mui(that.$refs.phone).button('reset');
-								mui.toast("连接失败，稍后再试",{ duration:'short', type:'div' });
+								mui(that.$refs.account).button('reset');
+								mui.toast("连接失败，稍后再试");
 							}
 						});
 					},2000)
 				}else{
-				
-					mui.toast('验证码错误',{ duration:'short', type:'div' }) 
+					mui.toast('验证码错误') 
 				}
-			}
+			},
+			
+			// 点击登录按钮进行登录
+			loginTo(){
+				// 判断登录方式
+				if(this.loginMethod){
+					this.phoneLogin()
+					// console.log("我是手机登录")
+				}else{
+					this.accountLogin()
+					// console.log("我是账号登录")
+				}
+			},
+			
+			// 点击登录时设置storage，将用户id存到手机storage中
+			setStorage(id){
+				mui.plusReady(function () {
+					// setItemAsync异步设置storage
+					// plus.storage.setItemAsync(key,value,successFallback,errorFallback)
+				    plus.storage.setItemAsync("account",id,function(){
+						mui.back()
+					},function(e){
+						mui.toast("本地存储数据失败")
+					})
+				})
+			},
+			
+			// 监测手机返回按钮，
+			
 		}
 	})
 </script>

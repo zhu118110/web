@@ -107,7 +107,12 @@
 </body>
 
 <script type="text/javascript">
-	mui.init();
+	mui.init({
+		keyEventBind: {
+		       backbutton: false,  //Boolean(默认true)关闭back按键监听  
+		       menubutton: true   //Boolean(默认true)关闭menu按键监听  
+		   }  
+	});
 	// 左侧选项卡标题
 	var leftClass=["男装","女装","食品","电子","百货","洗护","百货","洗护","百货","洗护","百货","洗护","百货","男装","女装",];
 	var leftCont=document.querySelector("#segmentedControls");

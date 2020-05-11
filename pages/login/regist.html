@@ -55,7 +55,8 @@
 		</div>
 	</div>
 </body>
-<script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
+
+<script src="../../js/vue.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../js/mui.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
 	
@@ -124,29 +125,43 @@
 				if(that.yzm==that.roundNum&&that.account.trim().length>0&&that.passWorld.trim().length>0&&that.phone.trim().length>0){
 					mui(that.$refs.regist).button('loading');//切换为loading状态
 					setTimeout(()=>{
-						mui.post("http://192.168.88.69:3200/regist",{
-							account:that.account,
-							passWorld:that.passWorld,
-							phone:that.phone
-						},function(data){
-							// 根据后端返回的字段，提示不同的内容
-							switch(data.statu){
-								case "success":
-									mui.toast('注册成功',{ duration:'short', type:'div' });
-								break;
-								case "isHave":
-									mui.toast('该账户已被注册',{ duration:'short', type:'div' });
-								break;
-								case "error":
-									mui.toast('注册失败,稍后再试',{ duration:'short', type:'div' });
-								break;
+						mui.ajax("http://192.168.88.69:3200/regist",{
+							data:{
+								account:that.account,
+								passWorld:that.passWorld,
+								phone:that.phone
+							},
+							type:"post",
+							timeout:10000,
+							success:function(data){
+								// 根据后端返回的字段，提示不同的内容
+								switch(data.statu){
+									case "success":
+										mui.toast('注册成功');
+										mui.back();
+									break;
+									case "accountIsHave":
+										mui.toast('该账户已被注册');
+									break;
+									case "phoneIsHave":
+										mui.toast('该手机号已被注册');
+									break;
+									case "error":
+										mui.toast('注册失败,稍后再试');
+									break;
+								}
+								mui(that.$refs.regist).button('reset');//关闭loading状态
+							},
+							error:function(xhr,type,errorThrown){
+								mui(that.$refs.regist).button('reset');
+								mui.toast("服务器连接失败，稍后再试");
 							}
-							mui(that.$refs.regist).button('reset');//关闭loading状态
-						},'json')
+							
+						})
 					},2000)
 				}else{
-					
-					mui.toast('输入内容有错误',{ duration:'short', type:'div' }) 
+					mui(that.$refs.regist).button('reset');
+					mui.toast('输入内容有误',{ duration:'short', type:'div' }) 
 				}
 			}
 		}
