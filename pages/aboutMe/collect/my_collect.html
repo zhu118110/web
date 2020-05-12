@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>我的收藏</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+		<link rel="stylesheet" type="text/css" href="../../../css/mui.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/mui.min.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../fonts/font.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/public.css"/>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">我的收藏</h1>
+		</header>
+		
+		<div class="mui-content myContent ">
+			<dl class="mui-table-view">
+				<dt class=" mui-table-view-cell">
+					<!--内容区-->
+					<div class="mui-slider-right mui-disabled">
+						<a class="mui-btn mui-btn-red">删除</a>
+						
+					</div>
+					<div class="mui-slider-handle">
+						
+					</div>
+				</dt>
+			</dl>
+			
+		</div>
+	</body>
+	<script src="../../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../../js/vue.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+
+		const vue=new Vue({
+			el:".myContent",
+			data:{
+				api:"http://192.168.88.69:3200",
+				my_collect:[],   //收藏的数据
+				user_Id:""   //用户id
+			},
+			created() {
+				this.getUserId();
+			},
+			mounted() {
+				mui.init();
+			},
+			methods:{
+				// 页面刚加载时获取上一个页面传递的用户的id
+				getUserId(){
+					let that=this;
+					mui.plusReady(function () {
+					    let self=plus.webview.currentWebview();
+						that.user_Id=self.userId;
+						that.getCollectPrd(that.user_Id); // 根据用户id请求后台获取用户收藏的商品
+					})
+				},
+				getCollectPrd(user_Id){
+					// let that=this;
+					mui.ajax(this.api+"/collect",{
+						data:{
+							user_Id:user_Id
+						},
+						type:"post",
+						timeout:10000,
+						success:function(data){
+							this.my_collect.push(...data.data);
+						}
+					})
+				}
+			}
+		})
+	</script>
+</html>

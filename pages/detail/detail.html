@@ -265,6 +265,7 @@
 				apiUrl:"http://192.168.88.69:3200",
 				prd_id:"",  //商品的id
 				prd:[],   //根据id查找到的商品
+				user_Id:"",   //本地存储的用户id
 				// 收藏
 				collect:{
 					collectData:[],     //收藏的数据
@@ -297,11 +298,15 @@
 				getPrdId(){
 						let self;
 						let that=this;
+						
 						mui.plusReady(function () {
-							self=plus.webview.currentWebview();// 商品id
-							that.prd_id=self.prd_id;
-							ajax(that.prd_id);   //获取到商品价格等信息
-							that.findCollect(that.prd_id)   //判断该商品是否已经被此用户收藏
+							
+							that.user_Id=plus.storage.getItem("account");  //得到本地存储的用户id
+							self=plus.webview.currentWebview();
+							
+							that.prd_id=self.prd_id;// 获取上一个页面传过来的商品id
+							ajax(that.prd_id);   //通过商品id请求后台获取到商品价格等信息
+							that.findCollect(that.prd_id,that.user_Id)   //通过商品id请求后台查找该商品是否已经被此用户收藏
 						})
 						// 请求数据库
 						function ajax(id){
@@ -313,6 +318,7 @@
 								dataType:"json",
 								timeout:10000,//超时时间设置为10秒；  
 								success:function(data){
+									// that.prd.push(...data.data);
 									that.prd=that.prd.concat(data.data);
 								},
 								error:function(xhr,type,errorThrown){
@@ -324,12 +330,14 @@
 				},
 				
 				// 页面刚加载时先查找这个商品是否被此用户收藏
-				findCollect(prd_id){
+				findCollect(prd_id,user_Id){
+					
 					let that=this;
 					mui.ajax(that.apiUrl+"/findCollect",{
 						data:{
-							user_id:"5eb287d5dcc9d749140f7a33",
-							prd_id:prd_id
+							user_id:user_Id,
+							prd_id:prd_id,
+							
 						},
 						type:"post",
 						dataType:"json",
@@ -352,36 +360,46 @@
 				// 点击收藏根据商品id和用户id加入收藏表中
 				joinCollect(){
 					let that=this;
-					that.collect.isCollect=!that.collect.isCollect;  //改变样式
+					
+					let date=new Date().toLocaleString();  //2020/5/12 下午5:49:49
+					let newDate=date.split(" ")[0].replace(/\//img,"-")  //2020-5-12
+					
 					// 如果样式=true,则将商品和用户id存到收藏表中
-					if(that.collect.isCollect==true){
+					if(that.collect.isCollect==false){
 						mui.ajax(that.apiUrl+"/addCollect",{
 							data:{
-								user_id:"5eb287d5dcc9d749140f7a33",
-								prd_id:that.prd_id
+								user_id:that.user_Id,   //用户id
+								// prd_id:that.prd_id,   //商品id
+								// prd_img:that.prd[0].img,  //收藏的商品的主图
+								// prd_price:that.prd[0].price,   //商品的价格
+								prd:JSON.stringify(that.prd),
+								collect_date:newDate,
 							},
 							type:"post",
 							dataType:"json",
 							timeout:10000,//超时时间设置为10秒；  
 							success:function(data){
 								mui.toast("收藏成功");
+								that.collect.isCollect=true;  //改变收藏样式
 								// 数据库收藏成功改变样式
 							},
 							error:function(xhr,type,errorThrown){
-								mui.toast("数据请求失败,原因"+type);
+								mui.toast("收藏失败,原因"+type);
 							}
 						})
 					}else{
+						console.log(111)
 						// 取消收藏
 						mui.ajax(that.apiUrl+"/cancelCollect",{
 							data:{
-								user_id:"5eb287d5dcc9d749140f7a33",
+								user_id:that.user_Id,
 								prd_id:that.prd_id
 							},
 							type:"post",
 							dataType:"json",
 							timeout:10000,//超时时间设置为10秒；  
 							success:function(data){
+								that.collect.isCollect=false;  //改变收藏样式
 								mui.toast("已取消收藏");
 							},
 							error:function(xhr,type,errorThrown){

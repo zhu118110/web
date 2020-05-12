@@ -154,35 +154,35 @@
 			</div><!-- 我的订单结束 -->
 			
 			<!-- 我的收藏开始 -->
-			<div class="mui-card myCard mysc">
+			<div class="mui-card myCard mysc" >
 				<div class="mui-card-content">
 					<div class="mui-card-content-inner myCardContent">
-						<ul>
-							<a href="#">
+						<ul id="mysc">
+							<a data-url="collect/my_collect.html" data-id="my_collect.html">
 								<li>
 									<div class="iconfont icon-youhuiquan"></div>
 									<div>优惠券</div>
 								</li>
 							</a>
-							<a href="#">
+							<a data-url="collect/my_collect.html" data-id="my_collect.html">
 								<li>
 									<div class="iconfont icon-shangpinshoucang"></div>
 									<div>商品收藏</div>
 								</li>
 							</a>
-							<a href="#">
+							<a data-url="collect/my_collect.html" data-id="my_collect.html">
 								<li>
 									<div class="iconfont icon-lishiliulan"></div>
 									<div>历史浏览</div>
 								</li>
 							</a>
-							<a href="#">
+							<a data-url="collect/my_collect.html" data-id="my_collect.html">
 								<li>
 									<div class="iconfont icon-tuikuanshouhou"></div>
 									<div>退款售后</div>
 								</li>
 							</a>
-							<a href="#">
+							<a data-url="collect/my_collect.html" data-id="my_collect.html">
 								<li>
 									<div class="iconfont icon-wodepingjia1"></div>
 									<div>我的评价</div>
@@ -295,38 +295,56 @@
  
 </div>
 </body>
-<script src="../../js/mui.js"></script>
+<script src="../../js/mui.min.js"></script>
 <script src="../../js/vue.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
+	// 监听登录页面的back事件,刷新页面
 	window.addEventListener('clearStorage',function(event){
-	  //获得事件参数
-	  var statu = event.detail.statu;
-	  if(statu!==true){
-		  plus.storage.removeItem("account");
-	  }
+	  var statu = event.detail.statu;   //  true|false
+	  let current=plus.webview.currentWebview();
+	   current.reload();//页面刷新 
 	});
+	
+	
 	// 阻止主页面滑动触发侧滑导航
 	document.querySelector(".mui-inner-wrap").addEventListener("drag",function(){
 		  event.stopPropagation();
 	})
-	// 点击退出登录到登录页面
+
 	const vue=new Vue({
 		el:".box",
 		data:{
+			api:"http://192.168.88.69:3200",
 			userName:"请先登录",
-			
 		},
 		created() {
 			this.getStorage()
 		},
 		mounted() {
 			mui.init({
-				
-				 keyEventBind: {  
-				        backbutton: false,  //Boolean(默认true)关闭back按键监听  
-				        menubutton: true   //Boolean(默认true)关闭menu按键监听  
-				    }  
+				keyEventBind: {  
+					backbutton: false,  //Boolean(默认true)关闭back按键监听  
+					menubutton: true   //Boolean(默认true)关闭menu按键监听  
+				}  
 			});
+			// 收藏列点击时，根据url和id跳转到不同页面,携带的参数是存在本地的用户id
+			mui('#mysc').on('tap','a',function(){
+				let url=this.getAttribute("data-url");
+				let id=this.getAttribute("data-id");
+				mui.plusReady(function () {
+				    let userId=plus.storage.getItem("account");
+					
+					mui.openWindow({
+						url,
+						id,
+						extras:{
+							userId
+						}
+					})
+				})
+				
+				
+			})
 		},
 		methods:{
 			// 获取本地存储的用户账号，
@@ -339,12 +357,12 @@
 				  let idKey=plus.storage.getAllKeys();
 				  // 通过key得到存储的用户id，，key必须是字符串
 				  idValue=plus.storage.getItem(`${idKey}`);
-				  console.log(`key是${idKey},value是${idValue}`);
+				  // console.log(`key是${idKey},value是${idValue}`);
 				  ajax(idValue)
 				});
-				
+				// 根据用户的id请求后台，回去用户数据
 				function ajax(id){
-					mui.ajax("http://192.168.88.69:3200/aboutMe",{
+					mui.ajax(that.api+"/aboutMe",{
 						data:{
 							userId:id
 						},
@@ -374,18 +392,15 @@
 				mui.openWindow({
 					url:"../login/login.html",
 					id:"login.html",
-					waiting:{
-					  autoShow:true,//自动显示等待框，默认为true
-					  title:'退出登录...',//等待对话框上显示的提示内容
-					},
 				});
 				mui.plusReady(function(){
-					//清除本地存储的用户id
+					//退出登录时清除本地存储的用户id
 					plus.storage.removeItem("account");
 				})
 			},
 			
 			// 点击顶部我的信息显示侧滑导航，再点击时关闭
+			// 判断用户是否登录,如果没有登录侧滑导航不显示，跳转到登录页面
 			dragToggle(){
 				if(this.userName=="请先登录"){
 					// mui(this.$refs.wrap).offCanvas().close();

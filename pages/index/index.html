@@ -20,29 +20,28 @@
 	<script src="../../js/mui.min.js"></script>
 	<script src="../../js/webviewGroup.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
-	mui.init({
-		preloadPages:[{
-			  url:"top-tab/tabmain.html",//子页面HTML地址，支持本地地址和网络地址
-			  id:"tabmain.html",//子页面标志
-			  
-		}]
-	});
+		
+		mui.init({
+			subpages:[{
+				  url:"top-tab/tabmain.html",//子页面HTML地址，支持本地地址和网络地址
+				  id:"tabmain.html",//子页面标志
+			}]
+		});
 	
 	
-	window.addEventListener("loadsubpages",function(e){
+		window.addEventListener("loadPages",function(e){
+			
+			var index=plus.webview.getWebviewById("index");
 		
-		console.log(e.detail.flag)
-		if(e.detail.flag!==true){
-			mui.init({
-				preloadPages:[{
-					  url:"top-tab/tabmain.html",//子页面HTML地址，支持本地地址和网络地址
-					  id:"tabmain.html",//子页面标志
-					  
-				}]
-			});
-		}
-		
-	})
+			if(e.detail.flag==false){
+				
+				index.close()
+			}else{
+				index.show()
+				// index.show()
+			}
+			
+		})
 		
 		
 		

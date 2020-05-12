@@ -49,103 +49,55 @@
 				bottom: '50px',
 				render: 'always',
 			};  
-			// 子窗口属性
-			// var tabsConfig = {
-			// 	index: {  
-			// 		url: 'pages/index/index.html',  
-			// 		styles: styles,  
-			// 		default: true  
-			// 	},  
-			// 	classify: {  
-			// 		url: 'pages/classify/classify.html',  
-			// 		styles: styles,
-					
-			// 	},  
-			// 	shopCar: {  
-			// 		url: 'pages/shopCar/shopCar.html',  
-			// 		styles: styles  
-			// 	},  
-			// 	aboutMe: {  
-			// 		url: 'pages/aboutMe/aboutMe.html',  
-			// 		styles: styles  
-			// 	}  
-			// };  
+			
 			var tabsConfig = [{  
 					url:'pages/index/index.html',  
 					id:"index",
-					styles: styles,
+					
 					default: true ,
 					
 				}];  
-			
 			var current;  //记录当前窗口id
-			
-			// for (id in tabsConfig) {
-			// 	// 创建webview子窗口,如主页，分类页面等。
-			// 	tabs[id] = plus.webview.create(tabsConfig[id].url, id, tabsConfig[id].styles); 
-			// 	// 如果子窗口属性中有default属性,把这个子窗口添加到webview窗口中
-			// 	if (tabsConfig[id]['default']) {  
-			// 		// 在Webview窗口中添加子窗口，子窗口必须是 plus.webview.create（）中创建过的
-			// 		self.append(tabs[id]);  
-				
-			// 		current = id;
-			// 	}
-			// }  
-			
 			for(let i=0;i<1;i++){
 				var sub = plus.webview.create(tabsConfig[i].url, tabsConfig[i].id, styles); 
 				if (i > 0) {
 					sub.hide();
 				};
-				if(tabsConfig[i].id=="index"){
-					var index = plus.webview.getWebviewById('index');
-					mui.fire(index,"loadsubpages",{
-						flag:false
-					})
-				}
 				self.append(sub);
-				current=tabsConfig[i].url;
-			
-				
+				current=tabsConfig[i].id;
 			};
 			mui('.mui-bar-tab').on('tap', 'a', function(e) {
 				let href=this.getAttribute("href");
 				let id=this.getAttribute("data-id");
-				var index = plus.webview.getWebviewById('index');
-				if (href==current) {  
+				if (id==current) {  
 					return;  
-				}  
-				if(id=="index"){
-					
-					mui.fire(index,"loadsubpages",{
+				} 
+				var index = plus.webview.getWebviewById('index');
+				// 点击首页的时候,触发自定义事件,控制主页内容显示或者隐藏
+				if(id!=="index"){
+					mui.fire(index,"loadPages",{
 						flag:false
 					})
-				}else{
-					mui.fire(index,"loadsubpages",{
-						flag:true
-					})
+				}
+				
+				switch(id){
+					
+					case id=="index":
+						mui.fire(index,"loadPages",{
+							flag:true
+						})
+					break;
+					
 				}
 				var self = plus.webview.currentWebview();
 				var sub = plus.webview.create(href, id, styles);
 				self.append(sub);
 				//隐藏当前;
 				plus.webview.close(current);
-				
-				current = href;  
+				current = id;  
 			});  
 			
-			// 点击导航时跳转
-			// mui('.mui-bar-tab').on('tap', 'a', function(e) {  
-			// 	if (current == this.dataset.id) {  
-			// 		mui.fire(tabs[current], 'scroll2top');  
-			// 		return;  
-			// 	}  
-			// 	tabs[this.dataset.id].show();
-			// 	tabs[current].hide();  
-			// 	current = this.dataset.id;  
-			// });  
-			
-			
+		
 		})
 	
    

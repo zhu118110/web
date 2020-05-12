@@ -230,14 +230,28 @@
 			// 点击产品时跳转至详情页面
 			// @prd_id : 点击的产品的id
 			toDeatail(prd_id){
-				
-				mui.openWindow({
-					url:"../../detail/detail.html",
-					id:"detail",
-					extras:{
-						prd_id:prd_id
-					},
+				mui.plusReady(function () {
+				    let accountStorage=plus.storage.getItem("account");
+					// 如果用户已经登录携带商品id跳转到详情页面
+					if(accountStorage){
+						mui.openWindow({
+							url:"../../detail/detail.html",
+							id:"detail",
+							extras:{
+								prd_id:prd_id
+							},
+						})
+					}else{
+						// 用户没有登录跳转到登录页面
+						mui.openWindow({
+							url:"../../login/login.html",
+							id:"login.html",
+						})
+					}
 				})
+				
+				
+				
 				
 			}
 		},

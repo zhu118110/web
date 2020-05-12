@@ -82,8 +82,7 @@
 		</div>
 	</div>
 </body>
-<script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>
-<script src="../../js/mui.js"></script>
+<script src="../../js/mui.min.js"></script>
 <script src="../../js/vue.js"></script>
 <script type="text/javascript">
 	// 打开注册界面
@@ -112,7 +111,8 @@
 			yzmDisabled:true,   //验证码按钮样式
 			timer:false,   //DOM中显示倒计时的数字
 			minute:5,   //倒计时时间
-			roundNum:""   //发送的验证码
+			roundNum:"",//发送的验证码
+			isLogin:false,   //登录状态
 		},
 		computed:{
 			// 动态切换登录按钮样式
@@ -139,17 +139,26 @@
 			
 		},
 		mounted() {
+			let that=this;
 			mui.init({
+				
 				beforeback:function(){
 					var aboutMe = plus.webview.getWebviewById('aboutMe');
 					// 返回前判断本地存储的用户id是否存在,不存在则返回到主页
 					let storage=plus.storage.getItem("account");
-					mui.fire(aboutMe,"clearStorage",{
-						statu:"false"
-					})
-					return true;
+					if(that.isLogin==false){
+						mui.fire(aboutMe,"clearStorage",{
+							statu:that.isLogin
+						})
+						
+					}else{
+						mui.fire(aboutMe,"clearStorage",{
+							statu:that.isLogin
+						})
+					}
+					
+					
 				}
-				
 			});
 			
 		},
@@ -292,14 +301,16 @@
 			
 			// 点击登录时设置storage，将用户id存到手机storage中
 			setStorage(id){
+				let that =this;
 				mui.plusReady(function () {
 					// setItemAsync异步设置storage
 					// plus.storage.setItemAsync(key,value,successFallback,errorFallback)
-				    plus.storage.setItemAsync("account",id,function(){
-						mui.back()
-					},function(e){
-						mui.toast("本地存储数据失败")
-					})
+				    plus.storage.setItem("account",id);
+					let ac=plus.storage.getItem("account");
+					if(ac){
+						that.isLogin=true;
+					}
+					
 				})
 			},
 			
