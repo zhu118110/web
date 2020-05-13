@@ -1,0 +1,126 @@
+.my-action-back {
+	position: absolute;
+	left: 0;
+	top: 10px;
+	z-index: 1000;
+	color: #fff;
+}
+
+/* 轮播图 */
+.mui-slider .my-slider-group .my-slider-item {
+	height: 200px;
+	font-size: 0;
+}
+
+.mui-slider .my-slider-group .my-slider-item>a {
+	display: inline !important;
+}
+
+.my-slider-item img {
+	height: 100%;
+	width: 100%;
+}
+
+.my-slider-indicator .my-indicator {
+	width: 10px;
+	height: 10px;
+}
+/* 主要内容 */
+#item1mobile,
+#item2mobile,
+#item3mobile {
+	border: none;
+}
+
+.main .main_price{
+	
+	display: flex;
+	justify-content: space-between;
+	
+	
+}
+.main .main_price ul{
+	display: flex;
+	justify-content: flex-start;
+	color: #d01c27;
+}
+
+.main .main_price li:last-child{
+	color: #bbb;
+	margin-left:15px;
+	text-decoration: line-through;
+}
+.main .my_cell{
+	display: flex !important;
+	justify-content: space-around;
+	
+}
+.my_cell>div{
+	font-size: 14px;
+}
+.my_cell .cell_left{
+	color: #bbb;
+}
+.my_cell .cell_left,.cell_right{
+	flex: 1;
+}
+
+.my_cell .cell_center{
+	flex: 4;
+}
+.cell_right{
+	text-align: right;
+}
+.cell_right i{
+	color: #bbb;
+	font-size: 18px;
+}
+
+/* 底部导航 */
+.my-mui-bar {
+	display: flex;
+	justify-content: space-between;
+}
+
+.tableft {
+	flex: 1;
+}
+
+.tabright {
+	flex: 2;
+	text-align: center;
+	display: inline-table;
+	align-self: center;
+}
+
+.tabright .mui-btn {
+	top: 0;
+	color: #fff;
+	padding: 13px 25px 11px;
+	border: none;
+}
+
+.tabright .mui-btn:first-child {
+	border-radius: 15px 0 0 15px;
+	border-right: 0px;
+	background-color: #ff9500;
+
+	/* background-image: linear-gradient(to right,#ff9500,#ff5000); */
+}
+
+.tabright .mui-btn:last-child {
+	border-radius: 0px 15px 15px 0;
+	border-left: 0px;
+	background-color: #ff5000;
+	/* background-image: linear-gradient(to right,#ff5300, #e24b02); */
+}
+
+.mui-bar-tab .mui-tab-item.mui-active {
+	color: #929292;
+}
+
+.cellect {
+	color: #ff5900 !important;
+}
+
+

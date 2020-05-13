@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>我的收藏</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+		<link rel="stylesheet" type="text/css" href="../../../css/mui.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/mui.min.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../fonts/font.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/public.css"/>
+		<style type="text/css">
+			*{
+				box-sizing: border-box;
+				-webkit-box-sizing: border-box;
+			}
+			.collect{
+				margin-top: 15px;
+			}
+			.collect_body{
+				display: flex;
+			}
+			.collect_body .collect_body_img{
+				font-size: 0;
+			}
+			.collect_body .collect_body_img img{
+				max-width: 80px;
+				height: 80px;
+			}
+			.collect_body_infor{
+				display: flex;
+				width: 100%;
+				flex-direction: column;
+				justify-content: space-between;
+			}
+			.collect_body_infor_title{
+				line-height: 15px;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				display:-webkit-box;
+				-webkit-box-orient:vertical;
+				-webkit-line-clamp: 2;
+			}
+			.collect_body_infor_price{
+				display: flex;
+				font-size: 14px;
+				justify-content: space-between;
+			}
+		</style>
+	</head>
+	
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">我的收藏</h1>
+		</header>
+		
+		<div class="mui-content myContent ">
+			<!-- 收藏内容 -->
+			<div class="collect" v-for="(item,i) in dateArr">
+				<p class="title">
+					{{item}}
+				</p>
+				<dl class="mui-table-view" v-for="i in my_collect">
+					<dt class=" mui-table-view-cell mui-media">
+						<div class="mui-slider-right mui-disabled">
+							<a class="mui-btn mui-btn-red">删除</a>
+						</div>
+						<!--内容区-->
+						<div class="mui-slider-handle collect_body">
+							<div class="collect_body_img clear">
+								<img class="mui-media-object mui-pull-left" src="../../../img/bd2.jpg">
+							</div>
+							
+							<div class="mui-media-body collect_body_infor">
+								<p class="collect_body_infor_title" v-if="i.collect_date==item">
+									{{i.title}}
+								</p>
+								<p class="collect_body_infor_type">
+									颜色
+								</p>
+								<div class="collect_body_infor_price">
+									<div style="color: #d01c27;">
+										<span style="font-size: 10px;">￥</span>
+										<span>{{item.prd_price|price}}</span>
+									</div>
+									
+									<div style="color: #bbb;">
+										<span>{{item.buy}}人购买</span>   
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</dt>
+				</dl>
+			</div><!-- 收藏内容 -->
+			
+			
+		</div>
+	</body>
+	<script src="../../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../../js/vue.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+
+		const vue=new Vue({
+			el:".myContent",
+			data:{
+				api:"http://192.168.88.69:3200",
+				my_collect:[],   //收藏的数据
+				user_Id:"",   //用户id
+				dateArr:[],  //收藏时间
+				
+			},
+			filters:{
+				price(num){
+					num=Number(num).toFixed(2);
+					return num+"元"
+				}
+			},
+			created() {
+				this.getUserId();
+			},
+			mounted() {
+				mui.init();
+			},
+			methods:{
+				// 页面刚加载时获取上一个页面传递的用户的id
+				getUserId(){
+					let that=this;
+					// mui.plusReady(function () {
+					//     let self=plus.webview.currentWebview();
+					// 	that.user_Id=self.userId;
+					// 	that.getCollectPrd(that.user_Id);
+					// })
+					that.getCollectPrd("5eb7b553ee1d1a3988b5309a");
+				},
+				 // 根据用户id请求后台获取用户收藏的商品
+				getCollectPrd(user_Id){
+					let that=this;
+					mui.ajax(this.api+"/collect",{
+						data:{
+							user_Id:user_Id
+						},
+						type:"post",
+						timeout:10000,
+						success:function(data){
+							if(data.data){
+								// 获取到所有收藏的商品信息
+								that.my_collect.push(...data.data);
+								
+								that.my_collect.forEach(val=>{
+									that.dateArr.push(val.collect_date);// 得到商品收藏的时间
+								})
+								//去掉重复的商品收藏的时间
+								that.dateArr=that.dateArr.filter((val,index)=>{
+									return that.dateArr.indexOf(val)==index; 
+								});
+								
+								
+							}
+							
+							
+						}
+					})
+				},
+			}
+		})
+	</script>
+</html>

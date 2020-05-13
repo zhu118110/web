@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>底部选项卡</title>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+	<link rel="stylesheet" type="text/css" href="fonts/font.css"/>
+    <style type="text/css">
+    	.mui-bar-tab .mui-tab-item.mui-active{
+			color: red;
+		}
+		.my-mui-bar{
+			border-top: 1px solid #c8c7cc;
+		}
+    </style>
+</head>
+<body>
+	
+		<nav class="mui-bar mui-bar-tab my-mui-bar">
+			<a class="mui-tab-item mui-active" href="pages/index/index.html" data-id="index">
+				<span class="mui-icon mui-icon-home"></span>
+				<span class="mui-tab-label">首页</span>
+			</a>
+			<a class="mui-tab-item" href="pages/classify/classify.html" data-id="classify">
+				<span class="mui-icon mui-icon-list"></span>
+				<span class="mui-tab-label">分类</span>
+			</a>
+			<a class="mui-tab-item" href="pages/shopCar/shopCar.html" data-id="shopCar">
+				<span class="mui-icon iconfont icon-gouwuchekong"></span>
+				<span class="mui-tab-label"> 购物车</span>
+			</a>
+			<a class="mui-tab-item" href="pages/aboutMe/aboutMe.html" data-id="aboutMe">
+				<span class="mui-icon mui-icon-contact"></span>
+				<span class="mui-tab-label">我的</span>
+			</a>
+		</nav>
+	
+</body>
+	<script type="text/javascript" charset="utf-8">
+	
+		mui.init();
+		mui.plusReady(function () {
+			var self = plus.webview.currentWebview(); 
+			
+			var styles = {  
+				top: '0',  
+				bottom: '50px',
+				render: 'always',
+			};  
+			
+			var tabsConfig = [{  
+					url:'pages/index/index.html',  
+					id:"index",
+					
+					default: true ,
+					
+				}];  
+			var current;  //记录当前窗口id
+			for(let i=0;i<1;i++){
+				var sub = plus.webview.create(tabsConfig[i].url, tabsConfig[i].id, styles); 
+				if (i > 0) {
+					sub.hide();
+				};
+				self.append(sub);
+				current=tabsConfig[i].id;
+			};
+			mui('.mui-bar-tab').on('tap', 'a', function(e) {
+				let href=this.getAttribute("href");
+				let id=this.getAttribute("data-id");
+				if (id==current) {  
+					return;  
+				} 
+				var index = plus.webview.getWebviewById('index');
+				// 点击首页的时候,触发自定义事件,控制主页内容显示或者隐藏
+				if(id!=="index"){
+					mui.fire(index,"loadPages",{
+						flag:false
+					})
+				}
+				
+				switch(id){
+					
+					case id=="index":
+						mui.fire(index,"loadPages",{
+							flag:true
+						})
+					break;
+					
+				}
+				var self = plus.webview.currentWebview();
+				var sub = plus.webview.create(href, id, styles);
+				self.append(sub);
+				//隐藏当前;
+				plus.webview.close(current);
+				current = id;  
+			});  
+			
+		
+		})
+	
+   
+    </script>
+</html>

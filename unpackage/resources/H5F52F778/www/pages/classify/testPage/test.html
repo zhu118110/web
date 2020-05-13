@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>分类</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<script src="../../../js/mui.min.js"></script>
+	<link href="../../../css/mui.min.css" rel="stylesheet"/>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css"/>
+	<link rel="stylesheet" type="text/css" href="../../../css/classify/classify.css"/>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav myheader">
+		<div class="mui-input-row mui-search">
+			<input type="search" class="mui-input-clear" placeholder="搜索你想要的">
+		</div>
+	</header>
+	<div class="mui-content mui-row mui-fullscreen">
+		<!-- 左边分类列表 -->
+		<div class="mui-col-xs-3">
+			<div id="segmentedControls" class="mui-segmented-control mui-segmented-control-inverted mui-segmented-control-vertical">
+				<!-- <a class="mui-control-item" href="#content${index+1}">${val}</a> -->
+			</div>
+		</div>
+		<!-- 右边详细内容 -->
+		<div id="segmentedControlContents" class="mui-col-xs-9" >
+			<!-- 女装显示内容 -->
+			<div id="content1" class="mui-control-content mui-active">
+				<!-- <header class="my-control-head">
+					111
+				</header> -->
+				<dl>
+					<dt>
+						<div><img src="../../../img/nz1.jpg"></div>
+						<div>
+							冲锋衣
+						</div>
+					</dt>
+					<dt>
+						<div><img src="../../../img/nz2.jpg"></div>
+						<div>
+							T恤
+						</div>
+					</dt>
+					<dt>
+						<div><img src="../../../img/nz3.jpg"></div>
+						<div>
+							短裤
+						</div>
+					</dt>
+					<dt>
+						<div><img src="../../../img/nz4.jpg"></div>
+						<div>
+							卫衣
+						</div>
+					</dt>
+					<dt>
+						<div><img src="../../../img/nz5.jpg"></div>
+						<span>
+							休闲裤
+						</span>
+					</dt>
+				</dl>
+			</div>
+			<div id="content2" class="mui-control-content mui-active">
+				<!-- <header class="my-control-head">
+					111
+				</header> -->
+				<dl>
+					<dt>
+						<div><img src="../../../img/nvz1.jpg"></div>
+						<div>
+							女装T恤
+						</div>
+					</dt>
+					<dt>
+						<div><img src="../../../img/nvz2.jpg"></div>
+						<div>
+							连衣裙
+						</div>
+					</dt>
+					<dt>
+						<div><img src="../../../img/nvz3.jpg"></div>
+						<div>
+							时尚套装
+						</div>
+					</dt>
+					<dt>
+						<div><img src="../../../img/nvz4.jpg"></div>
+						<div>
+							女士外套
+						</div>
+					</dt>
+					<dt>
+						<div><img src="../../../img/nvz5.jpg"></div>
+						<span>
+							仙女裙
+						</span>
+					</dt>
+				</dl>
+			</div>
+			
+			
+		</div>
+		
+	</div><!-- mui-content-->
+</body>
+
+<script type="text/javascript">
+	mui.init();
+	// 左侧选项卡标题
+	var leftClass=["男装","女装","食品","电子","百货","洗护","百货","洗护","百货","洗护","百货","洗护","百货","男装","女装",];
+	var leftCont=document.querySelector("#segmentedControls");
+	var classLength=leftClass.length;
+	leftClass.forEach((val,index,arr)=>{
+		let child=`<a class="mui-control-item" href="#content${index+1}">${val}</a>`;
+		leftCont.innerHTML+=child;
+	});
+	// 设置左侧选项卡第一个标题添加默认样式
+	leftCont.children[0].classList.add("mui-active")
+	
+	
+	
+	// 右侧选项卡内容
+	// var rightCont=document.querySelector("#segmentedControlContents");
+	
+	// for(var i=1;i<=classLength;i++){
+	// 	let child=`<div id="content${i}" class="mui-control-content"><ul class="mui-table-view"></ul></div>`
+	// 	rightCont.innerHTML+=child;	
+	// }
+	// rightCont.children[0].classList.add("mui-active");
+	
+	
+	
+	// let obj=[{
+	// 	title:["西装","短裤","衬衫"]
+	// },{
+	// 	title:["高跟鞋","牛仔裤","裙子"]
+	// },{
+	// 	title:["老干妈","辣条","饼干","哟吼"]
+	// }]
+	// let ul=document.querySelectorAll("#segmentedControlContents .mui-table-view");
+	// for(let k=0;k<ul.length;k++){
+	// 	ul[k].index=k;
+	// 	for(let m=0;m<obj.length;m++){
+	// 		if(ul[k].index==m){
+	// 			for(let n=0;n<obj[m].title.length;n++){
+	// 				ul[k].innerHTML+=`<li class="mui-table-view-cell">
+	// 						${obj[m].title[n]}
+	// 					</li>`
+	// 			}
+				
+	// 		}
+	// 	}
+	// }
+	
+</script>
+</html>

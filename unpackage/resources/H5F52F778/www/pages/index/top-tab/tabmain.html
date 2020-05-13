@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>顶部选项卡主要页面</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	</head>
+	<script src="../../../js/mui.min.js"></script>
+	<link href="../../../css/mui.min.css" rel="stylesheet"/>
+	<link rel="stylesheet" type="text/css" href="../../../css/index/index.css"/>
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css"/>
+	 <style type="text/css">
+		 
+		 .mui-bar-nav{
+			 box-shadow: none;
+			 -webkit-box-shadow: none;
+		 }
+		 .my-mui-slider{
+			border-bottom:1px solid #ddd;
+		 }
+		 .my-mui-slider,.myheader{
+			 background-color: #fff;
+		 }
+		 .mui-slider .mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active{
+			 color: red;
+			 border-bottom:2px solid red;
+		 }
+		 .mui-segmented-control .mui-control-item{
+			 line-height: 36px;
+		 }
+	 	.mui-segmented-control.mui-segmented-control-inverted .mui-control-item{
+			
+			border-bottom:2px solid #fff;
+		}
+	 </style>
+	<body>
+		<header class="mui-bar mui-bar-nav myheader">
+			<div class="mui-input-row mui-search">
+				<input type="search" class="mui-input-clear" placeholder="搜索你想要的">
+			</div>
+		</header>
+		<div class="mui-content">
+			<!-- 顶部滑动选项卡 -->
+			<div id="slider" class="mui-slider my-mui-slider">
+				<div id="sliderSegmentedControl" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+					<div class="mui-scroll my-mui-scroll">
+						<a class="mui-control-item my-mui-control-item mui-active" href="tab1.html" data-wid="tab1.html">
+							推荐
+						</a>
+						<a class="mui-control-item" href="tab2.html" data-wid="tab2.html">
+							热点
+						</a>
+						<a class="mui-control-item" href="tab3.html" data-wid="tab3.html">
+							女装
+						</a>
+						<a class="mui-control-item" href="tab4.html" data-wid="tab4.html">
+							男装
+						</a>
+						<a class="mui-control-item" href="tab5.html" data-wid="tab5.html">
+							科技
+						</a>
+						<a class="mui-control-item" href="tab6.html" data-wid="tab6.html">
+							美食
+						</a>
+						<a class="mui-control-item" href="tab7.html" data-wid="tab7.html">
+							健身
+						</a>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</body>
+	<script src="../../../js/webviewGroup.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		mui.init();
+		mui.plusReady(function() {
+			var _self = plus.webview.currentWebview();
+			
+			var group = new webviewGroup("tabmain.html", {
+				items: [{
+					id: "tab1.html",
+					url: "tab1.html",
+					extras: {}
+				}, {
+					id: "tab2.html",
+					url: "tab2.html",
+					extras: {}
+				}, {
+					id: "tab3.html",
+					url: "tab3.html",
+					extras: {}
+				}, {
+					id: "tab4.html",
+					url: "tab4.html",
+					extras: {}
+				}, {
+					id: "tab5.html",
+					url: "tab5.html",
+					extras: {}
+				}, {
+					id: "tab6.html",
+					url: "tab6.html",
+					extras: {}
+				}, {
+					id: "tab7.html",
+					url: "tab7.html",
+					extras: {}
+				}],
+				onChange: function(obj) {
+					var c = document.querySelector(".mui-control-item.mui-active");
+					if(c) {
+						c.classList.remove("mui-active");
+					}
+					var target = document.querySelector(".mui-scroll .mui-control-item:nth-child(" + (parseInt(obj.index) + 1) + ")");
+					target.classList.add("mui-active");
+					if(target.scrollIntoView) {
+						target.scrollIntoView();
+					}
+				}
+			});
+			mui(".mui-scroll").on("tap", ".mui-control-item", function(e) {
+				var wid = this.getAttribute("data-wid");
+				
+				group.switchTab(wid);
+			});
+			
+		});
+	</script>
+</html>

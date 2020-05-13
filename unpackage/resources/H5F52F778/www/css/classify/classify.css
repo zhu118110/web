@@ -1,0 +1,72 @@
+.mui-bar-nav{
+	 box-shadow: none;
+	 -webkit-box-shadow: none;
+}
+.my-mui-slider,.myheader{
+	 background-color: #fff;
+	 border-bottom: 1px solid #e5e5e5;
+}
+
+.mui-bar-nav~.mui-content{
+	padding-top:47px;
+	background-color: #fff;
+}
+.mui-row.mui-fullscreen>[class*="mui-col-"] {
+	height: 100%;
+}
+.mui-col-xs-3,
+.mui-control-content {
+	overflow-y: auto;
+	height: 100%;
+}
+.mui-segmented-control .mui-control-item {
+	line-height: 50px;
+	width: 100%;
+	border-bottom: none;
+}
+.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+	background-color: #fff;
+	color: red;
+}
+.mui-table-view-cell.mui-active{
+	background-color: #fff;
+}
+#segmentedControls{
+	background-color:rgba(229,229,229,0.5);
+	
+}
+#segmentedControls .mui-control-item{
+	border-bottom: 1px solid rgba(229,229,229,0.5);
+}
+#segmentedControls .mui-active{
+	border-bottom:1px solid red;
+}
+#segmentedControlContents dl{
+	display: flex;
+	justify-content: flex-start;
+	
+	flex-wrap: wrap;
+	list-style: none;
+}
+#segmentedControlContents dl dt{
+	width: 33%;
+	display: inline-block;
+	padding: 0;
+	margin-top: 10px;
+	text-align: center;
+}
+#segmentedControlContents dl dt>div{
+	
+}
+#segmentedControlContents dl dt>div:first-child{
+	
+	height: 90px;
+}
+#segmentedControlContents dl dt div Img{
+	width: 100%;
+	height: 100%;
+	max-height: auto;
+}
+#segmentedControlContents dl dt span{
+	font-size: 16px;
+}

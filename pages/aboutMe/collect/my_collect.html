@@ -4,43 +4,208 @@
 		<meta charset="utf-8">
 		<title>我的收藏</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
-		<link rel="stylesheet" type="text/css" href="../../../css/mui.css"/>
 		<link rel="stylesheet" type="text/css" href="../../../css/mui.min.css"/>
 		<link rel="stylesheet" type="text/css" href="../../../fonts/font.css"/>
 		<link rel="stylesheet" type="text/css" href="../../../css/public.css"/>
+		<style type="text/css">
+			*{
+				box-sizing: border-box;
+				-webkit-box-sizing: border-box;
+			}
+			.myContent{
+				padding-bottom: 50px;
+			}
+			.mui-bar .mui-btn-link{
+				color: #000000;
+			}
+			.collect{
+				margin-top: 15px;
+			}
+			.collct_dt{
+				display: flex;
+			}
+			.my_checkbox{
+				width: 50px;
+			}
+			
+			.my_checkbox input[type=checkbox]{
+				left: 0 !important;
+				top: 30%;
+			}
+			.my_checkbox input[type=checkbox]:checked::before{
+				color: #d01c27;
+			}
+			.my_checkbox input[type=checkbox]::before{
+				font-size: 22px !important;
+			}
+			.collect_body{
+				display: flex;
+			}
+			.collect_body .collect_body_img{
+				font-size: 0;
+			}
+			.collect_body .collect_body_img img{
+				max-width: 80px;
+				height: 80px;
+			}
+			.collect_body_infor{
+				display: flex;
+				width: 100%;
+				flex-direction: column;
+				justify-content: space-between;
+			}
+			.collect_body_infor_title{
+				line-height: 15px;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				display:-webkit-box;
+				-webkit-box-orient:vertical;
+				-webkit-line-clamp: 2;
+			}
+			.collect_body_infor_price{
+				display: flex;
+				font-size: 14px;
+				justify-content: space-between;
+			}
+			/* 底部导航 */
+			.my-mui-bar {
+				display: flex;
+				justify-content: space-between;
+			}
+			
+			.tableft {
+				flex: 1;
+				
+			}
+			footer.mui-bar{
+				background-color: #fff;
+			}
+			footer.mui-bar-tab{
+				padding:0 15px;
+			}
+			footer .my_checkbox{
+				height: 50px;
+			}
+			.tabright {
+				flex: 2;
+				text-align: center;
+				display: inline-table;
+				align-self: center;
+			}
+			
+			.tabright .mui-btn {
+				top: 0;
+				color: #fff;
+				padding: 13px 25px 11px;
+				border: none;
+			}
+		</style>
 	</head>
+	
 	<body>
+	<div class="body">
 		<header class="mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
 			<h1 class="mui-title">我的收藏</h1>
+			<a class="mui-btn-link mui-pull-right" @click="toggle">
+				管理
+			</a>
 		</header>
 		
 		<div class="mui-content myContent ">
-			<dl class="mui-table-view">
-				<dt class=" mui-table-view-cell">
-					<!--内容区-->
-					<div class="mui-slider-right mui-disabled">
-						<a class="mui-btn mui-btn-red">删除</a>
+		
+				<!-- 收藏内容 -->
+			<div class="collect" v-for="(value,index) in dateArr">   <!-- 遍历收藏的日期 -->
+				<p class="mui-content-padded">
+					{{value}}
+				</p>
+										<!-- 判断商品收藏的日期-->
+										
+				<dl class="mui-table-view" v-for="(val,ind) in my_collect" v-if="val.collect_date == value">
+					
+					<dt class="mui-table-view-cell mui-media clear collct_dt">
+						<!-- 复选按钮 -->
+						<div class="mui-input-row mui-checkbox mui-left my_checkbox" v-if="toggleAllChecked">
+							<input name="checkbox" :value="ind" v-model="singleCheckArr" type="checkbox" class="checkbox" @change="singleCheckChange(ind)">
+						</div>
+						<!-- 右滑删除 -->
+						<div class="mui-slider-right mui-disabled">
+							<a class="mui-btn mui-btn-red">删除</a>
+						</div>
 						
-					</div>
-					<div class="mui-slider-handle">
+						<!--商品展示-->
+						<div class="mui-slider-handle collect_body">
+							
+							<!-- 商品图片 -->
+							<div class="collect_body_img clear">
+								<img class="mui-media-object mui-pull-left" :src="val.prd_img">
+							</div>
+							<!-- 商品描述 -->
+							<div class="mui-media-body collect_body_infor">
+								<p class="collect_body_infor_title">
+									{{val.title}}
+								</p>
+								<p class="collect_body_infor_type">
+									颜色
+								</p>
+								<div class="collect_body_infor_price">
+									<div style="color: #d01c27;">
+										<span style="font-size: 10px;">￥</span>
+										
+										<span>{{val.prd_price|price}}</span>
+									</div>
+									
+									<div style="color: #bbb;">
+										<span>{{val.buy}}人购买</span>  
+									</div>
+								</div>
+							</div>
+						</div><!--商品展示结束-->
 						
-					</div>
-				</dt>
-			</dl>
-			
-		</div>
+					</dt>
+				</dl>
+			</div><!-- 收藏内容 -->
+
+		</div><!-- .mui-content -->
+		
+		
+		<footer class="mui-bar mui-bar-tab my-mui-bar" v-if="toggleAllChecked">
+			<div class="tableft clear">
+				<!-- 全选按钮 -->
+				<div class="mui-input-row mui-checkbox mui-left my_checkbox">
+					
+					<input name="checkbox" type="checkbox" class="checkbox">
+				</div>
+				
+			</div>
+			<div class="tabright">
+				<button type="button" class="mui-btn">
+					删除
+				</button>
+				
+			</div>
+		</footer>
+	</div>
 	</body>
 	<script src="../../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../../../js/vue.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
 
 		const vue=new Vue({
-			el:".myContent",
+			el:".body",
 			data:{
 				api:"http://192.168.88.69:3200",
-				my_collect:[],   //收藏的数据
-				user_Id:""   //用户id
+				my_collect:[],   //收藏的商品信息
+				user_Id:"",   //用户id
+				dateArr:[],  //去掉重复的收藏时间
+				singleCheckArr:[],   //存放多选按钮的下标
+				toggleAllChecked:false
+			},
+			filters:{
+				price(num){
+					num=Number(num).toFixed(2);
+					return num+"元"
+				}
 			},
 			created() {
 				this.getUserId();
@@ -52,14 +217,16 @@
 				// 页面刚加载时获取上一个页面传递的用户的id
 				getUserId(){
 					let that=this;
-					mui.plusReady(function () {
-					    let self=plus.webview.currentWebview();
-						that.user_Id=self.userId;
-						that.getCollectPrd(that.user_Id); // 根据用户id请求后台获取用户收藏的商品
-					})
+					// mui.plusReady(function () {
+					//     let self=plus.webview.currentWebview();
+					// 	that.user_Id=self.userId;
+					// 	that.getCollectPrd(that.user_Id);
+					// })
+					that.getCollectPrd("5eb7b553ee1d1a3988b5309a");
 				},
+				 // 根据用户id请求后台获取用户收藏的商品
 				getCollectPrd(user_Id){
-					// let that=this;
+					let that=this;
 					mui.ajax(this.api+"/collect",{
 						data:{
 							user_Id:user_Id
@@ -67,9 +234,40 @@
 						type:"post",
 						timeout:10000,
 						success:function(data){
-							this.my_collect.push(...data.data);
+							if(data.data){
+								// 获取到所有收藏的商品信息
+								that.my_collect.push(...data.data);
+								that.my_collect.forEach(val=>{
+									that.dateArr.push(val.collect_date);// 得到每个商品收藏的时间,放在数组里
+								})
+								//去掉重复的商品收藏时间
+								that.dateArr=that.dateArr.filter((val,index)=>{
+									return that.dateArr.indexOf(val)==index; 
+								});
+							}
+							
+							
 						}
 					})
+				},
+				
+				
+				// 点击导航的管理显示全选按钮
+				toggle(){
+					this.toggleAllChecked=!this.toggleAllChecked;
+					console.log(this.toggleAllChecked)
+				},
+				// 点击单个复选框
+				// 将点击的复选框的下标存入checkArr数组中;
+				// 存放后先数组去重，然后判断checkArr数组与商品信息数组的长度是否，相同则代表全部勾选，改变全选按钮样式
+				singleCheckChange(index){
+					
+					this.singleCheckArr.push(index);    //this.checkArr ：[0,0,1,1,2,2...]
+					this.singleCheckArr=Array.from(new Set(this.singleCheckArr));   //es6数组去重
+					
+					if(this.singleCheckArr.length==this.my_collect.length){
+						console.log("你全选了")
+					}
 				}
 			}
 		})
