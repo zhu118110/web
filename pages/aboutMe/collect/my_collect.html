@@ -4,102 +4,11 @@
 		<meta charset="utf-8">
 		<title>我的收藏</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+		<meta charset="GB2312"/>
 		<link rel="stylesheet" type="text/css" href="../../../css/mui.min.css"/>
 		<link rel="stylesheet" type="text/css" href="../../../fonts/font.css"/>
 		<link rel="stylesheet" type="text/css" href="../../../css/public.css"/>
-		<style type="text/css">
-			*{
-				box-sizing: border-box;
-				-webkit-box-sizing: border-box;
-			}
-			.myContent{
-				padding-bottom: 50px;
-			}
-			.mui-bar .mui-btn-link{
-				color: #000000;
-			}
-			.collect{
-				margin-top: 15px;
-			}
-			.collct_dt{
-				display: flex;
-			}
-			.my_checkbox{
-				width: 50px;
-			}
-			
-			.my_checkbox input[type=checkbox]{
-				left: 0 !important;
-				top: 30%;
-			}
-			.my_checkbox input[type=checkbox]:checked::before{
-				color: #d01c27;
-			}
-			.my_checkbox input[type=checkbox]::before{
-				font-size: 22px !important;
-			}
-			.collect_body{
-				display: flex;
-			}
-			.collect_body .collect_body_img{
-				font-size: 0;
-			}
-			.collect_body .collect_body_img img{
-				max-width: 80px;
-				height: 80px;
-			}
-			.collect_body_infor{
-				display: flex;
-				width: 100%;
-				flex-direction: column;
-				justify-content: space-between;
-			}
-			.collect_body_infor_title{
-				line-height: 15px;
-				text-overflow: ellipsis;
-				overflow: hidden;
-				display:-webkit-box;
-				-webkit-box-orient:vertical;
-				-webkit-line-clamp: 2;
-			}
-			.collect_body_infor_price{
-				display: flex;
-				font-size: 14px;
-				justify-content: space-between;
-			}
-			/* 底部导航 */
-			.my-mui-bar {
-				display: flex;
-				justify-content: space-between;
-			}
-			
-			.tableft {
-				flex: 1;
-				
-			}
-			footer.mui-bar{
-				background-color: #fff;
-			}
-			footer.mui-bar-tab{
-				padding:0 15px;
-			}
-			footer .my_checkbox{
-				height: 50px;
-			}
-			.tabright {
-				flex: 2;
-				text-align: center;
-				display: inline-table;
-				align-self: center;
-			}
-			
-			.tabright .mui-btn {
-				top: 0;
-				color: #fff;
-				padding: 13px 25px 11px;
-				border: none;
-			}
-		</style>
+		<link rel="stylesheet" type="text/css" href="../../../css/aboutMe/my_collect.css"/>
 	</head>
 	
 	<body>
@@ -112,10 +21,13 @@
 			</a>
 		</header>
 		
-		<div class="mui-content myContent ">
-		
+		<div class="mui-content myContent" :class="{'toggle':toggleAllChecked}">
+			<div style="text-align: center;" v-if="my_collect.length<=0">
+				您还没有收藏；快去逛逛吧！
+			</div>
+			
 				<!-- 收藏内容 -->
-			<div class="collect" v-for="(value,index) in dateArr">   <!-- 遍历收藏的日期 -->
+			<div v-else class="collect" v-for="(value,index) in dateArr">   <!-- 遍历收藏的日期 -->
 				<p class="mui-content-padded">
 					{{value}}
 				</p>
@@ -172,17 +84,21 @@
 		<footer class="mui-bar mui-bar-tab my-mui-bar" v-if="toggleAllChecked">
 			<div class="tableft clear">
 				<!-- 全选按钮 -->
-				<div class="mui-input-row mui-checkbox mui-left my_checkbox">
+				<div class="mui-input-row mui-checkbox mui-left my_checkbox" style="width: 35px;">
 					
-					<input name="checkbox" type="checkbox" class="checkbox">
+					<input name="checkbox" :value="1" v-model="allChecked" type="checkbox" @change="allCheckedChange" class="checkbox">
 				</div>
-				
+				<div>
+					全选
+				</div>
 			</div>
 			<div class="tabright">
-				<button type="button" class="mui-btn">
+				<div>
+					您选中了<span style="color:#d01c27">{{singleCheckArr.length}}</span>条
+				</div>
+				<button type="button" class="mui-btn" :disabled="deleteDisabled" @click="deleteChecked">
 					删除
 				</button>
-				
 			</div>
 		</footer>
 	</div>
@@ -198,8 +114,11 @@
 				my_collect:[],   //收藏的商品信息
 				user_Id:"",   //用户id
 				dateArr:[],  //去掉重复的收藏时间
-				singleCheckArr:[],   //存放多选按钮的下标
-				toggleAllChecked:false
+				singleCheckArr:[],   //存放选中的单个商品的下标
+				toggleAllChecked:false,   //点击导航 ‘管理’按钮,显示多选框和全选框
+				allChecked:[],   //存放点击全选按钮时的下标
+				deleteDisabled:true,    //控制底部删除按钮是否可被点击.没有选择商品时不可以点击
+				test:[]
 			},
 			filters:{
 				price(num){
@@ -237,10 +156,11 @@
 							if(data.data){
 								// 获取到所有收藏的商品信息
 								that.my_collect.push(...data.data);
+								that.test=that.my_collect;
 								that.my_collect.forEach(val=>{
 									that.dateArr.push(val.collect_date);// 得到每个商品收藏的时间,放在数组里
 								})
-								//去掉重复的商品收藏时间
+								//去掉重复的商品收藏时间,渲染时根据时间筛选对应的数据
 								that.dateArr=that.dateArr.filter((val,index)=>{
 									return that.dateArr.indexOf(val)==index; 
 								});
@@ -252,22 +172,77 @@
 				},
 				
 				
-				// 点击导航的管理显示全选按钮
+				// 点击导航的管理显示底部全选按钮；
+				// 显示每个商品的复选框；
+				// 给.mui-content添加.toggle类名
+				// 关闭时清空选中的商品和全选按钮,删除按钮禁用
 				toggle(){
 					this.toggleAllChecked=!this.toggleAllChecked;
-					console.log(this.toggleAllChecked)
-				},
-				// 点击单个复选框
-				// 将点击的复选框的下标存入checkArr数组中;
-				// 存放后先数组去重，然后判断checkArr数组与商品信息数组的长度是否，相同则代表全部勾选，改变全选按钮样式
-				singleCheckChange(index){
-					
-					this.singleCheckArr.push(index);    //this.checkArr ：[0,0,1,1,2,2...]
-					this.singleCheckArr=Array.from(new Set(this.singleCheckArr));   //es6数组去重
-					
-					if(this.singleCheckArr.length==this.my_collect.length){
-						console.log("你全选了")
+					if(!this.toggleAllChecked){
+						this.allChecked=[];
+						this.singleCheckArr=[];
+						this.deleteDisabled=true;
 					}
+				},
+				
+				// 点击单个复选框,将选中的的单个商品复选框的下标存入singleCheckArr数组中;
+				// 存放后先数组去重，然后判断singleCheckArr数组与商品信息数组的长度是否相同，相同则代表全部勾选，改变全选按钮样式
+				singleCheckChange(index){
+					// 选中商品时删除按钮可用
+					this.singleCheckArr.length>0?this.deleteDisabled=false:this.deleteDisabled=true;
+					
+					// 根据下标判断是否已经被选中, 
+					// 如果下标!==-1,说明没有被选中,保存下标
+					if(this.singleCheckArr.indexOf(index)!==-1){
+						this.singleCheckArr.push(index);    //this.checkArr ：[0,0,1,1,2,2...]
+						this.singleCheckArr=Array.from(new Set(this.singleCheckArr));   //es6数组去重
+						// 如果选中的的单个商品的数量=所以商品数量。直接全选选中
+						if(this.singleCheckArr.length==this.my_collect.length){
+							this.allChecked.push(1);
+						}
+					}else{
+						// 取消全选
+						this.allChecked=[];
+					}
+				},
+				
+				
+				// 点击全选时所有单个商品全部被选中，再点击时取消
+				// 先判断全选按钮是否是选择状态,
+				allCheckedChange(){
+					this.singleCheckArr=[];   //先清空选中的商品
+					// 判断全选按钮是否被选中，选中时allChecked的长度大于0
+					if(this.allChecked.length>0){
+						this.deleteDisabled=false;  //删除按钮可用
+						// 全选按钮选中时将所有商品的下标存入singleCheckArr,将所有商品选中
+						this.my_collect.forEach((val,i)=>{
+							this.singleCheckArr.push(i)
+						})
+					}else{
+						this.singleCheckArr=[];// 全选按钮取消选中时清空选中的商品
+						this.deleteDisabled=true;   //禁用删除按钮
+					}
+				},
+				
+				// 点击底部删除按钮,
+				// 出现一个提示按钮,选择是否删除
+				// 将选中的商品根据下标在所有商品中删除
+				deleteChecked(){
+					let btn=["否","是"]
+					let that=this;
+					mui.confirm("确认删除?","",btn,function(e){
+						// 选择了'是'
+					
+						if(e.index==1){
+							console.log(that.singleCheckArr)
+							for(var i=0;i<that.singleCheckArr.length;i++){
+								
+							}
+							
+							
+							
+						}
+					})
 				}
 			}
 		})

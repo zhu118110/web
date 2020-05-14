@@ -1,0 +1,120 @@
+* {
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+.mui-bar .mui-btn-link {
+	color: #000000;
+}
+
+.collect {
+	margin-top: 15px;
+}
+
+.collct_dt {
+	display: flex;
+}
+
+.my_checkbox {
+	width: 50px;
+}
+
+.my_checkbox input[type=checkbox] {
+	left: 0 !important;
+	top: 30%;
+}
+
+.my_checkbox input[type=checkbox]:checked::before {
+	color: #d01c27;
+}
+
+.my_checkbox input[type=checkbox]::before {
+	font-size: 22px !important;
+}
+
+.collect_body {
+	display: flex;
+}
+
+.collect_body .collect_body_img {
+	font-size: 0;
+}
+
+.collect_body .collect_body_img img {
+	max-width: 80px;
+	height: 80px;
+}
+
+.collect_body_infor {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.collect_body_infor_title {
+	line-height: 15px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
+.collect_body_infor_price {
+	display: flex;
+	font-size: 14px;
+	justify-content: space-between;
+}
+
+/* 底部导航 */
+.my-mui-bar {
+	display: flex;
+	justify-content: space-between;
+}
+
+.tableft {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	font-size: 14px;
+}
+
+footer.mui-bar {
+	background-color: #fff;
+}
+
+footer.mui-bar-tab {
+	padding: 0 15px;
+}
+
+footer .my_checkbox {
+	height: 50px;
+}
+
+.tabright {
+	font-size: 14px;
+	text-align: center;
+	display: flex;
+	align-items: center;
+}
+
+.tabright .mui-btn {
+	top: 0;
+	margin-left: 15px;
+	border: 1px solid #d01c27;
+	border-radius: 5px;
+	padding: 13px 25px 11px;
+
+}
+
+.toggle {
+	padding-bottom: 50px;
+}
+
+.mui-popup-button:nth-child(1){
+	color: #d01c27;
+}
+.mui-popup-button:nth-child(2){
+	color: #aaa;
+}

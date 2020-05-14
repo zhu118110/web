@@ -20,7 +20,7 @@
 	<div class="mui-off-canvas-wrap" ref="wrap" >
 		
 		  <!-- 侧滑菜单 -->
-		  <aside class="mui-off-canvas-left myaside">
+		  <aside class="mui-off-canvas-left myaside" onclick="tz('.myaside')">
 			  <!-- 侧滑头像 -->
 			<header class="myaside_header">
 				<div style="border-radius: 50%;overflow: hidden;">
@@ -40,7 +40,7 @@
 						<span class="iconfont icon-gerenxinxi"></span>
 					</li>
 				</a>
-				<a href="#">
+				<a href="#" data-url="address/my_address.html" data-id="my_address.html">
 					<li class="mui-table-view-cell">
 						<span>
 							我的收货地址
@@ -157,7 +157,7 @@
 			<div class="mui-card myCard mysc" >
 				<div class="mui-card-content">
 					<div class="mui-card-content-inner myCardContent">
-						<ul id="mysc">
+						<ul id="mysc" onclick="tz('#mysc')">
 							<a data-url="collect/my_collect.html" data-id="my_collect.html">
 								<li>
 									<div class="iconfont icon-youhuiquan"></div>
@@ -305,6 +305,24 @@
 	   current.reload();//页面刷新 
 	});
 	
+	function tz(ele){
+		// 收藏列点击时，根据url和id跳转到不同页面,携带的参数是存在本地的用户id
+		mui(ele).on('tap','a',function(){
+			let url=this.getAttribute("data-url");
+			let id=this.getAttribute("data-id");
+			mui.plusReady(function () {
+			    let userId=plus.storage.getItem("account");
+				
+				mui.openWindow({
+					url,
+					id,
+					extras:{
+						userId
+					}
+				})
+			})
+		})
+	}
 	
 	// 阻止主页面滑动触发侧滑导航
 	document.querySelector(".mui-inner-wrap").addEventListener("drag",function(){
@@ -327,24 +345,7 @@
 					menubutton: true   //Boolean(默认true)关闭menu按键监听  
 				}  
 			});
-			// 收藏列点击时，根据url和id跳转到不同页面,携带的参数是存在本地的用户id
-			mui('#mysc').on('tap','a',function(){
-				let url=this.getAttribute("data-url");
-				let id=this.getAttribute("data-id");
-				mui.plusReady(function () {
-				    let userId=plus.storage.getItem("account");
-					
-					mui.openWindow({
-						url,
-						id,
-						extras:{
-							userId
-						}
-					})
-				})
-				
-				
-			})
+			
 		},
 		methods:{
 			// 获取本地存储的用户账号，

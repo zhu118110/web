@@ -1,23 +1,156 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-
 	<head>
 		<meta charset="utf-8">
 		<title>添加地址</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<link href="css/mui.css" rel="stylesheet" />
-		
 		<link rel="stylesheet" type="text/css" href="../../../css/mui.min.css"/>
 		<link rel="stylesheet" type="text/css" href="../../../css/public.css"/>
 		<link rel="stylesheet" type="text/css" href="../../../fonts/font.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/mui.picker.min.css"/>
+		<style type="text/css">
+			.mui-bar .mui-btn-link{
+				color: #000;
+			}
+			.mui-bar .mui-btn-link:active {
+				color: #d01c27;
+			}
+			.mui-btn-blue,.mui-btn-primary, input[type=submit]{
+				color: #fff;
+				border: none;
+				background-color:#d01c27 ;
+			}
+			.mui-table-view-cell{
+				padding: 0 15px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.mui-table-view-cell.mui-active{
+				background-color: inherit;
+			}
+			input, select, textarea{
+				font-size: 14px;
+			}
+			.mui-table-view-cell input,textarea{
+				margin-bottom: 0;
+				padding: 0;
+				border: none;
+			}
+			textarea{
+				padding: 5px 0;
+			}
+			.mui-table-view-cell .iconfont{
+				font-size: 20px;
+				color: #bbb;
+			}
+			.mui-table-view-cell:after{
+				left: 0;
+			}
+			.mui-pciker-list li{
+				font-size: 14px;
+			}
+			.default{
+				font-size: 14px;
+				margin-top: 10px;
+				background-color: #fff;
+			}
+			.mui-switch{
+				margin-top: 7px;
+				width: 50px;
+				height: 20px;
+			}
+			.mui-switch-blue.mui-active{
+				border-color:#d01c27;
+				background-color: #d01c27;
+			}
+			.mui-switch .mui-switch-handle{
+				width: 18px;
+				height: 18px;
+			}
+			.mui-switch.mui-active:before{
+				left: 5px;
+			}
+			.mui-switch:before{
+				right: 5px;
+				top: -1px;
+			}
+		</style>
 	</head>
-
 	<body>
-		
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">添加地址</h1>
+			<a class="mui-btn-link mui-pull-right">
+				保存
+			</a>
+		</header>
+		<div class="mui-content">
+			<dl>
+				<dd>
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell">
+							<input type="text" required="required" class="mui-input-clear mui-input" value="" placeholder="收件人"/>
+							<span class="iconfont icon-gerenxinxi"></span>
+						</li>
+						<li class="mui-table-view-cell">
+							<input type="number" required="required" class="mui-input-clear mui-input" value="" placeholder="手机号码"/>
+							
+							<span class="mui-navigate-right"></span>
+						</li>
+						<li class="mui-table-view-cell" id="showCityPicker">
+							<input type="text" required="required" placeholder="所在地区" value="" readonly="readonly" class="cityPicker"/>
+							<span class="mui-navigate-right"></span>
+						</li>
+						<li class="mui-table-view-cell">
+							<textarea rows="2" placeholder="详细地址,如xx区xx街道xx号" cols="2"></textarea>
+						</li>
+					</ul>
+					
+				</dd>
+			</dl>
+			<dl class="default">
+				<dd>
+					<div class="mui-input-row clear">
+						<label>设为默认地址</label>
+						<div class="mui-switch mui-switch-blue">
+						  <div class="mui-switch-handle"></div>
+						</div>
+					</div>
+				</dd>
+			</dl>
+		</div>
 	</body>
 	<script src="../../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../../../js/vue.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../../js/city.data-3.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../../js/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
-		mui.init()
+		mui.init();
+		
+		var cityPicker = new mui.PopPicker({
+			layer: 3,
+			buttons:['取消','确定'],
+		});
+		cityPicker.setData(cityData3);
+		var showCityPicker = document.getElementById('showCityPicker');
+		var val=document.getElementsByClassName("cityPicker")[0];
+		
+		var _getParam = function(obj, param) {
+			return obj[param] || '';
+		};
+		
+		// 点击显示地址选择器
+		showCityPicker.addEventListener('tap', function(event) {
+			cityPicker.show(function(items) {
+				// console.log("你选择的城市是:" + _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text'))
+				
+				val.value=`${items[0].text} ${items[1].text} ${items[2].text}`
+				
+			});
+		}, false);
+		
+		
+		
 	</script>
 </html>
