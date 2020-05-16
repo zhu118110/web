@@ -1,0 +1,91 @@
+.mui-bar .mui-btn-link {
+	color: #000;
+}
+
+.mui-bar .mui-btn-link:active {
+	color: #d01c27;
+}
+
+.mui-btn-blue,
+.mui-btn-primary,
+input[type=submit] {
+	color: #fff;
+	border: none;
+	background-color: #d01c27;
+}
+
+.mui-table-view-cell {
+	padding: 0 15px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.mui-table-view-cell.mui-active {
+	background-color: inherit;
+}
+
+input,
+select,
+textarea {
+	font-size: 14px;
+}
+
+.mui-table-view-cell input,
+textarea {
+	margin-bottom: 0;
+	padding: 0;
+	border: none;
+}
+
+textarea {
+	padding: 5px 0;
+}
+
+.mui-table-view-cell .iconfont {
+	font-size: 20px;
+	color: #bbb;
+}
+
+.mui-table-view-cell:after {
+	left: 0;
+}
+
+.mui-pciker-list li {
+	font-size: 14px;
+}
+
+.default {
+	font-size: 14px;
+	margin-top: 10px;
+	background-color: #fff;
+}
+
+.mui-switch {
+	margin-top: 7px;
+	width: 50px;
+	height: 20px;
+}
+
+.mui-switch-blue.mui-active {
+	border-color: #d01c27;
+	background-color: #d01c27;
+	
+}
+.mui-switch.mui-active .mui-switch-handle{
+	transform: translate(29px,0);
+}
+.mui-switch .mui-switch-handle {
+	width: 18px;
+	height: 18px;
+	
+}
+
+.mui-switch.mui-active:before {
+	left: 5px;
+}
+
+.mui-switch:before {
+	right: 5px;
+	top: -1px;
+}

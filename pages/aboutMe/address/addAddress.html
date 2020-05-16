@@ -8,104 +8,41 @@
 		<link rel="stylesheet" type="text/css" href="../../../css/public.css"/>
 		<link rel="stylesheet" type="text/css" href="../../../fonts/font.css"/>
 		<link rel="stylesheet" type="text/css" href="../../../css/mui.picker.min.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/aboutMe/addAddress.css"/>
 		<style type="text/css">
-			.mui-bar .mui-btn-link{
-				color: #000;
-			}
-			.mui-bar .mui-btn-link:active {
-				color: #d01c27;
-			}
-			.mui-btn-blue,.mui-btn-primary, input[type=submit]{
-				color: #fff;
-				border: none;
-				background-color:#d01c27 ;
-			}
-			.mui-table-view-cell{
-				padding: 0 15px;
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-			}
-			.mui-table-view-cell.mui-active{
-				background-color: inherit;
-			}
-			input, select, textarea{
-				font-size: 14px;
-			}
-			.mui-table-view-cell input,textarea{
-				margin-bottom: 0;
-				padding: 0;
-				border: none;
-			}
-			textarea{
-				padding: 5px 0;
-			}
-			.mui-table-view-cell .iconfont{
-				font-size: 20px;
-				color: #bbb;
-			}
-			.mui-table-view-cell:after{
-				left: 0;
-			}
-			.mui-pciker-list li{
-				font-size: 14px;
-			}
-			.default{
-				font-size: 14px;
-				margin-top: 10px;
-				background-color: #fff;
-			}
-			.mui-switch{
-				margin-top: 7px;
-				width: 50px;
-				height: 20px;
-			}
-			.mui-switch-blue.mui-active{
-				border-color:#d01c27;
-				background-color: #d01c27;
-			}
-			.mui-switch .mui-switch-handle{
-				width: 18px;
-				height: 18px;
-			}
-			.mui-switch.mui-active:before{
-				left: 5px;
-			}
-			.mui-switch:before{
-				right: 5px;
-				top: -1px;
-			}
+			
 		</style>
 	</head>
 	<body>
+	<div class="box">
 		<header class="mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
 			<h1 class="mui-title">添加地址</h1>
-			<a class="mui-btn-link mui-pull-right">
+			<a class="mui-btn-link mui-pull-right" @click="save">
 				保存
 			</a>
 		</header>
 		<div class="mui-content">
 			<dl>
 				<dd>
-					<ul class="mui-table-view">
-						<li class="mui-table-view-cell">
-							<input type="text" required="required" class="mui-input-clear mui-input" value="" placeholder="收件人"/>
-							<span class="iconfont icon-gerenxinxi"></span>
-						</li>
-						<li class="mui-table-view-cell">
-							<input type="number" required="required" class="mui-input-clear mui-input" value="" placeholder="手机号码"/>
-							
-							<span class="mui-navigate-right"></span>
-						</li>
-						<li class="mui-table-view-cell" id="showCityPicker">
-							<input type="text" required="required" placeholder="所在地区" value="" readonly="readonly" class="cityPicker"/>
-							<span class="mui-navigate-right"></span>
-						</li>
-						<li class="mui-table-view-cell">
-							<textarea rows="2" placeholder="详细地址,如xx区xx街道xx号" cols="2"></textarea>
-						</li>
-					</ul>
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell">
+						<input type="text" required="required" class="mui-input-clear mui-input" :value="recipients" v-model="recipients" placeholder="收件人"/>
+						<span class="iconfont icon-gerenxinxi"></span>
+					</li>
+					<li class="mui-table-view-cell">
+						<input type="tel" :value="phone" v-model="phone" required="required" class="mui-input-clear mui-input" value="" placeholder="手机号码"/>
+						
+						<span class="mui-navigate-right"></span>
+					</li>
+					<li class="mui-table-view-cell" id="showCityPicker">
+						<input type="text" readonly="readonly" @click="showCityPicker" ref="city" required="required" placeholder="所在地区" class="cityPicker"/>
+						<span class="mui-navigate-right"></span>
+					</li>
+					<li class="mui-table-view-cell">
+						<textarea rows="2" :value="detailAddress" v-model="detailAddress" placeholder="详细地址,如xx区xx街道xx号" cols="2"></textarea>
+					</li>
+				</ul>
 					
 				</dd>
 			</dl>
@@ -113,43 +50,142 @@
 				<dd>
 					<div class="mui-input-row clear">
 						<label>设为默认地址</label>
-						<div class="mui-switch mui-switch-blue">
+						<div class="mui-switch mui-switch-blue" @click="setDefault" :class="{'mui-active':isDefault}">
 						  <div class="mui-switch-handle"></div>
 						</div>
 					</div>
 				</dd>
 			</dl>
 		</div>
+	</div>
 	</body>
 	<script src="../../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../../../js/vue.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../../../js/city.data-3.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../../../js/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
-		mui.init();
 		
-		var cityPicker = new mui.PopPicker({
-			layer: 3,
-			buttons:['取消','确定'],
-		});
-		cityPicker.setData(cityData3);
-		var showCityPicker = document.getElementById('showCityPicker');
-		var val=document.getElementsByClassName("cityPicker")[0];
-		
-		var _getParam = function(obj, param) {
-			return obj[param] || '';
-		};
-		
-		// 点击显示地址选择器
-		showCityPicker.addEventListener('tap', function(event) {
-			cityPicker.show(function(items) {
-				// console.log("你选择的城市是:" + _getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text'))
+		const vue=new Vue({
+			el:".box",
+			data:{
+				dataApi:"http://192.168.0.105:3200",
+				user_Id:"",
+				recipients:"",  //收件人
+				phone:"",   //手机号
 				
-				val.value=`${items[0].text} ${items[1].text} ${items[2].text}`
+				province:"",//省
+				city:"",   //市
+				district:"",  // 区
 				
-			});
-		}, false);
-		
+				detailAddress:"",   //详细地址
+				isDefault:false,   //是否默认
+				cityPicker:"",   //初始化城市选择器
+				
+				send:false,
+			},
+			computed:{
+				// 监听多个属性时的写法
+				watchData(){
+					const {recipients,phone,province,city,district,detailAddress} =this;
+					return {
+					  recipients,
+					  phone,
+					  province,city,district,
+					  detailAddress
+					}
+				}
+			},
+			watch:{
+				watchData(newVal,oldVal){
+					if(newVal.recipients.trim().length==0||
+					newVal.phone.trim().length==0||
+					newVal.province.trim().length==0||
+					newVal.city.trim().length==0||
+					newVal.district.trim().length==0||
+					newVal.detailAddress.trim().length==0){
+						this.send=false
+					}else{
+						this.send=true
+					}
+				}
+			},
+			created() {
+				this.chooseCity()
+			},
+			mounted() {
+				mui.init();
+			},
+			methods:{
+				// 点击保存将地址存到数据库
+				save(){
+					
+					if(this.send){
+						let that=this;
+						// mui.plusReady(function () {
+						//     let self=plus.webview.currentWebview();
+						// 	that.user_Id=self.userId;
+						// 	ajax(that.user_Id);
+						// })
+						ajax("5eb7b553ee1d1a3988b5309a");
+						function ajax(userId){
+							mui.ajax(that.dataApi+"/addAddress",{
+								data:{
+									userId:userId,
+									recipients:that.recipients,
+									phone:that.phone,
+									
+									province:that.province,
+									city:that.city,
+									district:that.district,
+									detailAddress:that.detailAddress,
+									isDefault:that.isDefault
+								},
+								type:"post",
+								timeout:10000,
+								success:function(data){
+									if(data.code=="1"){
+										mui.toast("保存成功")
+									}
+								},
+								error:function(xhr,type){
+									console.log(type)
+								}
+							})
+						}
+						
+					}else{
+						mui.toast("字段不能为空")
+					}
+				},
+				// 设置地址选择器
+				chooseCity(){
+					this.cityPicker = new mui.PopPicker({
+						layer: 3,
+						buttons:['取消','确定'],
+					});
+					this.cityPicker.setData(cityData3);
+				},
+				// 点击显示地址选择器
+				showCityPicker(){
+					let that=this;
+					that.cityPicker.show(function(items) {
+						
+						that.province=items[0].text;
+						that.city=items[1].text;
+						that.district=items[2].text;
+						console.log(that.province,that.city,that.district)
+					
+						that.$refs.city.value=`${that.province} ${that.city} ${that.district}`
+						
+						
+					});
+				},
+				// 设置默认地址
+				setDefault(){
+					this.isDefault=!this.isDefault
+				}
+			}
+		})
 		
 		
 	</script>

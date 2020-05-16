@@ -33,6 +33,7 @@
 }
 
 .collect_body {
+	width: 100%;
 	display: flex;
 }
 
