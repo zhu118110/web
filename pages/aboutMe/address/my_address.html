@@ -224,26 +224,30 @@
 				// 给后台提交用户id，要删除的地址的_id
 				deleteAddress(index){
 					let that=this;
-					mui.ajax(that.api+"/delAddress",{
-						data:{
-							userId:"5eb7b553ee1d1a3988b5309a",
-							_id:that.addressArray[index]._id,
-						},
-						dataType:'json',//服务器返回json格式数据
-						type:'post',//HTTP请求类型
-						timeout:10000,//超时时间设置为10秒；
-						success:function(data){
-							if(data.code=="1"){
-								that.addressArray=[];
-								that.selectAddress();  //重新请求数据
-								mui.toast("删除成功");
-							}
-						},
-						error:function(xhr,type,errorThrown){
-							mui.toast("删除地址失败,原因:"+type)
+					let btn=["否","是"]
+					mui.confirm("确认删除?","",btn,function(e){
+						if(e.index==1){
+							mui.ajax(that.api+"/delAddress",{
+								data:{
+									userId:"5eb7b553ee1d1a3988b5309a",
+									_id:that.addressArray[index]._id,
+								},
+								dataType:'json',//服务器返回json格式数据
+								type:'post',//HTTP请求类型
+								timeout:10000,//超时时间设置为10秒；
+								success:function(data){
+									if(data.code=="1"){
+										that.addressArray=[];
+										that.selectAddress();  //重新请求数据
+										mui.toast("删除成功");
+									}
+								},
+								error:function(xhr,type,errorThrown){
+									mui.toast("删除地址失败,原因:"+type)
+								}
+							})
 						}
 					});
-					
 				},
 				
 				editAddress(index){
