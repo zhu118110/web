@@ -111,7 +111,7 @@
 		const vue=new Vue({
 			el:".body",
 			data:{
-				api:"http://192.168.0.105:3200",
+				api:"http://192.168.88.69:3200",
 				my_collect:[],   //收藏的商品信息
 				user_Id:"",   //用户id
 				dateArr:[],  //去掉重复的收藏时间
@@ -151,7 +151,7 @@
 					let that=this;
 					mui.ajax(this.api+"/collect",{
 						data:{
-							user_Id:user_Id
+							user_Id
 						},
 						type:"post",
 						timeout:10000,

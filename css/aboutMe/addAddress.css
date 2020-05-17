@@ -60,9 +60,11 @@ textarea {
 	margin-top: 10px;
 	background-color: #fff;
 }
-
+.mui-input-row label{
+	width: auto;
+}
 .mui-switch {
-	margin-top: 7px;
+	margin-top: 7px !important;
 	width: 50px;
 	height: 20px;
 }
@@ -88,4 +90,5 @@ textarea {
 .mui-switch:before {
 	right: 5px;
 	top: -1px;
+	font-size: 12px;
 }

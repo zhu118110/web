@@ -68,7 +68,7 @@
 		const vue=new Vue({
 			el:".box",
 			data:{
-				dataApi:"http://192.168.0.105:3200",
+				dataApi:"http://192.168.88.69:3200",
 				user_Id:"",
 				recipients:"",  //收件人
 				phone:"",   //手机号
@@ -143,9 +143,10 @@
 								type:"post",
 								timeout:10000,
 								success:function(data){
-									if(data.code=="1"){
-										mui.toast("保存成功")
-									}
+									// if(data.code=="1"){
+									// 	mui.toast("保存成功")
+									// }
+									// console.log()
 								},
 								error:function(xhr,type){
 									console.log(type)
@@ -170,9 +171,9 @@
 					let that=this;
 					that.cityPicker.show(function(items) {
 						
-						that.province=items[0].text;
-						that.city=items[1].text;
-						that.district=items[2].text;
+						that.province=items[0].text||"";
+						that.city=items[1].text||"";
+						that.district=items[2].text||"";
 						console.log(that.province,that.city,that.district)
 					
 						that.$refs.city.value=`${that.province} ${that.city} ${that.district}`

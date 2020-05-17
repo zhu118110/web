@@ -13,41 +13,243 @@
 				text-align: center;
 				margin-top: 50%;
 			}
+			.noAddress>div{
+				display: inline-table;
+				padding: 50px;
+			}
+			.mui-table-view-cell.mui-active{
+				background-color: inherit;
+				font-size: 14px;
+			}
+			.edit{
+				padding-right: 15px;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				font-size: 14px;
+			}
+			.mui-radio input[type=radio]:checked:before{
+				color: #CF2D28;
+			}
+			.mui-radio input[type=radio]{
+				top: 5px;
+			}
+			.mui-radio input[type=radio]:before{
+				font-size: 16px;
+				line-height: 1.7;
+			}
+			.my_table_view:not(:first-child){
+				margin-top: 5px;
+			}
+			.close{
+				position: absolute;
+				right: 10px;
+				top: 10px;
+			}
 		</style>
 	</head>
 
 	<body>
 		<header class="mui-bar mui-bar-nav">
 			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-			<h1 class="mui-title">我的收获地址</h1>
+			<h1 class="mui-title">我的收货地址</h1>
 		</header>
 		<div class="mui-content">
-			<div class="noAddress">
-				<i class="iconfont icon-del"></i>
-				<p>添加地址</p>
+			<div class="noAddress" v-if="!haveAddress">
+				<div @click="noAddress" ref="noAddress">
+					<i class="iconfont icon-del"></i>
+					<p>添加地址</p>
+				</div>				
+			</div>
+			<div class="haveAddress">
+				<dl class="mui-table-view my_table_view"  v-for="(item,index) in addressArray" :key="index" >
+					 <dd class="mui-table-view-cell">
+						<p>
+							{{item.recipients}},{{item.phone}}
+						</p>
+						<p>
+							{{item.province}} {{item.city}} {{item.district}} {{item.detailAddress}} 
+						</p>
+						<span class="iconfont icon-guanbi close" @click="deleteAddress(index)"></span>
+					 </dd>
+					 <dd class="edit">
+						 <div class="mui-input-row mui-radio" @click="setDefault(index)">
+						 	<label>设为默认</label>
+						 	<input name="radio1" type="radio" :value="index" v-model="radio">
+						 </div>
+						 <div @click="editAddress(index)">
+						 	编辑
+						 </div>
+					 </dd>
+				</dl>
+				
+				
+				
 			</div>
 		</div>
 	</body>
 	<script src="../../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../../../js/vue.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
-		mui.init();
+
+		// mui(".mui-content").on("tap",".noAddress",function(){
+		// 	mui.plusReady(function () {
+		// 		let userId=plus.storage.getItem("account");
+		// 	    let url="./addAddress.html";
+		// 		let id="addAddress.html";
+		// 		mui.openWindow({
+		// 			url,
+		// 			id,
+		// 			extras:{
+		// 				userId
+		// 			}
+		// 		})
+				
+		// 	})
+		// });
 		
-		mui(".mui-content").on("tap",".noAddress",function(){
-			mui.plusReady(function () {
-				let userId=plus.storage.getItem("account");
-			    let url="./addAddress.html";
-				let id="addAddress.html";
-				
-				mui.openWindow({
-					url,
-					id,
-					extras:{
-						userId
+		var vue=new Vue({
+			el:".mui-content",
+			data:{
+				userId:"",
+				api:"http://192.168.88.69:3200",
+				AddAddressPage:null, 
+				haveAddress:false,  //控制是否有地址显示的内容
+				addressArray:[],
+				radio:""
+			},
+			created() {
+				//预加载添加地址页面
+				this.reloadAddAddress();
+				this.selectAddress()
+			},
+			mounted() {
+				let that=this;
+				mui.init({
+					// 监听返回事件
+					beforeback:function(){
+						// 请求后台，改变默认的地址
+						mui.ajax(that.api+"/setDefault",{
+							data:{
+								userId:"5eb7b553ee1d1a3988b5309a",
+								index:that.radio
+							},
+							type:"post",
+							timeout:10000,
+							// success:function(data){
+							// 	if(data.code=="1"){
+							// 		console.log("修改默认地址成功")
+							// 	}
+							// },
+							error:function(xhr,type,errorThrown){
+								mui.toast("修改默认地址失败,原因:"+type)
+							}
+						})
 					}
-				})
+				});
+			},
+			methods:{
+				// 页面刚加载时查找用户有没有添加地址
+				// 没有添加则页面显示 ‘添加地址’内容。
+				selectAddress(){
+					let that=this;
+					// mui.plusReady(function () {
+					// 	that.userId=plus.storage.getItem("account");
+					// 	ajax(that.userId)
+					// })
+					ajax("5eb7b553ee1d1a3988b5309a")
+					function ajax(userId){
+						mui.ajax(that.api+"/selectAddress",{
+							data:{
+								userId
+							},
+							dataType:'json',//服务器返回json格式数据
+							type:'post',//HTTP请求类型
+							timeout:10000,//超时时间设置为10秒；
+							success:function(data){
+								if(data.code!=="0"&&data.data.length>0){
+									that.addressArray.push(...data.data);
+									// 设置默认选中
+									
+									that.addressArray.forEach((val,i)=>{
+										if(val.isDefault==true){
+											that.radio=i;
+										}
+									})
+									that.haveAddress=true;
+								}else{
+									that.haveAddress=false;
+								}
+							},
+							error:function(xhr,type,errorThrown){
+								mui.toast("查找地址失败,原因:"+type)
+							}
+						});
+					}
+				},
 				
-			})
+				// 点击跳转到添加地址页面
+				noAddress(){
+					let that=this;
+					that.$refs.noAddress.addEventListener("tap",function(){
+						console.log(1111)
+						that.AddAddressPage.show()
+						
+					},false)
+				},
+				
+				// 预加载添加地址页面
+				reloadAddAddress(){
+					let that=this;
+					mui.plusReady(function () {
+						that.userId=plus.storage.getItem("account");
+						let url="./addAddress.html";
+						let id="addAddress.html";
+					    that.AddAddressPage = mui.preload({
+					        url,
+					        id,
+					        extras:{
+					    		userId:that.userId
+					    	}
+					    });
+					})
+				},
+				
+				// 点击设置默认地址
+				setDefault(index){
+					this.radio=index;
+				},
+				
+				// 点击删除地址,
+				// 给后台提交用户id，要删除的地址的_id
+				deleteAddress(index){
+					let that=this;
+					mui.ajax(that.api+"/delAddress",{
+						data:{
+							userId:"5eb7b553ee1d1a3988b5309a",
+							_id:that.addressArray[index]._id,
+						},
+						dataType:'json',//服务器返回json格式数据
+						type:'post',//HTTP请求类型
+						timeout:10000,//超时时间设置为10秒；
+						success:function(data){
+							if(data.code=="1"){
+								that.addressArray=[];
+								that.selectAddress();  //重新请求数据
+								mui.toast("删除成功");
+							}
+						},
+						error:function(xhr,type,errorThrown){
+							mui.toast("删除地址失败,原因:"+type)
+						}
+					});
+					
+				},
+				
+				editAddress(index){
+					
+				}
+			}
 		})
 	</script>
 </html>
