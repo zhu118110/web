@@ -159,6 +159,10 @@
 							if(data.data){
 								// 获取到所有收藏的商品信息
 								that.my_collect.push(...data.data);
+								if(that.my_collect.length<=0){
+									 that.deleteDisabled=true;   //禁用底部删除按钮
+									 that.allDisabled=true;  //禁用全选框
+								}
 								that.test=that.my_collect;
 								that.my_collect.forEach(val=>{
 									that.dateArr.push(val.collect_date);// 得到每个商品收藏的时间,放在数组里
@@ -247,63 +251,79 @@
 					let btn=["否","是"]
 					let that=this;
 					mui.confirm("确认删除?","",btn,function(e){
-						// 选择了'是'
-					
+						
+						// 如果选择了'是'
 						if(e.index==1){
-							 var del_arr = that.singleCheckArr.sort(s);  //将下标倒序
+							 var del_arr = that.singleCheckArr.sort(s);  //将选中的商品下标倒序
 							 function s(a,b){
 								 return b-a
 							 };
-							 for(var i=0;i<del_arr.length;i++){
-								 that.my_collect.splice(del_arr[i],1)
-							 }
-							that.singleCheckArr = []; //     清空选中的商品
-							that.allChecked=[];   //清空全选
-						
-							 if(that.my_collect.length<=0){
-								 that.deleteDisabled=true;
-								 that.allDisabled=true;
-							 }
-							 // 改变收藏时间
-							 that.dateArr = [];
-							 that.my_collect.forEach(val=>{
-							 	that.dateArr.push(val.collect_date);// 得到每个商品收藏的时间,放在数组里
+							 let prd_idArr=[];  //保存选中的商品的_id
+							 del_arr.forEach((val,i)=>{
+								 prd_idArr.push(that.my_collect[val]._id)
 							 })
-							 //去掉重复的商品收藏时间,渲染时根据时间筛选对应的数据
-							 that.dateArr=that.dateArr.filter((val,index)=>{
-							 	return that.dateArr.indexOf(val)==index; 
-							 });
-							
+							// 请求数据
+							that.delAjax(prd_idArr)
+
 						}
 					})
 				},
 				
-				// 左滑删除
-				deleteSingle(index){
+				// 左滑删除，参数是点击的商品的下标
+				deleteSingle(delIndex){
 					let btn=["否","是"]
 					let that=this;
-				
+					let prd_idArr=[];  //保存选中的商品的_id
+						// 根据点击的下标得到点击的商品的id
+					prd_idArr.push(that.my_collect[delIndex]._id)
+					
+					
 					mui.confirm("确认删除?","",btn,function(e){
+							
 						if(e.index==1){
-							that.my_collect.splice(index,1);
-							
-							mui.swipeoutClose(that.$refs.deleteSingle[index].parentNode.parentNode);
-							
-							// 改变收藏时间
-							that.dateArr = [];
-							that.my_collect.forEach(val=>{
-								that.dateArr.push(val.collect_date);// 得到每个商品收藏的时间,放在数组里
-							})
-							//去掉重复的商品收藏时间,渲染时根据时间筛选对应的数据
-							that.dateArr=that.dateArr.filter((val,index)=>{
-								return that.dateArr.indexOf(val)==index; 
-							});
-
+							mui.swipeoutClose(that.$refs.deleteSingle[delIndex].parentNode.parentNode);
+							that.delAjax(prd_idArr);
 						}else{
-							mui.swipeoutClose(that.$refs.deleteSingle[index].parentNode.parentNode);
+							mui.swipeoutClose(that.$refs.deleteSingle[delIndex].parentNode.parentNode);
 						}
 						
 					})
+				},
+				
+				
+				// 删除收藏的商品;参数是个数组，里边放着选中的商品的id
+				delAjax(prd_idArr){
+					let that=this;
+					mui.ajax(that.api+'/delCollect',{
+						data:{
+							// userId:that.user_Id,
+							userId:"5eb7b553ee1d1a3988b5309a",
+							prd_idArr:JSON.stringify(prd_idArr)
+						},
+						dataType:'json',//服务器返回json格式数据
+						type:'post',//HTTP请求类型
+						timeout:10000,//超时时间设置为10秒；
+						success:function(data){
+							if(data.code==1){
+								mui.toast("删除商品成功");
+								that.my_collect=[];
+								
+								// that.getCollectPrd(that.user_Id)
+								that.getCollectPrd("5eb7b553ee1d1a3988b5309a");
+								
+								that.singleCheckArr = []; //     清空选中的商品
+								that.allChecked=[];   //取消全选
+								
+								
+							}else{
+								mui.toast("删除商品失败")
+							}
+						},
+						error:function(xhr,type,errorThrown){
+						
+							mui.toast("请求失败，原因"+type)
+						}
+					});
 				}
 			}
 		})

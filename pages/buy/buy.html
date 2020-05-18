@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>立即购买</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link rel="stylesheet" type="text/css" href="../../css/mui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/public.css"/>
+	<link rel="stylesheet" type="text/css" href="../../css/buy/buy.css"/>
+	<link rel="stylesheet" type="text/css" href="../../fonts/font.css"/>
+	
+</head>
+
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<h1 class="mui-title">立即购买</h1>
+	</header>
+	<div class="mui-content">
+		<ul class="mui-table-view">
+			<li class="mui-table-view-cell">
+				<a class="mui-navigate-right my_navigate_right">
+					<span class="iconfont icon-tianjiadizhi"></span>
+					<div class="address">
+						<p>
+							<span style="font-weight: 600;">
+								收件人
+							</span> 
+							<span>
+								15111111111
+							</span>  
+							<!-- {{item.recipients}},{{item.phone}} -->
+						</p>
+						<p>
+							山西省 长治市 长子县  鹤沙航城199号汇善佳苑8号楼202
+							<!-- {{item.province}} {{item.city}} {{item.district}} {{item.detailAddress}} -->
+						</p>
+						
+					</div>
+				</a>
+			</li>
+		</ul>
+			<!--商品展示区域-->
+		<div class="collect">  
+			<dl class="mui-table-view" >
+				<dt class="mui-table-view-cell collect_body">
+					<!-- 商品图片 -->
+					<div class="collect_body_img clear">
+						<img class="mui-media-object mui-pull-left" src="../../img/bd1.jpg">
+					</div>
+					<!-- 商品描述 -->
+					<div class="mui-media-body collect_body_infor">
+						<p class="collect_body_infor_title">
+							<!-- {{val.title}} -->
+							商品描述商品描述商品描述商品描述商品描述
+						</p>
+						<p class="collect_body_infor_type">
+							颜色:
+						</p>
+						<p class="collect_body_infor_type">
+							尺码:
+						</p>
+						<div class="collect_body_infor_price">
+							<div style="color: #d01c27;">
+								<span style="font-size: 12px;">￥</span>
+								<span>
+									140.00
+								</span>
+								<!-- <span>{{val.prd_price|price}}</span> -->
+							</div>
+								
+							<div style="border: 1px solid green; padding: 0px 4px;">
+								免运费
+							</div>
+						</div>
+					</div>
+				</dt>
+				
+				<dt class="mui-table-view-cell collect_body buy_number">
+					<span>
+						购买数量
+					</span>
+					<div class="mui-numbox" data-numbox-min='1' data-numbox-max='10'>
+					  <!-- "-"按钮，点击可减小当前数值 -->
+					  <button class="mui-btn mui-numbox-btn-minus" type="button">-</button>
+					  <input class="mui-numbox-input" :value="buyNumber" v-model="buyNumber" type="number"/>
+					  <!-- "+"按钮，点击可增大当前数值 -->
+					  <button class="mui-btn mui-numbox-btn-plus" type="button">+</button>
+					</div>
+				</dt>
+			</dl>
+		</div><!--商品展示结束-->
+		
+	</div>
+	<footer class="mui-bar mui-bar-tab my-mui-bar" v-if="toggleAllChecked==true">
+		<div class="tab">
+			<div>
+				实付款:<span style="color:#d01c27">￥39.00 免运费</span>
+			</div>
+			<button type="button" class="mui-btn mui-btn-red">
+				立即支付
+			</button>
+		</div>
+	</footer>
+</body>
+<script src="../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/vue.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	mui.init()
+	const vue=new Vue({
+		el:".mui-content",
+		data:{
+			userId:"",
+			api:"http://192.168.88.69:3200",
+			recipients:"",
+			phone:"",
+			province:"",
+			city:"",
+			district:"",
+			detailAddress:"",
+			prdInfor:[],
+			buyNumber:1
+			
+		}
+	})
+</script>
+</html>

@@ -306,21 +306,32 @@
 	});
 	
 	function tz(ele){
-		// 收藏列点击时，根据url和id跳转到不同页面,携带的参数是存在本地的用户id
+		// 收藏列点击时，进行页面预加载，根据url和id跳转到不同页面,携带的参数是存在本地的用户id
 		mui(ele).on('tap','a',function(){
 			let url=this.getAttribute("data-url");
 			let id=this.getAttribute("data-id");
-			mui.plusReady(function () {
-			    let userId=plus.storage.getItem("account");
-				
-				mui.openWindow({
-					url,
-					id,
-					extras:{
-						userId
-					}
+			if(url,id){
+				mui.plusReady(function () {
+				    let userId=plus.storage.getItem("account");
+					let prePage=mui.preload({
+					    url,
+					    id,
+					    extras:{
+							userId
+						}
+					});
+					prePage.show()
+					
+					// mui.openWindow({
+					// 	url,
+					// 	id,
+					// 	extras:{
+					// 		userId
+					// 	}
+					// })
 				})
-			})
+			}
+			
 		})
 	}
 	

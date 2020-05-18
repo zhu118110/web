@@ -31,7 +31,7 @@
 						<span class="iconfont icon-gerenxinxi"></span>
 					</li>
 					<li class="mui-table-view-cell">
-						<input type="tel" :value="phone" v-model="phone" required="required" class="mui-input-clear mui-input" value="" placeholder="手机号码"/>
+						<input type="number" :value="phone" v-model="phone" required="required" class="mui-input-clear mui-input" value="" placeholder="手机号码"/>
 						
 						<span class="mui-navigate-right"></span>
 					</li>
@@ -121,12 +121,12 @@
 					
 					if(this.send){
 						let that=this;
-						// mui.plusReady(function () {
-						//     let self=plus.webview.currentWebview();
-						// 	that.user_Id=self.userId;
-						// 	ajax(that.user_Id);
-						// })
-						ajax("5eb7b553ee1d1a3988b5309a");
+						mui.plusReady(function () {
+						    let self=plus.webview.currentWebview();
+							that.user_Id=self.userId;
+							ajax(that.user_Id);
+						})
+						// ajax("5eb7b553ee1d1a3988b5309a");
 						function ajax(userId){
 							mui.ajax(that.dataApi+"/addAddress",{
 								data:{
@@ -177,8 +177,6 @@
 						console.log(that.province,that.city,that.district)
 					
 						that.$refs.city.value=`${that.province} ${that.city} ${that.district}`
-						
-						
 					});
 				},
 				// 设置默认地址

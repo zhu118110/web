@@ -8,14 +8,16 @@
 		<link rel="stylesheet" type="text/css" href="../../../css/mui.min.css"/>
 		<link rel="stylesheet" type="text/css" href="../../../css/public.css"/>
 		<link rel="stylesheet" type="text/css" href="../../../fonts/font.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/mui.picker.min.css"/>
 		<style type="text/css">
 			.noAddress{
 				text-align: center;
-				margin-top: 50%;
+				margin-top: 50px;
 			}
 			.noAddress>div{
-				display: inline-table;
-				padding: 50px;
+				background-color: #CF2D28;
+				padding: 10px;
+				color: #fff;
 			}
 			.mui-table-view-cell.mui-active{
 				background-color: inherit;
@@ -36,7 +38,7 @@
 			}
 			.mui-radio input[type=radio]:before{
 				font-size: 16px;
-				line-height: 1.7;
+				line-height: 2;
 			}
 			.my_table_view:not(:first-child){
 				margin-top: 5px;
@@ -45,6 +47,38 @@
 				position: absolute;
 				right: 10px;
 				top: 10px;
+			}
+			#sheet1{
+				position: absolute;
+				bottom: 40%;
+			}
+			.mui-input-row label{
+				width: auto;
+				font-size: 14px;
+				line-height: 1.5;
+			}
+			input, select, textarea{
+				font-size: 14px;
+				
+			}
+			textarea{
+				padding: 12px 15px;
+			}
+			.mui-input-row label~input, .mui-input-row label~select, .mui-input-row label~textarea{
+				width: 70%;
+			}
+			.mui-popup-button:nth-child(1){
+				color: #d01c27;
+			}
+			.mui-popup-button:nth-child(2){
+				color: #aaa;
+			}
+			.mui-btn-blue,
+			.mui-btn-primary,
+			input[type=submit] {
+				color: #fff;
+				border: none;
+				background-color: #d01c27;
 			}
 		</style>
 	</head>
@@ -55,12 +89,6 @@
 			<h1 class="mui-title">我的收货地址</h1>
 		</header>
 		<div class="mui-content">
-			<div class="noAddress" v-if="!haveAddress">
-				<div @click="noAddress" ref="noAddress">
-					<i class="iconfont icon-del"></i>
-					<p>添加地址</p>
-				</div>				
-			</div>
 			<div class="haveAddress">
 				<dl class="mui-table-view my_table_view"  v-for="(item,index) in addressArray" :key="index" >
 					 <dd class="mui-table-view-cell">
@@ -77,36 +105,53 @@
 						 	<label>设为默认</label>
 						 	<input name="radio1" type="radio" :value="index" v-model="radio">
 						 </div>
-						 <div @click="editAddress(index)">
+						 <div ref="edit" @click="editAddress(index)">
 						 	编辑
 						 </div>
 					 </dd>
 				</dl>
-				
-				
-				
+			</div>
+			
+			<div id="sheet1" class="mui-popover mui-popover-bottom mui-popover-action">
+				<form class="mui-input-group">
+				    <div class="mui-input-row">
+						<label>收件人</label>
+							
+						
+						<input type="text" class="mui-input-clear" :value="recipients" v-model="recipients" placeholder="收件人">
+				    </div>
+				    <div class="mui-input-row">
+						<label>手机号</label>
+				        <input type="number" class="mui-input-clear" :value="phone" v-model="phone" placeholder="手机号">
+				    </div>
+					<div class="mui-input-row" id="showCityPicker" >
+						<label>所在地区</label>
+					    <input type="text" readonly="readonly" @click="showCityPicker" ref="city" required="required" placeholder="所在地区" class="cityPicker"/>
+					</div>
+					<div class="mui-input-row" style="height: auto;">
+						<label>详细地址</label>
+					    <textarea rows="2" :value="detailAddress" v-model="detailAddress" placeholder="详细地址,如xx区xx街道xx号" cols="2"></textarea>
+					</div>
+				    <div class="mui-button-row">
+				        <button type="button" class="mui-btn mui-btn-red" @click="sureEdit">确认更改</button>
+				    </div>
+				</form>
+			</div>
+			
+			<div class="noAddress">
+				<div @click="noAddress" ref="noAddress">
+					<i class="iconfont icon-del"></i>
+					<span>添加地址</span>
+				</div>				
 			</div>
 		</div>
 	</body>
 	<script src="../../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../../../js/vue.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../../js/city.data-3.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../../js/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
-
-		// mui(".mui-content").on("tap",".noAddress",function(){
-		// 	mui.plusReady(function () {
-		// 		let userId=plus.storage.getItem("account");
-		// 	    let url="./addAddress.html";
-		// 		let id="addAddress.html";
-		// 		mui.openWindow({
-		// 			url,
-		// 			id,
-		// 			extras:{
-		// 				userId
-		// 			}
-		// 		})
-				
-		// 	})
-		// });
+		
 		
 		var vue=new Vue({
 			el:".mui-content",
@@ -115,49 +160,65 @@
 				api:"http://192.168.88.69:3200",
 				AddAddressPage:null, 
 				haveAddress:false,  //控制是否有地址显示的内容
-				addressArray:[],
-				radio:""
+				addressArray:[],   //从后台获取到的地址的数据
+				radio:"",    //选择的默认地址的下标
+				// 要编辑的区域
+				editIndex:"",
+				cityPicker:null,   //初始化城市选择器
+				recipients:"",      //收件人
+				phone:"",   //手机号
+				province:"411",   //省
+				city:"555",   //市
+				district:"666",   //县/区
+				detailAddress:""   //详细地址
 			},
 			created() {
-				//预加载添加地址页面
-				this.reloadAddAddress();
-				this.selectAddress()
+				
+				this.reloadAddAddress();//预加载添加地址页面
+				this.selectAddress();   //请求后台加载所有地址
+				this.chooseCity();// 初始化地址选择器
 			},
 			mounted() {
 				let that=this;
-				mui.init({
-					// 监听返回事件
-					beforeback:function(){
-						// 请求后台，改变默认的地址
-						mui.ajax(that.api+"/setDefault",{
-							data:{
-								userId:"5eb7b553ee1d1a3988b5309a",
-								index:that.radio
-							},
-							type:"post",
-							timeout:10000,
-							// success:function(data){
-							// 	if(data.code=="1"){
-							// 		console.log("修改默认地址成功")
-							// 	}
-							// },
-							error:function(xhr,type,errorThrown){
-								mui.toast("修改默认地址失败,原因:"+type)
-							}
-						})
-					}
-				});
+				mui.init();
+				
 			},
+			
 			methods:{
+				// 初始化设置地址选择器
+				chooseCity(){
+					this.cityPicker = new mui.PopPicker({
+						layer: 3,    //选择器列数
+						buttons:['取消','确定'],
+					});
+				
+					this.cityPicker.setData(cityData3);
+					this.cityPicker.pickers[0].setSelectedValue(this.province);
+					this.cityPicker.pickers[1].setSelectedValue(this.city);
+					this.cityPicker.pickers[2].setSelectedValue(this.district);
+					
+				},
+				// 点击显示地址选择器
+				showCityPicker(){
+					let that=this;
+					that.cityPicker.show(function(items) {
+						that.province=items[0].text||"";
+						that.city=items[1].text||"";
+						that.district=items[2].text||"";
+						console.log(that.province,that.city,that.district)
+											
+						that.$refs.city.value=`${that.province} ${that.city} ${that.district}`
+					});
+				},
 				// 页面刚加载时查找用户有没有添加地址
-				// 没有添加则页面显示 ‘添加地址’内容。
+				
 				selectAddress(){
 					let that=this;
-					// mui.plusReady(function () {
-					// 	that.userId=plus.storage.getItem("account");
-					// 	ajax(that.userId)
-					// })
-					ajax("5eb7b553ee1d1a3988b5309a")
+					mui.plusReady(function () {
+						that.userId=plus.storage.getItem("account");
+						ajax(that.userId)
+					})
+					// ajax("5eb7b553ee1d1a3988b5309a")
 					function ajax(userId){
 						mui.ajax(that.api+"/selectAddress",{
 							data:{
@@ -215,9 +276,29 @@
 					})
 				},
 				
-				// 点击设置默认地址
+				// 点击设置默认地址,改变下标
 				setDefault(index){
-					this.radio=index;
+					
+					let that=this;
+					that.radio=index;
+					mui.ajax(that.api+"/setDefault",{
+						data:{
+							userId:that.userId,
+							// userId:"5eb7b553ee1d1a3988b5309a",
+							_id:that.addressArray[that.radio]._id
+						},
+						type:"post",
+						timeout:10000,
+						success:function(data){
+							if(data.code=="1"){
+								mui.toast("修改默认地址成功")
+							}
+							
+						},
+						error:function(xhr,type,errorThrown){
+							mui.toast("连接服务器失败,原因:"+type)
+						}
+					})
 				},
 				
 				// 点击删除地址,
@@ -229,7 +310,8 @@
 						if(e.index==1){
 							mui.ajax(that.api+"/delAddress",{
 								data:{
-									userId:"5eb7b553ee1d1a3988b5309a",
+									userId:that.userId,
+									// userId:"5eb7b553ee1d1a3988b5309a",
 									_id:that.addressArray[index]._id,
 								},
 								dataType:'json',//服务器返回json格式数据
@@ -250,8 +332,56 @@
 					});
 				},
 				
+				// 点击编辑，显示操作表，初始化操作表内容
 				editAddress(index){
+					let that=this;
+					that.editIndex=index;
+					mui("#sheet1").popover("toggle",that.$refs.edit);   //显示要编辑的内容
+					document.querySelector("#sheet1").addEventListener("tap",function(){
+						that.cityPicker.hide()
+					})
+					that.recipients=that.addressArray[that.editIndex].recipients;   //收件人
+					that.phone=that.addressArray[that.editIndex].phone;  //手机号
+					that.province=that.addressArray[that.editIndex].province;   //省
+					that.city=that.addressArray[that.editIndex].city;  //市
+					that.district=that.addressArray[that.editIndex].district;  //县、区
+					that.$refs.city.value=`${that.province} ${that.city} ${that.district}`
+					that.detailAddress=that.addressArray[that.editIndex].detailAddress;   //详细地址
 					
+				},
+				
+				// 点击确认更改 向后台发送数据
+				sureEdit(){
+					let that=this;
+					mui.ajax(that.api+'/editAddress',{
+						data:{
+							userId:that.userId,
+							// userId:"5eb7b553ee1d1a3988b5309a",
+							_id:that.addressArray[that.editIndex]._id,
+							recipients:that.recipients,
+							phone:that.phone,
+							province:that.province,
+							city:that.city,
+							district:that.district,
+							detailAddress:that.detailAddress,
+							
+						},
+						dataType:'json',//服务器返回json格式数据
+						type:'post',//HTTP请求类型
+						timeout:10000,//超时时间设置为10秒；
+						success:function(data){
+							
+							if(data.code=="1"){
+								mui.toast("修改成功");
+								mui("#sheet1").popover("toggle");   //隐藏编辑的区域
+								that.addressArray=[];
+								that.selectAddress();
+							}
+						},
+						error:function(xhr,type,errorThrown){
+							mui.toast("数据连接失败，原因"+type);
+						}
+					});
 				}
 			}
 		})
