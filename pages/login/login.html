@@ -144,20 +144,12 @@
 				
 				beforeback:function(){
 					var aboutMe = plus.webview.getWebviewById('aboutMe');
-					// 返回前判断本地存储的用户id是否存在,不存在则返回到主页
-					let storage=plus.storage.getItem("account");
-					if(that.isLogin==false){
-						mui.fire(aboutMe,"clearStorage",{
-							statu:that.isLogin
-						})
-						
-					}else{
-						mui.fire(aboutMe,"clearStorage",{
-							statu:that.isLogin
-						})
-					}
+					// // 返回前判断本地存储的用户id是否存在,不存在则返回到主页
+					// let storage=plus.storage.getItem("account");
 					
-					
+					mui.fire(aboutMe,"clearStorage",{
+						statu:that.isLogin
+					})
 				}
 			});
 			

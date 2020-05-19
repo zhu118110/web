@@ -32,7 +32,7 @@
 		    </header>
 			<ul class="mui-table-view">
 				
-				<a href="#">
+				<a href="#" data-url="myInfor/myInfor.html" data-id="myInfor.html">
 					<li class="mui-table-view-cell">
 						<span>
 							编辑资料
@@ -93,7 +93,7 @@
 					<li class="mui-table-view-cell mui-media">
 						<a class="mui-navigate-right mytx">
 							<div style="border-radius: 50%;overflow: hidden;">
-								<img class="mui-media-object mui-pull-left" src="../../img/0.jpg">
+								<img class="mui-media-object mui-pull-left" :src="heade_img">
 							</div>
 							
 							<div class="mui-media-body">
@@ -345,6 +345,7 @@
 		data:{
 			api:"http://192.168.88.69:3200",
 			userName:"请先登录",
+			heade_img:"../../img/0.jpg"
 		},
 		created() {
 			this.getStorage()
@@ -359,8 +360,8 @@
 			
 		},
 		methods:{
-			// 获取本地存储的用户账号，
-			// 使用请求后台查找到昵称
+			// 获取本地存储的用户id，
+			// 请求后台查找到昵称
 			getStorage(){
 				let idValue;  
 				let that=this;
@@ -385,7 +386,8 @@
 								let dataArr=[];
 								dataArr.push(...[data.data])
 								dataArr.forEach(val=>{
-									that.userName=val.userName;
+									that.userName=val.userName;  //用户名
+									that.heade_img=val.headImg;   //用户头像
 									// console.log("userName是"+that.userName)
 								})
 							}

@@ -1,0 +1,295 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>我的资料</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<link href="../../../css/mui.min.css" rel="stylesheet" />
+	<link rel="stylesheet" type="text/css" href="../../../css/public.css"/>
+	<link rel="stylesheet" type="text/css" href="../../../fonts/font.css"/>
+	<style type="text/css">
+		.mui-bar .mui-btn-link{
+			color: #ff5900;
+		}
+		.head_img{
+			text-align: center;
+			margin-top: 30px;
+		}
+		.img{
+			font-size: 0;
+			border-radius: 50%;
+			overflow: hidden;
+			display: inline-block;
+			max-width: 100px;
+			height: 100px;
+		}
+		.img img{
+			width: 100%;
+			height: 100%;
+		}
+		.formArea{
+			margin-top: 30px;
+			font-size: 14px;
+		}
+		.mui-input-row{
+			display: flex;
+			align-items: center;
+			
+		}
+		.formArea .mui-input-row label{
+			width: auto;
+			height: 40px;
+			line-height: initial;
+			color: #716f6f;
+		}
+		.formArea input{
+			font-size: 14px;
+		}
+	</style>
+</head>
+<body>
+<div class="box">
+	
+	<header class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<h1 class="mui-title">我的资料</h1>
+		<a class="mui-btn-link mui-pull-right" @click="finish()">
+			完成
+		</a>
+	</header>
+	<div class="mui-content">
+		<div class="head_img">
+			<!-- 头像 -->
+			<div class="img">
+				<img :src="headImg" >
+			</div>
+			<p type="button" ref="changeHeadImg" @click="changeHeadImg">
+				点击更换头像
+			</p>
+		</div>
+		<form class="mui-input-group formArea">
+			<div class="mui-input-row">
+				<label>用户昵称</label>
+				<input type="text" :value="userName" v-model="userName" placeholder="请输入用户昵称">
+			</div>
+			
+		</form>
+	</div>
+</div>
+</body>
+<script src="../../../js/vue.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../js/mui.min.js"></script>
+<script type="text/javascript">
+	const vue=new Vue({
+		el:".box",
+		data:{
+			api:"http://192.168.88.69:3200",
+			userData:[],
+			user_Id:"",   //用户id
+			userName:"",   //用户名
+			headImg:"",    //头像
+			captureImgArr:"", //存放选择的照片
+			
+			contro:false,
+			mui_init:null
+		},
+		watch:{
+			
+		},
+		created() {
+			this.getInformation();
+		},
+		mounted() {
+			mui.init();
+		},
+		methods:{
+			// 页面刚加载时根据页面传递的用户id获取用户名称以及头像
+			getInformation(){
+				let that=this;
+				// mui.plusReady(function () {
+				//     let self=plus.webview.currentWebview();
+				// 	that.user_Id=self.userId;
+				// 	ajax(that.user_Id);
+				// });
+				ajax("5eb7b553ee1d1a3988b5309a");
+				function ajax(userId){
+					mui.ajax(that.api+'/aboutMe',{
+						data:{
+							userId
+						},
+						dataType:'json',//服务器返回json格式数据
+						type:'post',//HTTP请求类型
+						timeout:10000,//超时时间设置为10秒；
+						success:function(data){
+							that.userName=data.data.userName;
+							that.headImg=data.data.headImg;
+							that.userData.push(...[data.data]);
+							
+						},
+						error:function(xhr,type,errorThrown){
+							mui.toast("请求信息失败,原因"+type)
+						}
+					});
+				}
+			},
+			
+			// 点击更换头像时调用原生操作表
+			changeHeadImg(){
+				// 设置操作表的选择项
+				let that=this;
+				var btnArray = [{title:"拍照"},{title:"从相册中选择"}];
+				let actinsStyle={
+					title:"请选择",
+					cancel:"取消",
+					buttons:btnArray
+				}
+				plus.nativeUI.actionSheet(actinsStyle,function(e){
+					let index=e.index;
+					let filePath=""
+					switch(index){
+						case 0:
+							console.log("点击了取消");
+						break;
+						case 1:
+							console.log("点击了拍照");
+							that.camera();  //打开手机的照相机
+						break;
+						case 2:
+							console.log("点击了从相册选择");
+							that.readPhoto();   //打开手机的相册
+						break;
+					}
+					
+				})
+			},
+			
+			// 如果选择的是拍照,调用这个原生方法可以调用手机照相机
+			camera(){
+				let that=this;
+				
+				// 得到照相机对象
+				let camera=plus.camera.getCamera();
+				
+				// 开始拍照camera.captureImage(success(path),errBack(),option:{} )
+				camera.captureImage(function(path){   //拍照成功的回调函数。path是拍的照片名的上一级目录名称；默认是doc，可在filename设置
+					
+					// 读取本地文件系统,plus.io.resolveLocalFileSystemURL(path,success(),errBack())
+						// 第一个参数path是要读取的文件的url，第二个参数是读取成功的回调，第三个参数是读取失败的回调
+					plus.io.resolveLocalFileSystemURL(path,function(entry){// 本地读取目录成功的回调
+						// entry.toLocalURL() 得到照片的整体路径；比如:file:///storage/emulated/0/Android/data/io.dcloud.HBuilder/apps/HBuilder/doc/muiCamera/1589866658942.jpg
+						that.captureImgArr=entry.toLocalURL();
+						// that.headImg=entry.toLocalURL();
+						that.upLoadImg()
+
+					},function(err){   // 本地读取url失败的回调
+						return false;
+					})
+					
+				},function(err){   //拍照失败的回调函数
+					return false;
+				},{
+					// 设置拍的照片存放的目录
+					filename:"_doc/muiCamera/"
+				})
+			},
+			
+			
+			// 如果选择的是从相册中选择,调用原生gallery模块,打开相册;
+			// plus.gallery.pick(success(),error(),optionsObj)
+			//   success(GalleryPickSuccessCallback | GalleryMultiplePickSuccessCallback) 必选   单选系统相册图片成功的回调|多选系统相册图片成功的回调
+			//   error()     可选,失败的回调
+			// 	 optionsObj   可选,对象形式，可设置最大的选择数量或者文件保存路径等
+			readPhoto(){
+				let that=this;
+				let gallery=plus.gallery;
+				gallery.pick(function(path){
+					that.captureImgArr=path;
+					that.upLoadImg();
+				},function(err){
+					console.log("打开失败"+err)
+				},{
+					filter:"image",   //默认只显示image(图片文件); 值还有video(视频文件)、none(都显示) 
+					maximum:1,      //最多选择的图片数量,取值范围为1到Infinity，默认值为Infinity。
+					multiple:false,    //是否可以多选图片
+				})
+			},
+			
+			
+			// 选到照片后,使用原生uploader模块，用于把本地文件上传到服务器
+			upLoadImg(){
+				let that=this;
+				let wait=plus.nativeUI.showWaiting("上传中");   //显示系统原生的类似loading的等待框，使用wait.close()关闭
+				console.log(that.captureImgArr)
+				// plus.uploader.createUpload(url,options,finish())
+				let upload=plus.uploader.createUpload(that.api+"/uploadHeadImg",{
+					method:"POST",  //上传方式,只有POST
+					timeout:10,   //服务端响应超时时间，单位秒
+					// ....
+				},function(uploadObj,statu){    //上传成功或者失败都会触发
+					// uploadObj  上传的upload任务对象
+					// statu   HTTP传输协议状态码，如果未获取传输状态则其值则为0，如上传成功其值通常为200。
+					
+					let responseText=JSON.parse(uploadObj.responseText);
+					if(responseText.code=="1"&&statu==200){
+						let imgPath=responseText.path.substring(6);   //将返回的临时地址中的 public 字段删掉改为服务端地址
+						that.headImg=that.api+imgPath;
+						
+						wait.close();   //关闭等待框
+						mui.toast("修改头像成功")
+					}else{
+						mui.toast("修改头像失败,稍后再试");
+						wait.close()
+					}
+				})
+				// addFile(要上传的文件路径,{key:...})  key必须写，默认是上传文件路径名称
+				upload.addFile(that.captureImgArr,{key:that.captureImgArr}); 
+				upload.start();   //开始上传，必须写
+			},
+			
+			// 点击完成时,将修改的用户名称提交到服务器,
+			// 服务器将头像从临时文件夹里移除并清空临时文件夹(防止用户而已上传图片缺不保存)
+			finish(){
+				
+				let that=this;
+				if(that.userName==""||that.userName.trim().length<=0){
+					console.log(that.userName)
+					mui.toast("用户名不能为空")
+					mui.plusReady(function () {
+						let self=plus.webview.currentWebview();
+						self.reload()
+					})
+					return false;
+				}else if(that.userName==that.userData[0].userName){   //判断用户昵称是否改变
+					mui.back()
+				}else{
+					mui.ajax(that.api+'/editUserName',{
+						data:{
+							// userId:that.user_Id,
+							_id:"5eb7b553ee1d1a3988b5309a",
+							userName:that.userName.trim(),
+							headImg:that.headImg
+						},
+						dataType:'json',//服务器返回json格式数据
+						type:'post',//HTTP请求类型
+						timeout:10000,//超时时间设置为10秒；
+						success:function(data){
+							if(data.code=="1"){
+								mui.toast("保存成功");
+								
+							}else{
+								mui.toast("保存失败")
+							}
+						},
+						error:function(xhr,type,errorThrown){
+							mui.toast("数据库连接失败,原因"+type);
+						}
+					});
+				}
+			},
+			
+			
+		},  //methods
+	})
+</script>
+</html>
