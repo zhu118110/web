@@ -36,16 +36,12 @@
 										
 				<dl class="mui-table-view" v-for="(val,ind) in my_collect"  :key="ind" v-if="val.collect_date == value">
 					
-					<dt class="mui-table-view-cell mui-media clear collct_dt">
+					<dt class="mui-table-view-cell clear collct_dt">
 						<!-- 复选按钮 -->
 						<div class="mui-input-row mui-checkbox mui-left my_checkbox" v-if="toggleAllChecked">
 							<input name="checkbox" :value="ind" v-model="singleCheckArr" type="checkbox" class="checkbox" @change="singleCheckChange(ind)">
 						</div>
-						<!-- 左滑删除 -->
-						<div class="mui-slider-right mui-disabled" >
-							<a class="mui-btn mui-btn-red"  ref="deleteSingle" @click="deleteSingle(ind)">删除</a>
-						</div>
-						
+					
 						<!--商品展示区域-->
 						<div class="mui-slider-handle collect_body">
 							
@@ -123,6 +119,7 @@
 				test:[]
 			},
 			filters:{
+				// 过滤价格
 				price(num){
 					num=Number(num).toFixed(2);
 					return num+"元"
@@ -133,7 +130,6 @@
 			},
 			mounted() {
 				mui.init();
-				
 			},
 			methods:{
 				// 页面刚加载时获取上一个页面传递的用户的id
@@ -172,13 +168,10 @@
 									return that.dateArr.indexOf(val)==index; 
 								});
 							}
-							
-							
 						}
 					})
 				},
-				
-				
+
 				// 点击导航的管理显示底部全选按钮；
 				// true显示每个商品的复选框；禁止左滑删除
 				// 给.mui-content添加.toggle类名
@@ -190,15 +183,6 @@
 						this.allChecked=[];
 						this.singleCheckArr=[];
 						this.deleteDisabled=true;
-						
-						mui(".mui-table-view").off("slideleft");
-						
-					}else{
-						
-						// 多选框出现时禁止左滑删除
-						mui(".mui-table-view").on("slideleft",".mui-table-view-cell",function(ele){
-							mui.swipeoutClose(this);
-						})	
 					}
 				},
 				
@@ -262,33 +246,13 @@
 							 del_arr.forEach((val,i)=>{
 								 prd_idArr.push(that.my_collect[val]._id)
 							 })
-							// 请求数据
+							// 请求数据，
 							that.delAjax(prd_idArr)
 
 						}
 					})
 				},
 				
-				// 左滑删除，参数是点击的商品的下标
-				deleteSingle(delIndex){
-					let btn=["否","是"]
-					let that=this;
-					let prd_idArr=[];  //保存选中的商品的_id
-						// 根据点击的下标得到点击的商品的id
-					prd_idArr.push(that.my_collect[delIndex]._id)
-					
-					
-					mui.confirm("确认删除?","",btn,function(e){
-							
-						if(e.index==1){
-							mui.swipeoutClose(that.$refs.deleteSingle[delIndex].parentNode.parentNode);
-							that.delAjax(prd_idArr);
-						}else{
-							mui.swipeoutClose(that.$refs.deleteSingle[delIndex].parentNode.parentNode);
-						}
-						
-					})
-				},
 				
 				
 				// 删除收藏的商品;参数是个数组，里边放着选中的商品的id

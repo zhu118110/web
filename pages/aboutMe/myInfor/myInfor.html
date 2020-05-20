@@ -54,7 +54,7 @@
 	<header class="mui-bar mui-bar-nav">
 		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
 		<h1 class="mui-title">我的资料</h1>
-		<a class="mui-btn-link mui-pull-right" @click="finish()">
+		<a class="mui-btn-link mui-pull-right" v-show="finishBtn" @click="finish()">
 			完成
 		</a>
 	</header>
@@ -67,6 +67,7 @@
 			<p type="button" ref="changeHeadImg" @click="changeHeadImg">
 				点击更换头像
 			</p>
+			<p>	{{finishBtn}}</p>
 		</div>
 		<form class="mui-input-group formArea">
 			<div class="mui-input-row">
@@ -91,18 +92,37 @@
 			headImg:"",    //头像
 			captureImgArr:"", //存放选择的照片
 			
-			contro:false,
-			mui_init:null
-		},
-		watch:{
+			finishBtn:false,
+			mui_init:null,
+			
 			
 		},
+		
 		created() {
 			this.getInformation();
 		},
 		mounted() {
+			
 			mui.init();
 		},
+		
+		watch:{
+			"userName":function(newVal,oldVal){
+				if(newVal!==this.userData[0].userName){
+					this.finishBtn=true;
+				}else{
+					this.finishBtn=false;
+				}
+			},
+			"headImg":function(newVal,oldVal){
+				if(newVal!==this.userData[0].headImg){
+					this.finishBtn=true;
+				}else{
+					this.finishBtn=false;
+				}
+			}
+		},
+		
 		methods:{
 			// 页面刚加载时根据页面传递的用户id获取用户名称以及头像
 			getInformation(){
@@ -178,10 +198,9 @@
 						// 第一个参数path是要读取的文件的url，第二个参数是读取成功的回调，第三个参数是读取失败的回调
 					plus.io.resolveLocalFileSystemURL(path,function(entry){// 本地读取目录成功的回调
 						// entry.toLocalURL() 得到照片的整体路径；比如:file:///storage/emulated/0/Android/data/io.dcloud.HBuilder/apps/HBuilder/doc/muiCamera/1589866658942.jpg
+						
 						that.captureImgArr=entry.toLocalURL();
-						// that.headImg=entry.toLocalURL();
-						that.upLoadImg()
-
+						that.headImg=entry.toLocalURL();
 					},function(err){   // 本地读取url失败的回调
 						return false;
 					})
@@ -204,8 +223,9 @@
 				let that=this;
 				let gallery=plus.gallery;
 				gallery.pick(function(path){
-					that.captureImgArr=path;
-					that.upLoadImg();
+					that.captureImgArr=path;   //要往服务器发送的头像路径
+					
+					that.headImg=path;  //更改头像路径
 				},function(err){
 					console.log("打开失败"+err)
 				},{
@@ -219,7 +239,7 @@
 			// 选到照片后,使用原生uploader模块，用于把本地文件上传到服务器
 			upLoadImg(){
 				let that=this;
-				let wait=plus.nativeUI.showWaiting("上传中");   //显示系统原生的类似loading的等待框，使用wait.close()关闭
+				let wait=plus.nativeUI.showWaiting("修改中");   //显示系统原生的类似loading的等待框，使用wait.close()关闭
 				console.log(that.captureImgArr)
 				// plus.uploader.createUpload(url,options,finish())
 				let upload=plus.uploader.createUpload(that.api+"/uploadHeadImg",{
@@ -232,23 +252,32 @@
 					
 					let responseText=JSON.parse(uploadObj.responseText);
 					if(responseText.code=="1"&&statu==200){
-						let imgPath=responseText.path.substring(6);   //将返回的临时地址中的 public 字段删掉改为服务端地址
-						that.headImg=that.api+imgPath;
-						
 						wait.close();   //关闭等待框
-						mui.toast("修改头像成功")
+						mui.toast("修改成功")
+						
+						let oldBack=mui.back;
+						mui.back=function(){
+							var aboutMe = plus.webview.getWebviewById('aboutMe');
+							mui.fire(aboutMe,"clearStorage",{
+								statu:true
+							})
+							oldBack()
+						}
+						
 					}else{
-						mui.toast("修改头像失败,稍后再试");
+						mui.toast("修改失败,稍后再试");
 						wait.close()
 					}
 				})
 				// addFile(要上传的文件路径,{key:...})  key必须写，默认是上传文件路径名称
 				upload.addFile(that.captureImgArr,{key:that.captureImgArr}); 
+				// upload.addData("_id":that.user_Id);
+				upload.addData("_id","5eb7b553ee1d1a3988b5309a");  //用户id
 				upload.start();   //开始上传，必须写
 			},
 			
-			// 点击完成时,将修改的用户名称提交到服务器,
-			// 服务器将头像从临时文件夹里移除并清空临时文件夹(防止用户而已上传图片缺不保存)
+			// 点击完成按钮时,将修改的用户名称提交到服务器,
+			
 			finish(){
 				
 				let that=this;
@@ -260,8 +289,6 @@
 						self.reload()
 					})
 					return false;
-				}else if(that.userName==that.userData[0].userName){   //判断用户昵称是否改变
-					mui.back()
 				}else{
 					mui.ajax(that.api+'/editUserName',{
 						data:{
@@ -275,8 +302,8 @@
 						timeout:10000,//超时时间设置为10秒；
 						success:function(data){
 							if(data.code=="1"){
-								mui.toast("保存成功");
 								
+								that.upLoadImg()
 							}else{
 								mui.toast("保存失败")
 							}

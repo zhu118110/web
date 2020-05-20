@@ -14,36 +14,32 @@
 	
 	</style>
 	<body style="line-height: none;">
-		
-		
+		<!-- 11111 -->
 	</body>
 	<script src="../../js/mui.min.js"></script>
 	<script src="../../js/webviewGroup.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
-		
 		mui.init({
-			subpages:[{
-				  url:"top-tab/tabmain.html",//子页面HTML地址，支持本地地址和网络地址
-				  id:"tabmain.html",//子页面标志
-			}]
+			keyEventBind: {
+				backbutton: false  //关闭back按键监听
+			},
+			
 		});
-	
-	
-		window.addEventListener("loadPages",function(e){
-			
-			var index=plus.webview.getWebviewById("index");
 		
-			if(e.detail.flag==false){
-				
-				index.close()
-			}else{
-				index.show()
-				// index.show()
-			}
-			
+		mui.openWindow({
+			url:"top-tab/tabmain.html",//子页面HTML地址，支持本地地址和网络地址
+			id:"tabmain.html",//子页面标志
 		})
 		
-		
-		
+		window.addEventListener("loadPages",function(e){
+			if(e.detail.flag==true){
+				
+				mui.openWindow({
+					url:"top-tab/tabmain.html",//子页面HTML地址，支持本地地址和网络地址
+					id:"tabmain.html",//子页面标志
+				})
+			}
+		})
+	
 	</script>
 </html>

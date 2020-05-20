@@ -22,9 +22,9 @@
 		  <!-- 侧滑菜单 -->
 		  <aside class="mui-off-canvas-left myaside" onclick="tz('.myaside')">
 			  <!-- 侧滑头像 -->
-			<header class="myaside_header">
+			<header class="myaside_header mytx">
 				<div style="border-radius: 50%;overflow: hidden;">
-					<img class="mui-media-object mui-pull-left" src="../../img/0.jpg">
+					<img class="mui-media-object mui-pull-left" :src="heade_img">
 				</div>
 				<div class="mui-media-body">
 					<p >{{userName}}</p>
@@ -76,7 +76,7 @@
 				</a>
 			</ul>
 			<ul class="mui-table-view">
-				<a @click="toLogin()">
+				<a @click="toLogin()" data-url="../login/login.html" data-id="login.html">
 					<li class="mui-table-view-cell">
 						退出登录
 					</li>
@@ -92,7 +92,7 @@
 				<ul class="mui-table-view mui-table-view-chevron">
 					<li class="mui-table-view-cell mui-media">
 						<a class="mui-navigate-right mytx">
-							<div style="border-radius: 50%;overflow: hidden;">
+							<div>
 								<img class="mui-media-object mui-pull-left" :src="heade_img">
 							</div>
 							
@@ -321,14 +321,6 @@
 						}
 					});
 					prePage.show()
-					
-					// mui.openWindow({
-					// 	url,
-					// 	id,
-					// 	extras:{
-					// 		userId
-					// 	}
-					// })
 				})
 			}
 			
@@ -345,7 +337,7 @@
 		data:{
 			api:"http://192.168.88.69:3200",
 			userName:"请先登录",
-			heade_img:"../../img/0.jpg"
+			heade_img:""
 		},
 		created() {
 			this.getStorage()
@@ -403,14 +395,12 @@
 			// 点击退出登录跳转到登录页面
 			// 清除本地存储的用户id
 			toLogin(){
-				mui.openWindow({
-					url:"../login/login.html",
-					id:"login.html",
-				});
+				console.log("退出登录清理缓存")
 				mui.plusReady(function(){
 					//退出登录时清除本地存储的用户id
 					plus.storage.removeItem("account");
-				})
+				});
+				
 			},
 			
 			// 点击顶部我的信息显示侧滑导航，再点击时关闭

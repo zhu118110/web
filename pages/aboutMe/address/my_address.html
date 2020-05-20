@@ -116,8 +116,6 @@
 				<form class="mui-input-group">
 				    <div class="mui-input-row">
 						<label>收件人</label>
-							
-						
 						<input type="text" class="mui-input-clear" :value="recipients" v-model="recipients" placeholder="收件人">
 				    </div>
 				    <div class="mui-input-row">
@@ -176,7 +174,7 @@
 				
 				this.reloadAddAddress();//预加载添加地址页面
 				this.selectAddress();   //请求后台加载所有地址
-				this.chooseCity();// 初始化地址选择器
+			
 			},
 			mounted() {
 				let that=this;
@@ -185,7 +183,7 @@
 			},
 			
 			methods:{
-				// 初始化设置地址选择器
+				// 设置地址选择器
 				chooseCity(){
 					this.cityPicker = new mui.PopPicker({
 						layer: 3,    //选择器列数
@@ -201,6 +199,7 @@
 				// 点击显示地址选择器
 				showCityPicker(){
 					let that=this;
+					that.chooseCity()
 					that.cityPicker.show(function(items) {
 						that.province=items[0].text||"";
 						that.city=items[1].text||"";
@@ -308,6 +307,9 @@
 					let btn=["否","是"]
 					mui.confirm("确认删除?","",btn,function(e){
 						if(e.index==1){
+							if(index==that.radio){
+								that.radio=""
+							}
 							mui.ajax(that.api+"/delAddress",{
 								data:{
 									userId:that.userId,
@@ -337,9 +339,7 @@
 					let that=this;
 					that.editIndex=index;
 					mui("#sheet1").popover("toggle",that.$refs.edit);   //显示要编辑的内容
-					document.querySelector("#sheet1").addEventListener("tap",function(){
-						that.cityPicker.hide()
-					})
+					
 					that.recipients=that.addressArray[that.editIndex].recipients;   //收件人
 					that.phone=that.addressArray[that.editIndex].phone;  //手机号
 					that.province=that.addressArray[that.editIndex].province;   //省

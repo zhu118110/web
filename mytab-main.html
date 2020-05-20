@@ -18,87 +18,190 @@
 </head>
 <body>
 	
-		<nav class="mui-bar mui-bar-tab my-mui-bar">
-			<a class="mui-tab-item mui-active" href="pages/index/index.html" data-id="index">
-				<span class="mui-icon mui-icon-home"></span>
-				<span class="mui-tab-label">首页</span>
-			</a>
-			<a class="mui-tab-item" href="pages/classify/classify.html" data-id="classify">
-				<span class="mui-icon mui-icon-list"></span>
-				<span class="mui-tab-label">分类</span>
-			</a>
-			<a class="mui-tab-item" href="pages/shopCar/shopCar.html" data-id="shopCar">
-				<span class="mui-icon iconfont icon-gouwuchekong"></span>
-				<span class="mui-tab-label"> 购物车</span>
-			</a>
-			<a class="mui-tab-item" href="pages/aboutMe/aboutMe.html" data-id="aboutMe">
-				<span class="mui-icon mui-icon-contact"></span>
-				<span class="mui-tab-label">我的</span>
-			</a>
-		</nav>
+	<nav class="mui-bar mui-bar-tab my-mui-bar">
+		<a class="mui-tab-item mui-active first" href="pages/index/index.html" data-id="index">
+			<span class="mui-icon mui-icon-home"></span>
+			<span class="mui-tab-label">首页</span>
+		</a>
+		<a class="mui-tab-item" href="pages/classify/classify.html" data-id="classify">
+			<span class="mui-icon mui-icon-list"></span>
+			<span class="mui-tab-label">分类</span>
+		</a>
+		<a class="mui-tab-item" href="pages/shopCar/shopCar.html" data-id="shopCar">
+			<span class="mui-icon iconfont icon-gouwuchekong"></span>
+			<span class="mui-tab-label"> 购物车</span>
+		</a>
+		<a class="mui-tab-item" href="pages/aboutMe/aboutMe.html" data-id="aboutMe">
+			<span class="mui-icon mui-icon-contact"></span>
+			<span class="mui-tab-label">我的</span>
+		</a>
+	</nav>
 	
 </body>
 	<script type="text/javascript" charset="utf-8">
-	
-		mui.init();
-		mui.plusReady(function () {
-			var self = plus.webview.currentWebview(); 
-			
-			var styles = {  
-				top: '0',  
-				bottom: '50px',
-				render: 'always',
-			};  
-			
-			var tabsConfig = [{  
-					url:'pages/index/index.html',  
-					id:"index",
-					
-					default: true ,
-					
-				}];  
-			var current;  //记录当前窗口id
-			for(let i=0;i<1;i++){
-				var sub = plus.webview.create(tabsConfig[i].url, tabsConfig[i].id, styles); 
-				if (i > 0) {
-					sub.hide();
-				};
-				self.append(sub);
-				current=tabsConfig[i].id;
-			};
-			mui('.mui-bar-tab').on('tap', 'a', function(e) {
-				let href=this.getAttribute("href");
-				let id=this.getAttribute("data-id");
-				if (id==current) {  
-					return;  
-				} 
-				var index = plus.webview.getWebviewById('index');
-				// 点击首页的时候,触发自定义事件,控制主页内容显示或者隐藏
-				if(id!=="index"){
-					mui.fire(index,"loadPages",{
-						flag:false
-					})
-				}
-				
-				switch(id){
-					
-					case id=="index":
-						mui.fire(index,"loadPages",{
-							flag:true
-						})
-					break;
-					
-				}
-				var self = plus.webview.currentWebview();
-				var sub = plus.webview.create(href, id, styles);
-				self.append(sub);
-				//隐藏当前;
-				plus.webview.close(current);
-				current = id;  
-			});  
+		var styles = {
+			top: '0',  
+			bottom: '50px',
+			render: 'always',
+		}; 
+		let tabPages=[{
+			url:'pages/index/index.html',  
+			id:"index",
+			subpages:[{  //预加载页面的子页面
+				  url:"pages/index/top-tab/tabmain.html",
+				  id:"tabmain.html",
+				}],
+			styles,
+			},{
+				url:'pages/classify/classify.html',  
+				id:"classify",
+				styles
+			},{
+				url:'pages/shopCar/shopCar.html',  
+				id:"shopCar",
+				styles
+			},{
+				url:'pages/aboutMe/aboutMe.html',  
+				id:"aboutMe",
+				styles
+		}];
+		mui.init({
+			// keyEventBind: {
+			//    backbutton: false,  //Boolean(默认true)关闭back按键监听  
+			//    menubutton: true   //Boolean(默认true)关闭menu按键监听  
+			// },
+			// 预加载页面，
+			preloadPages:[{
+				url:'pages/index/index.html',  
+				id:"index",
+				subpages:[{  //预加载页面的子页面
+					  url:"pages/index/top-tab/tabmain.html",
+					  id:"tabmain.html",
+					}],
+				styles,
+				},{
+					url:'pages/classify/classify.html',  
+					id:"classify",
+					styles
+				},{
+					url:'pages/shopCar/shopCar.html',  
+					id:"shopCar",
+					styles
+				},{
+					url:'pages/aboutMe/aboutMe.html',  
+					id:"aboutMe",
+					styles
+				}]
+		});
+		 var page;	
+		let first=document.querySelector(".first");
+		first.addEventListener("tap",function(){
+			let firstPage;	
+			let url=this.getAttribute("href");
+			let id=this.getAttribute("data-id");
+			mui.openWindow({
+				url: 'pages/index/index.html',
+				id: 'index',
+				styles,
+				subpages:[{  //预加载页面的子页面
+				  url:"pages/index/top-tab/tabmain.html",
+				  id:"tabmain.html",
+				}],
+			}) 
+		})
+		 setTimeout(function(){
+			 mui.trigger(first,'tap');
+		 },200)
+		
+		// setTimeout(function(){
+		// 	mui.openWindow({
+		// 		url: 'pages/index/index.html',
+		// 		id: 'index',
+		// 		styles,
+		// 		subpages:[{  //预加载页面的子页面
+		// 		  url:"pages/index/top-tab/tabmain.html",
+		// 		  id:"tabmain.html",
+		// 		}],
+		// 	}) 
+		// },200)
+		
+		
+		// 点击导航时切换页面，
+		mui('.mui-bar-tab').on('tap', 'a', function(e) {
+			let url=this.getAttribute("href");
+			let id=this.getAttribute("data-id");
+			page = mui.preload({
+			    url,
+			   	id,
+			    styles,//窗口参数
+			});
+			page.show()
+		})
 			
 		
-		})
+		
+		
+		
+		
+		
+		
+		// mui.plusReady(function () {
+		// 	var self = plus.webview.currentWebview(); 
+			
+		// 	var styles = {  
+		// 		top: '0',  
+		// 		bottom: '50px',
+		// 		render: 'always',
+		// 	};  
+			
+		// 	var tabsConfig = [{  
+		// 			url:'pages/index/index.html',  
+		// 			id:"index",
+					
+		// 			default: true ,
+					
+		// 		}];  
+		// 	var current;  //记录当前窗口id
+		// 	for(let i=0;i<1;i++){
+		// 		var sub = plus.webview.create(tabsConfig[i].url, tabsConfig[i].id, styles); 
+		// 		if (i > 0) {
+		// 			sub.hide();
+		// 		};
+		// 		self.append(sub);
+		// 		current=tabsConfig[i].id;
+		// 	};
+		// 	mui('.mui-bar-tab').on('tap', 'a', function(e) {
+		// 		let href=this.getAttribute("href");
+		// 		let id=this.getAttribute("data-id");
+		// 		if (id==current) {  
+		// 			return;  
+		// 		} 
+		// 		var index = plus.webview.getWebviewById('index');
+		// 		// 点击首页的时候,触发自定义事件,控制主页内容显示或者隐藏
+		// 		if(id!=="index"){
+		// 			mui.fire(index,"loadPages",{
+		// 				flag:false
+		// 			})
+		// 		}
+				
+		// 		switch(id){
+					
+		// 			case id=="index":
+		// 				mui.fire(index,"loadPages",{
+		// 					flag:true
+		// 				})
+		// 			break;
+					
+		// 		}
+		// 		var self = plus.webview.currentWebview();
+		// 		var sub = plus.webview.create(href, id, styles);
+		// 		self.append(sub);
+		// 		plus.webview.close(current);
+		// 		current = id;  
+		// 	});  
+			
+		
+		// })
 	
    
     </script>
