@@ -94,8 +94,6 @@
 		})
 	})
 	
-	
-	
 	const login=new Vue({
 		el:".box",
 		data:{
@@ -121,7 +119,7 @@
 			},
 		},
 		watch:{
-			// 监听输入的手机号数据,如果不为空 验证码按钮就不禁用
+			// 监听输入的手机号数据,如果不为空 验证码按钮就可以点击，否则禁用
 			"phone":function(newNum,oldNum){
 				if(newNum!==""){
 					this.yzmDisabled=false
@@ -136,18 +134,14 @@
 		},
 		mounted() {
 			let that=this;
-			mui.init({
-				
-				beforeback:function(){
-					var aboutMe = plus.webview.getWebviewById('aboutMe');
-					// // 返回前判断本地存储的用户id是否存在,不存在则返回到主页
-					// let storage=plus.storage.getItem("account");
-					
-					mui.fire(aboutMe,"clearStorage",{
-						statu:that.isLogin
-					})
-				}
-			});
+			mui.init({});
+			// 进入登录页面时，将‘我的’ 页面刷新,
+			mui.plusReady(function () {
+				var aboutMe = plus.webview.getWebviewById('aboutMe');
+				mui.fire(aboutMe,"clearStorage",{
+					statu:that.isLogin
+				});
+			})
 			
 		},
 		methods:{
@@ -287,22 +281,28 @@
 				}
 			},
 			
-			// 点击登录时设置storage，将用户id存到手机storage中
+			// 点击登录按钮时设置storage，将用户id存到手机storage中
 			setStorage(id){
 				let that =this;
 				mui.plusReady(function () {
 					// setItemAsync异步设置storage
 					// plus.storage.setItemAsync(key,value,successFallback,errorFallback)
 				    plus.storage.setItem("account",id);
-					let ac=plus.storage.getItem("account");
-					if(ac){
+					let  user_id=plus.storage.getItem("account");
+					// 如果手机号或者账号验证已经通过，刷新 关于我的  页面
+					if(user_id){
 						that.isLogin=true;
+						var aboutMe = plus.webview.getWebviewById('aboutMe');
+						mui.fire(aboutMe,"clearStorage",{
+							statu:that.isLogin
+						});
+						
 					}
 					
 				})
 			},
 			
-			// 监测手机返回按钮，
+			
 			
 		}
 	})

@@ -135,12 +135,12 @@
 				// 页面刚加载时获取上一个页面传递的用户的id
 				getUserId(){
 					let that=this;
-					// mui.plusReady(function () {
-					//     let self=plus.webview.currentWebview();
-					// 	that.user_Id=self.userId;
-					// 	that.getCollectPrd(that.user_Id);
-					// })
-					that.getCollectPrd("5eb7b553ee1d1a3988b5309a");
+					mui.plusReady(function () {
+					    let self=plus.webview.currentWebview();
+						that.user_Id=self.userId;
+						that.getCollectPrd(that.user_Id);
+					})
+					// that.getCollectPrd("5eb7b553ee1d1a3988b5309a");
 				},
 				 // 根据用户id请求后台获取用户收藏的商品
 				getCollectPrd(user_Id){
@@ -260,8 +260,8 @@
 					let that=this;
 					mui.ajax(that.api+'/delCollect',{
 						data:{
-							// userId:that.user_Id,
-							userId:"5eb7b553ee1d1a3988b5309a",
+							userId:that.user_Id,
+							// userId:"5eb7b553ee1d1a3988b5309a",
 							prd_idArr:JSON.stringify(prd_idArr)
 						},
 						dataType:'json',//服务器返回json格式数据
@@ -272,8 +272,8 @@
 								mui.toast("删除商品成功");
 								that.my_collect=[];
 								
-								// that.getCollectPrd(that.user_Id)
-								that.getCollectPrd("5eb7b553ee1d1a3988b5309a");
+								that.getCollectPrd(that.user_Id)
+								// that.getCollectPrd("5eb7b553ee1d1a3988b5309a");
 								
 								that.singleCheckArr = []; //     清空选中的商品
 								that.allChecked=[];   //取消全选

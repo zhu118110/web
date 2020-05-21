@@ -337,7 +337,7 @@
 		data:{
 			api:"http://192.168.88.69:3200",
 			userName:"请先登录",
-			heade_img:""
+			heade_img:"../../img/0.jpg"
 		},
 		created() {
 			this.getStorage()
@@ -365,7 +365,7 @@
 				  // console.log(`key是${idKey},value是${idValue}`);
 				  ajax(idValue)
 				});
-				// 根据用户的id请求后台，回去用户数据
+				// 根据用户的id请求后台，获取用户数据
 				function ajax(id){
 					mui.ajax(that.api+"/aboutMe",{
 						data:{
@@ -375,6 +375,7 @@
 						timeout:10000,
 						success:function(data){
 							if(data.data){
+								
 								let dataArr=[];
 								dataArr.push(...[data.data])
 								dataArr.forEach(val=>{
@@ -382,6 +383,9 @@
 									that.heade_img=val.headImg;   //用户头像
 									// console.log("userName是"+that.userName)
 								})
+							}else{
+								that.userName=that.userName;
+								that.heade_img=that.heade_img
 							}
 						},
 						error:function(xhr,type){
@@ -399,6 +403,7 @@
 				mui.plusReady(function(){
 					//退出登录时清除本地存储的用户id
 					plus.storage.removeItem("account");
+				
 				});
 				
 			},
@@ -411,7 +416,6 @@
 					mui.openWindow({
 						url:"../login/login.html",
 						id:"login.html",
-						
 					});
 				}else{
 					mui(this.$refs.wrap).offCanvas().toggle();

@@ -211,7 +211,7 @@
 					<button type="button" class="mui-btn" ref="joinCar" @click="joinCar">
 						加入购物车
 					</button>
-					<button type="button" class="mui-btn">
+					<button type="button" class="mui-btn" @click="buy">
 						立即购买
 					</button>
 				</div>
@@ -399,6 +399,11 @@
 				// 点击加入购物车弹出商品属性菜单
 				joinCar(){
 					
+				},
+				
+				// 点击立即购买跳转到购买页
+				buy(){
+					mui.openWindow('../buy/buy.html','buy.html')
 				}
 			}
 		})

@@ -66,10 +66,10 @@
 				styles
 		}];
 		mui.init({
-			// keyEventBind: {
-			//    backbutton: false,  //Boolean(默认true)关闭back按键监听  
-			//    menubutton: true   //Boolean(默认true)关闭menu按键监听  
-			// },
+			keyEventBind: {
+			   backbutton: false,  //Boolean(默认true)关闭back按键监听  
+			   menubutton: false   //Boolean(默认true)关闭menu按键监听  
+			},
 			// 预加载页面，
 			preloadPages:[{
 				url:'pages/index/index.html',  
@@ -93,12 +93,8 @@
 					styles
 				}]
 		});
-		 var page;	
-		let first=document.querySelector(".first");
-		first.addEventListener("tap",function(){
-			let firstPage;	
-			let url=this.getAttribute("href");
-			let id=this.getAttribute("data-id");
+		mui.plusReady(function () {
+		    let wait=plus.nativeUI.showWaiting("加载中,客官请稍等");
 			mui.openWindow({
 				url: 'pages/index/index.html',
 				id: 'index',
@@ -107,27 +103,21 @@
 				  url:"pages/index/top-tab/tabmain.html",
 				  id:"tabmain.html",
 				}],
-			}) 
+			})
+			setTimeout(function(){
+				wait.close()
+			},1000)
 		})
-		 setTimeout(function(){
-			 mui.trigger(first,'tap');
-		 },200)
+				
+				
+			
 		
-		// setTimeout(function(){
-		// 	mui.openWindow({
-		// 		url: 'pages/index/index.html',
-		// 		id: 'index',
-		// 		styles,
-		// 		subpages:[{  //预加载页面的子页面
-		// 		  url:"pages/index/top-tab/tabmain.html",
-		// 		  id:"tabmain.html",
-		// 		}],
-		// 	}) 
-		// },200)
+		
 		
 		
 		// 点击导航时切换页面，
 		mui('.mui-bar-tab').on('tap', 'a', function(e) {
+			var page;	
 			let url=this.getAttribute("href");
 			let id=this.getAttribute("data-id");
 			page = mui.preload({
@@ -138,71 +128,6 @@
 			page.show()
 		})
 			
-		
-		
-		
-		
-		
-		
-		
-		// mui.plusReady(function () {
-		// 	var self = plus.webview.currentWebview(); 
-			
-		// 	var styles = {  
-		// 		top: '0',  
-		// 		bottom: '50px',
-		// 		render: 'always',
-		// 	};  
-			
-		// 	var tabsConfig = [{  
-		// 			url:'pages/index/index.html',  
-		// 			id:"index",
-					
-		// 			default: true ,
-					
-		// 		}];  
-		// 	var current;  //记录当前窗口id
-		// 	for(let i=0;i<1;i++){
-		// 		var sub = plus.webview.create(tabsConfig[i].url, tabsConfig[i].id, styles); 
-		// 		if (i > 0) {
-		// 			sub.hide();
-		// 		};
-		// 		self.append(sub);
-		// 		current=tabsConfig[i].id;
-		// 	};
-		// 	mui('.mui-bar-tab').on('tap', 'a', function(e) {
-		// 		let href=this.getAttribute("href");
-		// 		let id=this.getAttribute("data-id");
-		// 		if (id==current) {  
-		// 			return;  
-		// 		} 
-		// 		var index = plus.webview.getWebviewById('index');
-		// 		// 点击首页的时候,触发自定义事件,控制主页内容显示或者隐藏
-		// 		if(id!=="index"){
-		// 			mui.fire(index,"loadPages",{
-		// 				flag:false
-		// 			})
-		// 		}
-				
-		// 		switch(id){
-					
-		// 			case id=="index":
-		// 				mui.fire(index,"loadPages",{
-		// 					flag:true
-		// 				})
-		// 			break;
-					
-		// 		}
-		// 		var self = plus.webview.currentWebview();
-		// 		var sub = plus.webview.create(href, id, styles);
-		// 		self.append(sub);
-		// 		plus.webview.close(current);
-		// 		current = id;  
-		// 	});  
-			
-		
-		// })
-	
-   
+
     </script>
 </html>

@@ -98,9 +98,9 @@
 						<p>
 							{{item.province}} {{item.city}} {{item.district}} {{item.detailAddress}} 
 						</p>
-						<span class="iconfont icon-guanbi close" @click="deleteAddress(index)"></span>
+						<span class="iconfont icon-guanbi close" v-if="fromBuyIsHide" @click="deleteAddress(index)"></span>
 					 </dd>
-					 <dd class="edit">
+					 <dd class="edit" v-if="fromBuyIsHide">
 						 <div class="mui-input-row mui-radio" @click="setDefault(index)">
 						 	<label>设为默认</label>
 						 	<input name="radio1" type="radio" :value="index" v-model="radio">
@@ -136,7 +136,7 @@
 				</form>
 			</div>
 			
-			<div class="noAddress">
+			<div class="noAddress" v-if="fromBuyIsHide">
 				<div @click="noAddress" ref="noAddress">
 					<i class="iconfont icon-del"></i>
 					<span>添加地址</span>
@@ -149,6 +149,7 @@
 	<script src="../../../js/city.data-3.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../../../js/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
+		
 		
 		
 		var vue=new Vue({
@@ -168,21 +169,49 @@
 				province:"411",   //省
 				city:"555",   //市
 				district:"666",   //县/区
-				detailAddress:""   //详细地址
+				detailAddress:""   ,//详细地址
+				
+				fromBuyIsHide:true,   //如果通过购买页面进来的页面将 编辑、默认、删除地址 隐藏。
 			},
 			created() {
 				
 				this.reloadAddAddress();//预加载添加地址页面
 				this.selectAddress();   //请求后台加载所有地址
-			
+				
+				
 			},
 			mounted() {
-				let that=this;
+				// let that=this;
 				mui.init();
+				this.formBuyPage()
 				
 			},
 			
 			methods:{
+				// 判断是否是 购买页面 进来选择地址的
+				formBuyPage(){
+					let that=this;
+					mui.plusReady(function () {
+					    let buyPage=plus.webview.getWebviewById("buy.html");
+						let self=plus.webview.currentWebview();
+						
+						if(self.fromBuy==true){
+							that.fromBuyIsHide=false
+							mui(".haveAddress").on("tap","dl",function(){
+								
+								let sibings=this.parentNode.children;
+								let index=[].indexOf.call(sibings,this);   //获取到点击的下标
+								mui.fire(buyPage,"choiceAddress",{   //触发购买页面的,自定义事件，参数是选择的地址信息
+									address:that.addressArray[index]
+								})
+								mui.back()
+							})
+						}else{
+							that.fromBuyIsHide=false
+						}
+					})
+				},
+				
 				// 设置地址选择器
 				chooseCity(){
 					this.cityPicker = new mui.PopPicker({
@@ -209,13 +238,13 @@
 						that.$refs.city.value=`${that.province} ${that.city} ${that.district}`
 					});
 				},
-				// 页面刚加载时查找用户有没有添加地址
 				
+				// 页面刚加载时查找用户有没有添加地址
 				selectAddress(){
 					let that=this;
 					mui.plusReady(function () {
 						that.userId=plus.storage.getItem("account");
-						ajax(that.userId)
+						ajax(that.userId);
 					})
 					// ajax("5eb7b553ee1d1a3988b5309a")
 					function ajax(userId){
@@ -252,7 +281,7 @@
 				noAddress(){
 					let that=this;
 					that.$refs.noAddress.addEventListener("tap",function(){
-						console.log(1111)
+					
 						that.AddAddressPage.show()
 						
 					},false)
@@ -277,7 +306,6 @@
 				
 				// 点击设置默认地址,改变下标
 				setDefault(index){
-					
 					let that=this;
 					that.radio=index;
 					mui.ajax(that.api+"/setDefault",{
@@ -350,7 +378,7 @@
 					
 				},
 				
-				// 点击确认更改 向后台发送数据
+				// 点击确认更改的地址信息 向后台发送数据
 				sureEdit(){
 					let that=this;
 					mui.ajax(that.api+'/editAddress',{

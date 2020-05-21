@@ -13,28 +13,31 @@
 </head>
 
 <body>
+<div class="box">
 	<header class="mui-bar mui-bar-nav">
 		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
 		<h1 class="mui-title">立即购买</h1>
 	</header>
 	<div class="mui-content">
+		
 		<ul class="mui-table-view">
-			<li class="mui-table-view-cell">
+			<li class="mui-table-view-cell" v-for="(item,index) in address" @click="chooseAddres">
 				<a class="mui-navigate-right my_navigate_right">
 					<span class="iconfont icon-tianjiadizhi"></span>
-					<div class="address">
+					<div v-if="address.length<=0">
+						没有默认地址，点击选择
+					</div>
+					<div class="address" v-else>
 						<p>
 							<span style="font-weight: 600;">
-								收件人
+								{{item.recipients}}
 							</span> 
 							<span>
-								15111111111
+								{{item.phone}}
 							</span>  
-							<!-- {{item.recipients}},{{item.phone}} -->
 						</p>
 						<p>
-							山西省 长治市 长子县  鹤沙航城199号汇善佳苑8号楼202
-							<!-- {{item.province}} {{item.city}} {{item.district}} {{item.detailAddress}} -->
+							{{item.province}} {{item.city}} {{item.district}} {{item.detailAddress}}
 						</p>
 						
 					</div>
@@ -65,7 +68,8 @@
 							<div style="color: #d01c27;">
 								<span style="font-size: 12px;">￥</span>
 								<span>
-									140.00
+									<!-- 140.00 -->
+									{{testPrice}}
 								</span>
 								<!-- <span>{{val.prd_price|price}}</span> -->
 							</div>
@@ -81,47 +85,140 @@
 					<span>
 						购买数量
 					</span>
-					<div class="mui-numbox" data-numbox-min='1' data-numbox-max='10'>
-					  <!-- "-"按钮，点击可减小当前数值 -->
-					  <button class="mui-btn mui-numbox-btn-minus" type="button">-</button>
-					  <input class="mui-numbox-input" :value="buyNumber" v-model="buyNumber" type="number"/>
-					  <!-- "+"按钮，点击可增大当前数值 -->
-					  <button class="mui-btn mui-numbox-btn-plus" type="button">+</button>
+					<div class="my_numbox">
+						<button type="button" class="mui-btn mui-btn-outlined" :disabled="subtractBtn" @click="buyNumber-=1">-</button>
+						<input type="number":value="buyNumber" readonly="readonly" v-model="buyNumber" @blur="blur"/>
+						<button type="button" class="mui-btn mui-btn-outlined" :disabled="addBtn" @click="buyNumber+=1">+</button>
 					</div>
 				</dt>
 			</dl>
 		</div><!--商品展示结束-->
 		
 	</div>
-	<footer class="mui-bar mui-bar-tab my-mui-bar" v-if="toggleAllChecked==true">
+	<footer class="mui-bar mui-bar-tab my-mui-bar">
 		<div class="tab">
 			<div>
-				实付款:<span style="color:#d01c27">￥39.00 免运费</span>
+				实付款:<span style="color:#d01c27">￥{{this.totle}} 免运费</span>
 			</div>
 			<button type="button" class="mui-btn mui-btn-red">
 				立即支付
 			</button>
 		</div>
 	</footer>
+</div>
 </body>
 <script src="../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../js/vue.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
-	mui.init()
+	
+	
+	
+	
+	
 	const vue=new Vue({
-		el:".mui-content",
+		el:".box",
 		data:{
 			userId:"",
 			api:"http://192.168.88.69:3200",
-			recipients:"",
-			phone:"",
-			province:"",
-			city:"",
-			district:"",
-			detailAddress:"",
-			prdInfor:[],
-			buyNumber:1
+			address:[],   //地址
+			prdInfor:[],    //存放产品信息
+			buyNumber:1,   //购买数量
+			testPrice:50,   //测试用的价格
 			
+			subtractBtn:true,  //控制减少按钮是否禁用
+			addBtn:false,   //控制添加按钮是否禁用
+		},
+		mounted() {
+			mui.init();
+			this.choiceAddress()
+		},
+		created() {
+			this.getAddress()
+		},
+		methods:{
+			//  接收地址页面的点击的那个地址
+			choiceAddress(){
+				let that=this;
+				// 自定义事件
+				window.addEventListener("choiceAddress",function(e){
+					if(e.detail.address){
+						that.address=[];
+						that.address.push(e.detail.address);
+					}else{
+						console.log("没有获取到地址")
+					}
+				})
+			},
+			
+			// 页面刚加载的时候通过用户id获得默认的地址
+			getAddress:function(){
+				let that=this;
+				mui.ajax(that.api+'/selectAddress',{
+					data:{
+						userId:"5eb7b553ee1d1a3988b5309a",
+					},
+					dataType:'json',//服务器返回json格式数据
+					type:'post',//HTTP请求类型
+					timeout:10000,//超时时间设置为10秒；
+					success:function(data){
+						if(data.code=="1"){
+							that.address.push(...data.data);    //获取所有的地址
+							that.address=that.address.filter(val=>{     //得到默认地址
+								return val.isDefault==true;
+							})
+							// console.log(that.address)
+						}
+					},
+					error:function(xhr,type,errorThrown){
+						mui.toast("服务器错误"+errorThrown)
+					}
+				});
+			},
+			
+			// 点击地址跳转到地址页面选择地址
+			chooseAddres(){
+				mui.plusReady(function () {
+					var page = mui.preload({
+						url:'../aboutMe/address/my_address.html',
+						id:'my_address.html',
+					    
+					    extras:{
+					    	fromBuy:true
+					    },
+					});
+					page.show()
+					// mui.openWindow({
+					// 	url:'../aboutMe/address/my_address.html',
+					// 	id:'my_address.html',
+					// 	extras:{
+					// 		fromBuy:true
+					// 	},
+					// });
+				})
+				
+				
+			}
+		},
+		computed:{
+			// 计算总价
+			totle:function(){
+				return this.buyNumber*this.testPrice
+			}
+		},
+		watch:{
+			"buyNumber":function(newVal,oldVal){
+				if(newVal<=1){
+					this.buyNumber=1;
+					this.subtractBtn=true
+					
+				}else if(newVal>=10){
+					this.addBtn=true;
+					this.subtractBtn=false
+				}else{
+					this.addBtn=false;
+					this.subtractBtn=false
+				}
+			}
 		}
 	})
 </script>

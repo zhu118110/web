@@ -252,17 +252,17 @@
 					
 					let responseText=JSON.parse(uploadObj.responseText);
 					if(responseText.code=="1"&&statu==200){
-						wait.close();   //关闭等待框
-						mui.toast("修改成功")
 						
-						let oldBack=mui.back;
-						mui.back=function(){
-							var aboutMe = plus.webview.getWebviewById('aboutMe');
-							mui.fire(aboutMe,"clearStorage",{
-								statu:true
-							})
-							oldBack()
-						}
+						wait.close();   //关闭等待框
+						mui.toast("修改成功");
+						// 触发 我的 页面事件，让其自己刷新
+						mui.plusReady(function () {
+							let aboutMe=plus.webview.getWebviewById("aboutMe")
+						    mui.fire(aboutMe,"clearStorage",{
+						    	statu:true
+						    })
+						})
+						
 						
 					}else{
 						mui.toast("修改失败,稍后再试");
@@ -279,10 +279,9 @@
 			// 点击完成按钮时,将修改的用户名称提交到服务器,
 			
 			finish(){
-				
 				let that=this;
 				if(that.userName==""||that.userName.trim().length<=0){
-					console.log(that.userName)
+					
 					mui.toast("用户名不能为空")
 					mui.plusReady(function () {
 						let self=plus.webview.currentWebview();
@@ -297,13 +296,25 @@
 							userName:that.userName.trim(),
 							headImg:that.headImg
 						},
-						dataType:'json',//服务器返回json格式数据
-						type:'post',//HTTP请求类型
-						timeout:10000,//超时时间设置为10秒；
+						dataType:'json',
+						type:'post',
+						timeout:10000,
 						success:function(data){
-							if(data.code=="1"){
+							// code=1表示数据已经把新的用户名放入数据库
+							if(data.code=="1"){  
+								if(that.headImg!==that.userData[0].headImg){
+									that.upLoadImg();   //保存头像
+								}else{
+									// 触发 我的 页面事件，让其自己刷新
+									mui.plusReady(function () {
+										let aboutMe=plus.webview.getWebviewById("aboutMe")
+									    mui.fire(aboutMe,"clearStorage",{
+									    	statu:true
+									    })
+									})
+								}
 								
-								that.upLoadImg()
+								
 							}else{
 								mui.toast("保存失败")
 							}
