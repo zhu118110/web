@@ -403,7 +403,17 @@
 				
 				// 点击立即购买跳转到购买页
 				buy(){
-					mui.openWindow('../buy/buy.html','buy.html')
+					
+					let that=this;
+					mui.openWindow({
+						url:'../buy/buy.html',
+						id:'buy.html',
+						extras:{
+							userId:that.user_Id,
+							prdId:that.prd[0]._id
+						}
+					})
+					
 				}
 			}
 		})

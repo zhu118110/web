@@ -46,17 +46,17 @@
 		</ul>
 			<!--商品展示区域-->
 		<div class="collect">  
-			<dl class="mui-table-view" >
+			<dl class="mui-table-view" v-for="(val,index) in prdInfor">
 				<dt class="mui-table-view-cell collect_body">
 					<!-- 商品图片 -->
 					<div class="collect_body_img clear">
-						<img class="mui-media-object mui-pull-left" src="../../img/bd1.jpg">
+						<img class="mui-media-object mui-pull-left" :src="val.img">
 					</div>
 					<!-- 商品描述 -->
 					<div class="mui-media-body collect_body_infor">
 						<p class="collect_body_infor_title">
-							<!-- {{val.title}} -->
-							商品描述商品描述商品描述商品描述商品描述
+							{{val.title}}
+							<!-- 商品描述商品描述商品描述商品描述商品描述 -->
 						</p>
 						<p class="collect_body_infor_type">
 							颜色:
@@ -68,8 +68,8 @@
 							<div style="color: #d01c27;">
 								<span style="font-size: 12px;">￥</span>
 								<span>
-									<!-- 140.00 -->
-									{{testPrice}}
+								
+									{{val.price|price}}
 								</span>
 								<!-- <span>{{val.prd_price|price}}</span> -->
 							</div>
@@ -98,9 +98,9 @@
 	<footer class="mui-bar mui-bar-tab my-mui-bar">
 		<div class="tab">
 			<div>
-				实付款:<span style="color:#d01c27">￥{{this.totle}} 免运费</span>
+				实付款:<span style="color:#d01c27">￥{{this.totle|price}}</span>
 			</div>
-			<button type="button" class="mui-btn mui-btn-red">
+			<button type="button" class="mui-btn mui-btn-red" @click="pay">
 				立即支付
 			</button>
 		</div>
@@ -110,15 +110,12 @@
 <script src="../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../js/vue.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
-	
-	
-	
-	
-	
+
 	const vue=new Vue({
 		el:".box",
 		data:{
 			userId:"",
+			prd_id:"",
 			api:"http://192.168.88.69:3200",
 			address:[],   //地址
 			prdInfor:[],    //存放产品信息
@@ -128,12 +125,19 @@
 			subtractBtn:true,  //控制减少按钮是否禁用
 			addBtn:false,   //控制添加按钮是否禁用
 		},
+		filters:{
+			price:function(num){
+				num=Number(num).toFixed(2);
+				return num+"元"
+			}
+		},
 		mounted() {
 			mui.init();
 			this.choiceAddress()
 		},
 		created() {
-			this.getAddress()
+			this.getId();
+			
 		},
 		methods:{
 			//  接收地址页面的点击的那个地址
@@ -144,18 +148,33 @@
 					if(e.detail.address){
 						that.address=[];
 						that.address.push(e.detail.address);
-					}else{
-						console.log("没有获取到地址")
 					}
 				})
 			},
+			// 页面刚加载的时候获取到详情页传递过来的用户id和商品id，
+			// 根据 用户id得到默认的地址
+			// 根据 商品id得到要购买的商品
+			getId(){
+				let that=this;
+				mui.plusReady(function () {
+				    let self=plus.webview.currentWebview();
+					that.userId=self.userId;
+					that.prd_id=self.prdId;
+					// that.getAddress("5eb7b553ee1d1a3988b5309a")
+					that.getAddress(that.userId,that.prd_id);   //通过id得到地址
+					that.getProduct(that.prd_id);
+					
+				})
+			},
 			
-			// 页面刚加载的时候通过用户id获得默认的地址
-			getAddress:function(){
+			
+			//通过用户id获得默认的地址
+			getAddress(userId,prdId){
 				let that=this;
 				mui.ajax(that.api+'/selectAddress',{
 					data:{
-						userId:"5eb7b553ee1d1a3988b5309a",
+						// userId:"5eb7b553ee1d1a3988b5309a",
+						userId
 					},
 					dataType:'json',//服务器返回json格式数据
 					type:'post',//HTTP请求类型
@@ -163,10 +182,12 @@
 					success:function(data){
 						if(data.code=="1"){
 							that.address.push(...data.data);    //获取所有的地址
+							
 							that.address=that.address.filter(val=>{     //得到默认地址
 								return val.isDefault==true;
 							})
-							// console.log(that.address)
+							// 根据商品id得到商品信息
+							
 						}
 					},
 					error:function(xhr,type,errorThrown){
@@ -175,6 +196,28 @@
 				});
 			},
 			
+			// 根据商品id 得到商品信息，在得到地址成功后调用
+			getProduct(prdId){
+				let that=this;
+				mui.ajax(that.api+'/detail',{
+					data:{
+						prd_id:prdId
+					},
+					dataType:'json',//服务器返回json格式数据
+					type:'post',//HTTP请求类型
+					timeout:10000,//超时时间设置为10秒；
+					success:function(data){
+						
+						if(data.statu=="success"){
+							that.prdInfor.push(data.data);
+							
+						}
+					},
+					error:function(xhr,type,errorThrown){
+						mui.toast("服务器错误"+errorThrown)
+					}
+				});
+			},
 			// 点击地址跳转到地址页面选择地址
 			chooseAddres(){
 				mui.plusReady(function () {
@@ -187,28 +230,127 @@
 					    },
 					});
 					page.show()
-					// mui.openWindow({
-					// 	url:'../aboutMe/address/my_address.html',
-					// 	id:'my_address.html',
-					// 	extras:{
-					// 		fromBuy:true
-					// 	},
-					// });
 				})
+								
+			},
+			
+			// 点击立即购买,2 秒后显示支付方式
+			pay(){
+				let that=this;
+				setTimeout(function(){
+					that.getPayChannels()  //获取支付通道
+				},2000)
 				
+				plus.nativeUI.showWaiting("正在获取支付方式");
+			},
+			
+			// 获取支付的通道
+			getPayChannels(){
+				let that=this;
+				let payChannels=null;   // 存放可以支付的方式
+				mui.plusReady(function () {
+					// 获取本地支付的信息,
+				    plus.payment.getChannels(function(channels){   //获取支付方式成功的回调,参数是个数组， 包含可选择的支付的方式,如支付宝，微信等
+						payChannels=channels;
+						plus.nativeUI.closeWaiting();
+						
+						let btnArray=[];
+						payChannels.forEach(val=>{
+							btnArray.push({title:val.description})
+						})
+						
+						let actinsStyle={
+							title:"请选择支付方式",
+							cancel:"取消",
+							buttons:btnArray  //[{title:支付宝,title:微信}]
+						}
+						plus.nativeUI.actionSheet(actinsStyle,function(e){
+							let index=e.index;
+							switch(index){
+								case 0:
+									mui.toast("取消支付")
+								break;
+								case 1:
+									mui.toast("支付宝支付");
+									// that.payRequest(payChannels[0]);
+								
+									that.buySuccess();
+								break;
+								case 2:
+									// that.payRequest(payChannels[1])
+									mui.toast("微信支付");
+								
+									that.buySuccess()
+									
+								break;
+							}
+							
+						})
+					},function(err){
+						
+						mui.toast("获取支付方式失败"+err.message)
+					})
+					
+				});
 				
-			}
+			},
+			// 模拟 支付成功后 调用
+			buySuccess(){
+			
+				let that=this;
+				console.log(that.address)
+				 //购买日期
+				let date=new Date();
+				var year=date.getFullYear();
+					// 月，日 , 时，分，秒小于10时前面+0补齐
+				var month=date.getMonth()<10?'0'+(Number(date.getMonth())+1):(Number(date.getMonth())+1);  //月(0-11)
+				var day=date.getDate()<10?'0'+date.getDate:date.getDate();    //日(0-23)
+				var hours=date.getHours()<10?'0'+date.getHours():date.getHours();  
+				var minutes=date.getMinutes()<10?'0'+date.getMinutes():date.getMinutes();
+				var seconds=date.getSeconds()<10?'0'+date.getSeconds():date.getSeconds();
+				let dateStr=year + "-" +month + "-" + day +" "+ hours + ":" + minutes + ":"+ seconds;
+				
+	            mui.ajax(that.api+'/buySingle',{
+					data:{
+						user_id:that.userId,   //用户id
+						prd_id:that.prd_id,  //商品id
+						singlePrice:that.prdInfor[0].price,   //商品单价
+						buy_date:dateStr,  //购买的时间
+						buy_number:that.buyNumber,  //购买的数量
+						totle:that.totle,   //商品总价
+						address:JSON.stringify(that.address)
+					},
+					dataType:'json',
+					type:'post',
+					timeout:10000,
+					success:function(data){
+						if(data.code=="1"){
+							mui.toast("购买成功");
+						}else{
+							mui.toast("购买失败");
+						}
+					},
+					error:function(xhr,type,errorThrown){
+						mui.toast("网络连接失败"+type);
+					}
+				});
+				
+			},
 		},
 		computed:{
 			// 计算总价
 			totle:function(){
-				return this.buyNumber*this.testPrice
+				if(this.prdInfor.length>0){
+					return this.buyNumber*this.prdInfor[0].price;
+				}
+				
 			}
 		},
 		watch:{
+			// 监听购买数量的变化
 			"buyNumber":function(newVal,oldVal){
 				if(newVal<=1){
-					this.buyNumber=1;
+					this.buyNumber=1;  
 					this.subtractBtn=true
 					
 				}else if(newVal>=10){
