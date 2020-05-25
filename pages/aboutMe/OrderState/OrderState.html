@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>订单状态</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../../../css/mui.min.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../css/public.css"/>
+		<link rel="stylesheet" type="text/css" href="../../../fonts/font.css"/>
+		<style type="text/css">
+			.mui-segmented-control.mui-scroll-wrapper .mui-scroll{
+				/* width: 100%; */
+				display: flex;
+				justify-content: space-around;
+				background-color: #fff;
+			}
+			.mui-slider .mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active{
+				 color: red;
+				 border-bottom:2px solid red;
+			 }
+			 .mui-segmented-control .mui-control-item{
+				 line-height: 36px;
+			 }
+			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item{
+				
+				border-bottom:2px solid #fff;
+			}
+		</style>
+	</head>
+	
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">订单状态</h1>
+		</header>
+		<div class="mui-content">
+			<div id="slider" class="mui-slider mui-fullscreen">
+				<div id="sliderSegmentedControl" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+					<div class="mui-scroll">
+						<a class="mui-control-item mui-active" href="orderList/all.html" data-wid="all.html">
+							全部
+						</a>
+						<a class="mui-control-item" href="orderList/waitPay.html" data-wid="waitPay.html">
+							待付款
+						</a>
+						<a class="mui-control-item" href="orderList/waitSend.html" data-wid="waitSend.html">
+							待发货
+						</a>
+						<a class="mui-control-item" href="orderList/waitGet.html" data-wid="waitGet.html">
+							待收货
+						</a>
+						<a class="mui-control-item" href="orderList/waitComment.html" data-wid="waitComment.html">
+							待评价
+						</a>
+						
+					</div>
+				</div>
+		
+			</div>
+		</div>
+	</body>
+	<script src="../../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../../js/vue.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../../js/webviewGroup.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var styles = {
+			top: '84px',
+		}; 
+		let pages=[{
+			url:"orderList/all.html",
+			id:"all.html",
+			styles
+		},{
+			url:"orderList/waitPay.html",
+			id:"waitPay.html",
+			styles
+		},{
+			url:"orderList/waitSend.html",
+			id:"waitSend.html",
+			styles
+		},{
+			url:"orderList/waitGet.html",
+			id:"waitGet.html",
+			styles
+		},{
+			url:"orderList/waitComment.html",
+			id:"waitComment.html",
+			styles
+		}];
+		mui.init({
+			
+		});
+		mui.plusReady(function() {
+			var _self = plus.webview.currentWebview();
+			var group = new webviewGroup("OrderState.html", {
+				items:[{
+					id:"all.html",
+					url:"orderList/all.html",
+					extras: {},
+					styles
+				},{
+					url:"orderList/waitPay.html",
+					id:"waitPay.html",
+					styles,
+					extras: {}
+				},{
+					url:"orderList/waitSend.html",
+					id:"waitSend.html",
+					styles,
+					extras: {}
+				},{
+					url:"orderList/waitGet.html",
+					id:"waitGet.html",
+					styles,
+					extras: {}
+				},{
+					url:"orderList/waitComment.html",
+					id:"waitComment.html",
+					styles,
+					extras: {}
+				}],
+				onChange: function(obj) {
+					var c = document.querySelector(".mui-control-item.mui-active");
+					if(c) {
+						c.classList.remove("mui-active");
+					}
+					var target = document.querySelector(".mui-scroll .mui-control-item:nth-child(" + (parseInt(obj.index) + 1) + ")");
+					target.classList.add("mui-active");
+					if(target.scrollIntoView) {
+						target.scrollIntoView();
+					}
+				}
+			});
+			mui(".mui-scroll").on("tap", ".mui-control-item", function(e) {
+				var wid = this.getAttribute("data-wid");
+				group.switchTab(wid);
+			});
+			
+		});
+		
+		mui.back = function() {
+			var _self = plus.webview.currentWebview();
+			_self.close("auto");
+		}
+		
+	</script>
+</html>

@@ -21,13 +21,10 @@
 	<div class="mui-content">
 		
 		<ul class="mui-table-view">
-			<li class="mui-table-view-cell" v-for="(item,index) in address" @click="chooseAddres">
+			<li class="mui-table-view-cell" v-for="(item,index) in address" @click="chooseAddres" v-if="address.length>0">
 				<a class="mui-navigate-right my_navigate_right">
 					<span class="iconfont icon-tianjiadizhi"></span>
-					<div v-if="address.length<=0">
-						没有默认地址，点击选择
-					</div>
-					<div class="address" v-else>
+					<div class="address">
 						<p>
 							<span style="font-weight: 600;">
 								{{item.recipients}}
@@ -41,6 +38,12 @@
 						</p>
 						
 					</div>
+				</a>
+			</li>
+			
+			<li class="mui-table-view-cell" @click="chooseAddres" v-if="address.length<=0">
+				<a class="mui-navigate-right my_navigate_right">
+					选择地址
 				</a>
 			</li>
 		</ul>
@@ -237,11 +240,18 @@
 			// 点击立即购买,2 秒后显示支付方式
 			pay(){
 				let that=this;
-				setTimeout(function(){
-					that.getPayChannels()  //获取支付通道
-				},2000)
 				
-				plus.nativeUI.showWaiting("正在获取支付方式");
+				if(that.address.length<=0){
+					
+					mui.toast("请先选择收货地址")
+				}else{
+					setTimeout(function(){
+						that.getPayChannels()  //获取支付通道
+					},2000)
+					
+					plus.nativeUI.showWaiting("正在获取支付方式");
+				}
+				
 			},
 			
 			// 获取支付的通道

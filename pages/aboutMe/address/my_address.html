@@ -90,7 +90,7 @@
 		</header>
 		<div class="mui-content">
 			<div class="haveAddress">
-				<dl class="mui-table-view my_table_view"  v-for="(item,index) in addressArray" :key="index" >
+				<dl class="mui-table-view my_table_view"  v-for="(item,index) in addressArray"  :key="index" >
 					 <dd class="mui-table-view-cell">
 						<p>
 							{{item.recipients}},{{item.phone}}
@@ -98,14 +98,14 @@
 						<p>
 							{{item.province}} {{item.city}} {{item.district}} {{item.detailAddress}} 
 						</p>
-						<span class="iconfont icon-guanbi close" v-if="fromBuyIsHide" @click="deleteAddress(index)"></span>
+						<span class="iconfont icon-guanbi close" @click.stop="deleteAddress(index)"></span>
 					 </dd>
-					 <dd class="edit" v-if="fromBuyIsHide">
+					 <dd class="edit">
 						 <div class="mui-input-row mui-radio" @click="setDefault(index)">
 						 	<label>设为默认</label>
 						 	<input name="radio1" type="radio" :value="index" v-model="radio">
 						 </div>
-						 <div ref="edit" @click="editAddress(index)">
+						 <div ref="edit" @click.stop="editAddress(index)">
 						 	编辑
 						 </div>
 					 </dd>
@@ -205,7 +205,7 @@
 									address:that.addressArray[index]
 								})
 								mui.back()
-							})
+							},true)
 						}else{
 							that.fromBuyIsHide=true
 						}
@@ -307,25 +307,30 @@
 				// 点击设置默认地址,改变下标
 				setDefault(index){
 					let that=this;
-					that.radio=index;
-					mui.ajax(that.api+"/setDefault",{
-						data:{
-							userId:that.userId,
-							// userId:"5eb7b553ee1d1a3988b5309a",
-							_id:that.addressArray[that.radio]._id
-						},
-						type:"post",
-						timeout:10000,
-						success:function(data){
-							if(data.code=="1"){
-								mui.toast("修改默认地址成功")
+					if(that.radio==index){
+						return false
+					}else{
+						that.radio=index;
+						mui.ajax(that.api+"/setDefault",{
+							data:{
+								userId:that.userId,
+								// userId:"5eb7b553ee1d1a3988b5309a",
+								_id:that.addressArray[that.radio]._id
+							},
+							type:"post",
+							timeout:10000,
+							success:function(data){
+								if(data.code=="1"){
+									mui.toast("修改默认地址成功")
+								}
+								
+							},
+							error:function(xhr,type,errorThrown){
+								mui.toast("连接服务器失败,原因:"+type)
 							}
-							
-						},
-						error:function(xhr,type,errorThrown){
-							mui.toast("连接服务器失败,原因:"+type)
-						}
-					})
+						})
+					}
+					
 				},
 				
 				// 点击删除地址,

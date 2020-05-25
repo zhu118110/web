@@ -73,7 +73,12 @@
 	</body>
 	<script src="../../../js/webviewGroup.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
-		mui.init();
+		mui.init({
+			keyEventBind: {
+				backbutton: false  //关闭back按键监听
+			},
+			
+		});
 		mui.plusReady(function() {
 			var _self = plus.webview.currentWebview();
 			
@@ -124,7 +129,10 @@
 				
 				group.switchTab(wid);
 			});
-			
+			mui.back = function() {
+				var _self = plus.webview.currentWebview();
+				_self.close("auto");
+			}
 		});
 	</script>
 </html>

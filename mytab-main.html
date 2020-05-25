@@ -108,13 +108,6 @@
 				wait.close()
 			},1000)
 		})
-				
-				
-			
-		
-		
-		
-		
 		// 点击导航时切换页面，
 		mui('.mui-bar-tab').on('tap', 'a', function(e) {
 			var page;	
@@ -127,7 +120,11 @@
 			});
 			page.show()
 		})
-			
+		
+		mui.back = function() {
+			var _self = plus.webview.currentWebview();
+			_self.close("auto");
+		}
 
     </script>
 </html>
