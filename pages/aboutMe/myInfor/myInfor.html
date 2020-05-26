@@ -94,8 +94,6 @@
 			
 			finishBtn:false,
 			mui_init:null,
-			
-			
 		},
 		
 		created() {
@@ -127,12 +125,12 @@
 			// 页面刚加载时根据页面传递的用户id获取用户名称以及头像
 			getInformation(){
 				let that=this;
-				// mui.plusReady(function () {
-				//     let self=plus.webview.currentWebview();
-				// 	that.user_Id=self.userId;
-				// 	ajax(that.user_Id);
-				// });
-				ajax("5eb7b553ee1d1a3988b5309a");
+				mui.plusReady(function () {
+				    let self=plus.webview.currentWebview();
+					that.user_Id=self.userId;
+					ajax(that.user_Id);
+				});
+				// ajax("5eb7b553ee1d1a3988b5309a");
 				function ajax(userId){
 					mui.ajax(that.api+'/aboutMe',{
 						data:{
@@ -227,7 +225,7 @@
 					
 					that.headImg=path;  //更改头像路径
 				},function(err){
-					console.log("打开失败"+err)
+					mui.toast("相册打开失败")
 				},{
 					filter:"image",   //默认只显示image(图片文件); 值还有video(视频文件)、none(都显示) 
 					maximum:1,      //最多选择的图片数量,取值范围为1到Infinity，默认值为Infinity。
@@ -271,8 +269,8 @@
 				})
 				// addFile(要上传的文件路径,{key:...})  key必须写，默认是上传文件路径名称
 				upload.addFile(that.captureImgArr,{key:that.captureImgArr}); 
-				// upload.addData("_id":that.user_Id);
-				upload.addData("_id","5eb7b553ee1d1a3988b5309a");  //用户id
+				upload.addData("_id",that.user_Id);
+				// upload.addData("_id","5eb7b553ee1d1a3988b5309a");  //用户id
 				upload.start();   //开始上传，必须写
 			},
 			
@@ -291,8 +289,8 @@
 				}else{
 					mui.ajax(that.api+'/editUserName',{
 						data:{
-							// userId:that.user_Id,
-							_id:"5eb7b553ee1d1a3988b5309a",
+							_id:that.user_Id,
+							// _id:"5eb7b553ee1d1a3988b5309a",
 							userName:that.userName.trim(),
 							headImg:that.headImg
 						},
@@ -302,19 +300,21 @@
 						success:function(data){
 							// code=1表示数据已经把新的用户名放入数据库
 							if(data.code=="1"){  
-								if(that.headImg!==that.userData[0].headImg){
-									that.upLoadImg();   //保存头像
-								}else{
-									// 触发 我的 页面事件，让其自己刷新
-									mui.plusReady(function () {
-										let aboutMe=plus.webview.getWebviewById("aboutMe")
-									    mui.fire(aboutMe,"clearStorage",{
-									    	statu:true
-									    })
-									})
-								}
+								// 触发 我的 页面事件，让其自己刷新
+								mui.toast("修改成功")
+								let aboutMe=plus.webview.getWebviewById("aboutMe")
+								mui.fire(aboutMe,"clearStorage",{
+									statu:true
+								})
+								setTimeout(function(){
+									mui.back()
+								},1000)
 								
-								
+								// if(that.headImg!==that.userData[0].headImg){
+								// 	that.upLoadImg();   //保存头像
+								// }else{
+									
+								// }
 							}else{
 								mui.toast("保存失败")
 							}

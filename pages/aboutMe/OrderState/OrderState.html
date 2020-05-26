@@ -9,8 +9,11 @@
 		<link rel="stylesheet" type="text/css" href="../../../css/public.css"/>
 		<link rel="stylesheet" type="text/css" href="../../../fonts/font.css"/>
 		<style type="text/css">
+			.mui-bar,.mui-bar-nav{
+				box-shadow: none;
+			}
 			.mui-segmented-control.mui-scroll-wrapper .mui-scroll{
-				/* width: 100%; */
+				
 				display: flex;
 				justify-content: space-around;
 				background-color: #fff;
@@ -67,30 +70,8 @@
 		var styles = {
 			top: '84px',
 		}; 
-		let pages=[{
-			url:"orderList/all.html",
-			id:"all.html",
-			styles
-		},{
-			url:"orderList/waitPay.html",
-			id:"waitPay.html",
-			styles
-		},{
-			url:"orderList/waitSend.html",
-			id:"waitSend.html",
-			styles
-		},{
-			url:"orderList/waitGet.html",
-			id:"waitGet.html",
-			styles
-		},{
-			url:"orderList/waitComment.html",
-			id:"waitComment.html",
-			styles
-		}];
-		mui.init({
-			
-		});
+		
+		mui.init({});
 		mui.plusReady(function() {
 			var _self = plus.webview.currentWebview();
 			var group = new webviewGroup("OrderState.html", {
@@ -135,14 +116,47 @@
 			mui(".mui-scroll").on("tap", ".mui-control-item", function(e) {
 				var wid = this.getAttribute("data-wid");
 				group.switchTab(wid);
+				
 			});
 			
 		});
+		
+		 window.addEventListener("showTab",function(e){
+			 let wid = e.detail.id;
+			 console.log(wid)
+			 group.switchTab(wid);
+			 
+		 })
+		
 		
 		mui.back = function() {
 			var _self = plus.webview.currentWebview();
 			_self.close("auto");
 		}
 		
+		
+		
+		
+		// let pages=[{
+		// 	url:"orderList/all.html",
+		// 	id:"all.html",
+		// 	styles
+		// },{
+		// 	url:"orderList/waitPay.html",
+		// 	id:"waitPay.html",
+		// 	styles
+		// },{
+		// 	url:"orderList/waitSend.html",
+		// 	id:"waitSend.html",
+		// 	styles
+		// },{
+		// 	url:"orderList/waitGet.html",
+		// 	id:"waitGet.html",
+		// 	styles
+		// },{
+		// 	url:"orderList/waitComment.html",
+		// 	id:"waitComment.html",
+		// 	styles
+		// }];
 	</script>
 </html>

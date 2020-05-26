@@ -4,7 +4,7 @@
 	<meta charset="UTF-8" />
 	<title>分类</title>
 	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-	<script src="../../js/mui.min.js"></script>
+	
 	<link href="../../css/mui.min.css" rel="stylesheet"/>
 	<link rel="stylesheet" type="text/css" href="../../css/public.css"/>
 	<link rel="stylesheet" type="text/css" href="../../css/classify/classify.css"/>
@@ -16,148 +16,105 @@
 		</div>
 	</header>
 	<div class="mui-content mui-row mui-fullscreen">
-		<!-- 左边分类列表 -->
+		<!-- 左边商品列表 -->
 		<div class="mui-col-xs-3">
 			<div id="segmentedControls" class="mui-segmented-control mui-segmented-control-inverted mui-segmented-control-vertical">
 				<!-- <a class="mui-control-item" href="#content${index+1}">${val}</a> -->
+				<!-- @click="showCategry(leftTitle[index]._id)" -->
+				<a class="mui-control-item" :class="{'mui-active':index==0}" v-for="(item,index) in leftTitle" :href="index" @click="clickLeft(leftTitle[index]._id)">{{item.title}}</a>
 			</div>
 		</div>
-		<!-- 右边详细内容 -->
+		<!-- 右边分类内容 -->
 		<div id="segmentedControlContents" class="mui-col-xs-9" >
-			<!-- 女装显示内容 -->
-			<div id="content1" class="mui-control-content mui-active">
-				<!-- <header class="my-control-head">
-					111
-				</header> -->
+			<!-- 每个商品对应的分类的显示内容 -->
+			<div class="mui-control-content mui-active">
 				<dl>
-					<dt>
-						<div><img src="../../img/nz1.jpg"></div>
+					<dt v-for="(val,i) in categry" v-if="typeId == val.productId">
+						<div><img :src="val.imgSrc"></div>
 						<div>
-							冲锋衣
+							{{val.title}}
 						</div>
-					</dt>
-					<dt>
-						<div><img src="../../img/nz2.jpg"></div>
-						<div>
-							T恤
-						</div>
-					</dt>
-					<dt>
-						<div><img src="../../img/nz3.jpg"></div>
-						<div>
-							短裤
-						</div>
-					</dt>
-					<dt>
-						<div><img src="../../img/nz4.jpg"></div>
-						<div>
-							卫衣
-						</div>
-					</dt>
-					<dt>
-						<div><img src="../../img/nz5.jpg"></div>
-						<span>
-							休闲裤
-						</span>
 					</dt>
 				</dl>
 			</div>
-			<div id="content2" class="mui-control-content mui-active">
-				<!-- <header class="my-control-head">
-					111
-				</header> -->
-				<dl>
-					<dt>
-						<div><img src="../../img/nvz1.jpg"></div>
-						<div>
-							女装T恤
-						</div>
-					</dt>
-					<dt>
-						<div><img src="../../img/nvz2.jpg"></div>
-						<div>
-							连衣裙
-						</div>
-					</dt>
-					<dt>
-						<div><img src="../../img/nvz3.jpg"></div>
-						<div>
-							时尚套装
-						</div>
-					</dt>
-					<dt>
-						<div><img src="../../img/nvz4.jpg"></div>
-						<div>
-							女士外套
-						</div>
-					</dt>
-					<dt>
-						<div><img src="../../img/nvz5.jpg"></div>
-						<span>
-							仙女裙
-						</span>
-					</dt>
-				</dl>
-			</div>
-			
 			
 		</div>
 		
 	</div><!-- mui-content-->
 </body>
-
+<script src="../../js/mui.min.js"></script>
+<script src="../../js/vue.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
-	mui.init({
-		keyEventBind: {
-		       backbutton: false,  //Boolean(默认true)关闭back按键监听  
-		       menubutton: true   //Boolean(默认true)关闭menu按键监听  
-		   }  
-	});
-	// 左侧选项卡标题
-	var leftClass=["男装","女装","食品","电子","百货","洗护","百货","洗护","百货","洗护","百货","洗护","百货","男装","女装",];
-	var leftCont=document.querySelector("#segmentedControls");
-	var classLength=leftClass.length;
-	leftClass.forEach((val,index,arr)=>{
-		let child=`<a class="mui-control-item" href="#content${index+1}">${val}</a>`;
-		leftCont.innerHTML+=child;
-	});
-	// 设置左侧选项卡第一个标题添加默认样式
-	leftCont.children[0].classList.add("mui-active")
+	const vue=new Vue({
+		el:".mui-content",
+		data:{
+			api:"http://192.168.88.69:3200",
+			leftTitle:[],
+			categry:[],
+			showId:null,
+			typeId:'',
+		},
+		created() {
+			this.showProduct();
+			this.showCategry()
+		},
+		mounted() {
+			mui.init({
+				keyEventBind: {
+				       backbutton: false,  //Boolean(默认true)关闭back按键监听  
+				       menubutton: true   //Boolean(默认true)关闭menu按键监听  
+				   }  
+			});
+		},
+		methods:{
+			
+			// 页面刚加载时请求后台,得到左边的全部商品
+			showProduct(){
+				let that=this;
+				that.ajax({},that.api+'/showProduct','get',function(data){
+					// 后端返回1表示获取到了分类标题
+					if(data.code=="1"){
+						that.leftTitle.push(...data.data);
+						that.typeId = data.data[0]._id;   //记录下第一个商品的_id
+					};
+				});
+			},
+			
+			// 页面刚加载时请求后台得到所有的分类
+			showCategry(){
+				let that=this;
+				that.ajax({},that.api+"/categry","post",function(data){
+					that.categry.push(...data.data);
+				})
+			},
+			
+			// 点击左边商品时触发,
+			// @params{String} id  左边的商品的_id
+			clickLeft(id){
+				this.typeId=id
+			},
+			
+			
+			// 封装ajax请求
+			// @params{Object} dataObj,请求携带的参数格式如:{key:value}
+			// @params{String} url, 请求的后台url
+			// @params{String} type, 请求方式,如post,get
+			// @params{Function} success, 请求成功的回调函数
+			ajax(dataObj,url,type,success){
+				mui.ajax(url,{
+					data:dataObj||{},
+					type:type,
+					timeout:10000,
+					success:success,
+					error:function(xhr,type){
+						mui.toast("连接服务器失败")
+					}
+				})
+			},
+			
+		},
+	})
 	
-	
-	
-	// 右侧选项卡内容
-	// var rightCont=document.querySelector("#segmentedControlContents");
-	
-	// for(var i=1;i<=classLength;i++){
-	// 	let child=`<div id="content${i}" class="mui-control-content"><ul class="mui-table-view"></ul></div>`
-	// 	rightCont.innerHTML+=child;	
-	// }
-	// rightCont.children[0].classList.add("mui-active");
-	
-	
-	
-	// let obj=[{
-	// 	title:["西装","短裤","衬衫"]
-	// },{
-	// 	title:["高跟鞋","牛仔裤","裙子"]
-	// },{
-	// 	title:["老干妈","辣条","饼干","哟吼"]
-	// }]
-	// let ul=document.querySelectorAll("#segmentedControlContents .mui-table-view");
-	// for(let k=0;k<ul.length;k++){
-	// 	ul[k].index=k;
-	// 	for(let m=0;m<obj.length;m++){
-	// 		if(ul[k].index==m){
-	// 			for(let n=0;n<obj[m].title.length;n++){
-	// 				ul[k].innerHTML+=`<li class="mui-table-view-cell">
-	// 						${obj[m].title[n]}
-	// 					</li>`
-	// 			}
-				
-	// 		}
-	// 	}
-	// }
 	
 </script>
 </html>

@@ -142,10 +142,20 @@
 								type:"post",
 								timeout:10000,
 								success:function(data){
-									// if(data.code=="1"){
-									// 	mui.toast("保存成功")
-									// }
-									// console.log()
+									// 后端返回1表示保存成功
+									if(data.code=="1"){
+										//   触发 我的地址 页面的自定义事件，让其刷新并返回到我的地址页面
+										let myAddress=plus.webview.getWebviewById("my_address.html")
+										mui.fire(myAddress,'reload',{
+											reload:true
+										});
+										setTimeout(function(){
+											mui.back()
+										},1000)
+									}else{
+										mui.toast("保存失败");
+									}
+									
 								},
 								error:function(xhr,type){
 									console.log(type)

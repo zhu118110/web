@@ -94,6 +94,7 @@
 						<button type="button" class="mui-btn mui-btn-outlined" :disabled="addBtn" @click="buyNumber+=1">+</button>
 					</div>
 				</dt>
+				
 			</dl>
 		</div><!--商品展示结束-->
 		
@@ -123,8 +124,8 @@
 			address:[],   //地址
 			prdInfor:[],    //存放产品信息
 			buyNumber:1,   //购买数量
-			testPrice:50,   //测试用的价格
 			
+			payStyle:"",  //付款方式
 			subtractBtn:true,  //控制减少按钮是否禁用
 			addBtn:false,   //控制添加按钮是否禁用
 		},
@@ -166,7 +167,6 @@
 					// that.getAddress("5eb7b553ee1d1a3988b5309a")
 					that.getAddress(that.userId,that.prd_id);   //通过id得到地址
 					that.getProduct(that.prd_id);
-					
 				})
 			},
 			
@@ -281,16 +281,16 @@
 									mui.toast("取消支付")
 								break;
 								case 1:
-									mui.toast("支付宝支付");
+									// mui.toast("支付宝支付");
 									// that.payRequest(payChannels[0]);
 								
-									that.buySuccess();
+									that.buySuccess("支付宝");
 								break;
 								case 2:
 									// that.payRequest(payChannels[1])
-									mui.toast("微信支付");
+									// mui.toast("微信支付");
 								
-									that.buySuccess()
+									that.buySuccess("微信")
 									
 								break;
 							}
@@ -305,10 +305,10 @@
 				
 			},
 			// 模拟 支付成功后 调用
-			buySuccess(){
+			buySuccess(payStyle){
 			
 				let that=this;
-				console.log(that.address)
+				that.payStyle=payStyle;   //付款方式
 				 //购买日期
 				let date=new Date();
 				var year=date.getFullYear();
@@ -328,6 +328,7 @@
 						buy_date:dateStr,  //购买的时间
 						buy_number:that.buyNumber,  //购买的数量
 						totle:that.totle,   //商品总价
+						payStyle:that.payStyle,
 						address:JSON.stringify(that.address)
 					},
 					dataType:'json',
@@ -335,7 +336,7 @@
 					timeout:10000,
 					success:function(data){
 						if(data.code=="1"){
-							mui.toast("购买成功");
+							mui.toast("购买成功，购买方式是"+that.payStyle);
 						}else{
 							mui.toast("购买失败");
 						}

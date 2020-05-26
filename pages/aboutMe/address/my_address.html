@@ -183,11 +183,13 @@
 			mounted() {
 				// let that=this;
 				mui.init();
-				this.formBuyPage()
-				
+				this.formBuyPage();    //购买页面 进来时执行的业务逻辑
+				this.fromAddAddress();   //监听 添加地址 页面业务逻辑
 			},
 			
 			methods:{
+				
+				
 				// 判断是否是 购买页面 进来选择地址的
 				formBuyPage(){
 					let that=this;
@@ -415,6 +417,18 @@
 							mui.toast("数据连接失败，原因"+type);
 						}
 					});
+				},
+				
+				// 自定义监听事件，
+				// 添加地址 页面点击完成后刷新本页面
+				fromAddAddress(){
+					window.addEventListener("reload",function(e){
+						if(e.detail.reload){
+							let self=plus.webview.currentWebview();
+							self.reload()
+						}
+						
+					})
 				}
 			}
 		})

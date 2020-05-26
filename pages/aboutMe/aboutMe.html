@@ -326,10 +326,18 @@
 	});
 	
 	function tz(ele){
+		
+		
 		// 收藏列点击时，进行页面预加载，根据url和id跳转到不同页面,携带的参数是存在本地的用户id
 		mui(ele).on('tap','a',function(){
 			let url=this.getAttribute("data-url");
 			let id=this.getAttribute("data-id");
+			if(ele=="#myOder"){
+				let OrderState=plus.webview.getWebviewById("OrderState.html");
+				mui.fire(OrderState,'showTab',{
+					id:id
+				})
+			}
 			if(url,id){
 				mui.plusReady(function () {
 				    let userId=plus.storage.getItem("account");
@@ -377,6 +385,7 @@
 		methods:{
 			// 获取本地存储的用户id，
 			// 请求后台查找到昵称
+			
 			getStorage(){
 				let idValue;  
 				let that=this;
@@ -397,7 +406,7 @@
 						});
 				    });
 					console.log("用户id"+that.userId)
-					//  根据用户id得到未发货的数量
+					//  根据用户id得到未发货的数量, 后端返回1表示响应成功
 					that.ajax({userId:that.userId,target:"waitSend"},that.api+"/waitSendData","post",function(data){
 						if(data.code=="1"){
 							that.waitSendNum=data.num
@@ -405,7 +414,7 @@
 							that.waitSendNum=""
 						}
 					});
-					//  根据用户id得到已发货的数量
+					//  根据用户id得到已发货的数量, 后端返回1表示响应成功
 					that.ajax({userId:that.userId,target:"alreadySend"},that.api+"/waitSendData","post",function(data){
 						
 						if(data.code=="1"){
@@ -419,10 +428,10 @@
 			},
 			
 			// 封装ajax请求
-			// @params{Object} dataObj,请求携带的参数格式如:data:{key:value}
+			// @params{Object} dataObj,请求携带的参数格式如:{key:value}
 			// @params{String} url, 请求的后台url
 			// @params{String} type, 请求方式,如post,get
-			// @params{Fuctions} success, 请求成功的回调函数
+			// @params{Function} success, 请求成功的回调函数
 			ajax(dataObj,url,type,success){
 				mui.ajax(url,{
 					data:dataObj,
@@ -458,7 +467,7 @@
 				}else{
 					mui(this.$refs.wrap).offCanvas().toggle();
 				}
-			}
+			},
 		}
 	})
 	
