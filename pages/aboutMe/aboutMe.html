@@ -25,14 +25,14 @@
 	</style>
 </head>
 <body id="body">
-<div class="box">
+<div class="box" ref="box">
 	
 
 		<!-- 侧滑导航根容器 -->
 	<div class="mui-off-canvas-wrap" ref="wrap" >
 		
 		  <!-- 侧滑菜单 -->
-		  <aside class="mui-off-canvas-left myaside" onclick="tz('.myaside')">
+		  <aside class="mui-off-canvas-left myaside" ref="myaside" id="myaside">
 			  <!-- 侧滑头像 -->
 			<header class="myaside_header mytx">
 				<div style="border-radius: 50%;overflow: hidden;">
@@ -42,7 +42,7 @@
 					<p >{{userName}}</p>
 				</div>
 		    </header>
-			<ul class="mui-table-view">
+			<ul class="mui-table-view" id="">
 				
 				<a href="#" data-url="myInfor/myInfor.html" data-id="myInfor.html">
 					<li class="mui-table-view-cell">
@@ -88,16 +88,16 @@
 				</a>
 			</ul>
 			<ul class="mui-table-view">
-				<a @click="toLogin()" data-url="../login/login.html" data-id="login.html">
+				<span @click="toLogin()">
 					<li class="mui-table-view-cell">
 						退出登录
 					</li>
-				</a>
+				</span>
 			</ul>
 		  </aside>
 		  
 		  <!-- 主界面开始 -->
-		<div class="mui-content mui-inner-wrap"> 
+		<div class="mui-content mui-inner-wrap" > 
 			
 			<!-- w我的信息开始 -->
 			<div class="my_infor"  @click="dragToggle()">
@@ -126,22 +126,23 @@
 						<a href="#"> 产看全部订单 > </a> 
 					</div>
 				</div>
-				<div class="mui-card-content">
+				<div class="mui-card-content" >
 					<div class="mui-card-content-inner myCardContent">
-						<ul id="myOrder" onclick="tz('#myOrder')">
-							<a href="#" data-url="OrderState/OrderState.html" data-id="OrderState.html">
+						<!-- onclick="tz('#myOrder')" -->
+						<ul id="myOrder" ref="myOrder">
+							<a href="#" data-url="OrderState/OrderState.html" data-id="OrderState.html" data-wid="all.html">
 								<li>
 									<div class="iconfont icon-daifukuan"></div>
 									<div>待付款</div>
 								</li>
 							</a>
-							<a href="#">
+							<a href="#" data-url="OrderState/OrderState.html" data-id="OrderState.html" data-wid="waitPay.html">
 								<li>
 									<div class="iconfont icon-daifenxiang"></div>
 									<div>待分享</div>
 								</li>
 							</a>
-							<a href="#" data-url="OrderState/OrderState.html" data-id="OrderState.html">
+							<a href="#" data-url="OrderState/OrderState.html" data-id="OrderState.html" data-wid="waitSend.html">
 								<li>
 									
 									<div class="iconfont icon-dengdaifahuo">
@@ -150,7 +151,7 @@
 									<div>待发货</div>
 								</li>
 							</a>
-							<a href="#" data-url="OrderState/OrderState.html" data-id="OrderState.html">
+							<a href="#" data-url="OrderState/OrderState.html" data-id="OrderState.html" data-wid="waitGet.html">
 								<li>
 									<div class="iconfont icon-dengdaishouhuo">
 										
@@ -159,7 +160,7 @@
 									<div>待收货</div>
 								</li>
 							</a>
-							<a href="#" data-url="OrderState/OrderState.html" data-id="OrderState.html">
+							<a href="#" data-url="OrderState/OrderState.html" data-id="OrderState.html" data-wid="waitComment.html">
 								<li>
 									<div class="iconfont icon-daipingjia-copy">
 										<span class="mui-badge" v-if="waitComment">{{waitComment}}</span>
@@ -177,7 +178,7 @@
 			<div class="mui-card myCard mysc" >
 				<div class="mui-card-content">
 					<div class="mui-card-content-inner myCardContent">
-						<ul id="mysc" onclick="tz('#mysc')">
+						<ul id="mysc" ref="mysc">
 							<a data-url="collect/my_collect.html" data-id="my_collect.html">
 								<li>
 									<div class="iconfont icon-youhuiquan"></div>
@@ -325,35 +326,6 @@
 	   current.reload();//页面刷新 
 	});
 	
-	function tz(ele){
-		
-		
-		// 收藏列点击时，进行页面预加载，根据url和id跳转到不同页面,携带的参数是存在本地的用户id
-		mui(ele).on('tap','a',function(){
-			let url=this.getAttribute("data-url");
-			let id=this.getAttribute("data-id");
-			if(ele=="#myOder"){
-				let OrderState=plus.webview.getWebviewById("OrderState.html");
-				mui.fire(OrderState,'showTab',{
-					id:id
-				})
-			}
-			if(url,id){
-				mui.plusReady(function () {
-				    let userId=plus.storage.getItem("account");
-					let prePage=mui.preload({
-					    url,
-					    id,
-					    extras:{
-							userId
-						}
-					});
-					prePage.show()
-				})
-			}
-		})
-	}
-	
 	// 阻止主页面滑动触发侧滑导航
 	document.querySelector(".mui-inner-wrap").addEventListener("drag",function(){
 		  event.stopPropagation();
@@ -369,6 +341,7 @@
 			waitSendNum:null,    //没有发货的数量
 			alreadySendNum:null,    //已经发货的数量
 			waitComment:null,    //等待评价的数量
+			preloadArr:[]
 		},
 		created() {
 			this.getStorage()
@@ -381,11 +354,13 @@
 				}  
 			});
 			
+			this.myOrder();
+			this.myaside();
+			this.mysc()
 		},
 		methods:{
 			// 获取本地存储的用户id，
 			// 请求后台查找到昵称
-			
 			getStorage(){
 				let idValue;  
 				let that=this;
@@ -394,36 +369,35 @@
 					// 通过key得到存储的用户id，，key必须是字符串
 					that.userId=plus.storage.getItem(`account`);
 					// ajax(that.userId);
-					let ajaxData={userId:that.userId};   //请求后台携带的参数
-					
-					// 调用封装的ajax,根据用户id获取用户名和头像
-				    that.ajax(ajaxData,that.api+"/aboutMe","post",function(data){
-						let dataArr=[];
-						dataArr.push(...[data.data])
-						dataArr.forEach(val=>{
-							that.userName=val.userName;  //用户名
-							that.heade_img=val.headImg;   //用户头像
+					if(that.userId){
+						// 调用封装的ajax,根据用户id获取用户名和头像
+						that.ajax({userId:that.userId},that.api+"/aboutMe","post",function(data){
+							let dataArr=[];
+							dataArr.push(...[data.data])
+							dataArr.forEach(val=>{
+								that.userName=val.userName;  //用户名
+								that.heade_img=val.headImg;   //用户头像
+							});
 						});
-				    });
-					console.log("用户id"+that.userId)
-					//  根据用户id得到未发货的数量, 后端返回1表示响应成功
-					that.ajax({userId:that.userId,target:"waitSend"},that.api+"/waitSendData","post",function(data){
-						if(data.code=="1"){
-							that.waitSendNum=data.num
-						}else{
-							that.waitSendNum=""
-						}
-					});
-					//  根据用户id得到已发货的数量, 后端返回1表示响应成功
-					that.ajax({userId:that.userId,target:"alreadySend"},that.api+"/waitSendData","post",function(data){
-						
-						if(data.code=="1"){
-							that.alreadySendNum=data.num;
-						}else{
-							that.alreadySendNum="";
-						}
-					});
-					
+						console.log("用户id"+that.userId)
+						//  根据用户id得到未发货的数量, 后端返回1表示响应成功
+						that.ajax({userId:that.userId,target:"waitSend"},that.api+"/waitSendData","post",function(data){
+							if(data.code=="1"){
+								that.waitSendNum=data.num
+							}else{
+								that.waitSendNum=""
+							}
+						});
+						//  根据用户id得到已发货的数量, 后端返回1表示响应成功
+						that.ajax({userId:that.userId,target:"alreadySend"},that.api+"/waitSendData","post",function(data){
+							
+							if(data.code=="1"){
+								that.alreadySendNum=data.num;
+							}else{
+								that.alreadySendNum="";
+							}
+						});
+					}
 				});
 			},
 			
@@ -448,11 +422,20 @@
 			// 点击退出登录跳转到登录页面
 			// 清除本地存储的用户id
 			toLogin(){
-				mui.plusReady(function(){
+					console.log("跳到登录页面");
+					
 					//退出登录时清除本地存储的用户id
 					plus.storage.removeItem("account");
+					console.log(this.preloadArr);
+					for(var i=0;i<this.preloadArr.length;i++){
+						plus.webview.close(this.preloadArr[i])
+					}
+					// 跳转到登录页面
+					mui.openWindow({
+						url:"../login/login.html",
+						id:"login.html",
+					});
 				
-				});
 			},
 			
 			// 点击顶部我的信息显示侧滑导航，再点击时关闭
@@ -468,6 +451,66 @@
 					mui(this.$refs.wrap).offCanvas().toggle();
 				}
 			},
+			//点击订单相关
+			myOrder(){
+				let that=this;
+				mui(that.$refs.myOrder).on('tap','a',function(){
+					let url=this.getAttribute("data-url");
+					let id=this.getAttribute("data-id");
+					let wid=this.getAttribute("data-wid");
+					that.preloadArr.push(id)
+					let OrderState=plus.webview.getWebviewById("OrderState.html");
+					mui.openWindow({
+						url,
+						id,
+						extras:{
+							userId:that.userId,
+							wid:wid
+						},
+						waiting:{
+							autoShow:false
+						}
+					})	
+				})
+			},
+			
+			myaside(){
+				let that=this;
+			
+				mui(that.$refs.myaside).on("tap",".mui-table-view a",function(){
+					let url=this.getAttribute("data-url");
+					let id=this.getAttribute("data-id");
+					that.preloadArr.push(id)
+					let extras={
+						userId:that.userId,
+					};
+					let prePage=mui.preload({
+						url,
+						id,
+						extras
+					});
+					prePage.show()
+				})	
+			},
+			
+			mysc(){
+				let that=this;
+							
+				mui(that.$refs.mysc).on("tap","a",function(){
+					let url=this.getAttribute("data-url");
+					let id=this.getAttribute("data-id");
+					that.preloadArr.push(id)
+					let extras={
+						userId:that.userId,
+					};
+					let prePage=mui.preload({
+						url,
+						id,
+						extras
+					});
+					prePage.show()
+				})	
+			}
 		}
 	})
 	

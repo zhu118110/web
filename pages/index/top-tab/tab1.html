@@ -228,7 +228,7 @@
 				})
 			},
 			// 点击产品时跳转至详情页面
-			// @prd_id : 点击的产品的id
+			// @prams {Srting} prd_id: 点击的产品的id
 			toDeatail(prd_id){
 				mui.plusReady(function () {
 				    let accountStorage=plus.storage.getItem("account");
@@ -249,10 +249,6 @@
 						})
 					}
 				})
-				
-				
-				
-				
 			}
 		},
 	})

@@ -23,15 +23,22 @@
 .collect_body {
 	width: 100%;
 	display: flex;
+	max-height: 140px;
 }
 
 .collect_body .collect_body_img {
 	font-size: 0;
+	flex: 1;
+	margin-right: 10px;
 }
-
+.mui-table-view .mui-media-object{
+	max-width: none;
+}
 .collect_body .collect_body_img img {
-	max-width: 100px;
-	height: 100px;
+	width:100%;
+	
+	min-height: 95px;
+	max-height: 105px;
 }
 
 .collect_body_infor {
@@ -39,7 +46,7 @@
 	width: 100%;
 	flex-direction: column;
 	justify-content: space-between;
-	
+	flex: 2;
 	
 }
 

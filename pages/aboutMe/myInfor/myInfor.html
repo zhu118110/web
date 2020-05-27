@@ -10,7 +10,10 @@
 	<link rel="stylesheet" type="text/css" href="../../../fonts/font.css"/>
 	<style type="text/css">
 		.mui-bar .mui-btn-link{
-			color: #ff5900;
+			color: #000;
+		}
+		.mui-bar .mui-btn-link:active {
+			color: #d01c27;
 		}
 		.head_img{
 			text-align: center;
@@ -54,7 +57,7 @@
 	<header class="mui-bar mui-bar-nav">
 		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
 		<h1 class="mui-title">我的资料</h1>
-		<a class="mui-btn-link mui-pull-right" v-show="finishBtn" @click="finish()">
+		<a class="mui-btn-link mui-pull-right"  @click="finish()">
 			完成
 		</a>
 	</header>
@@ -62,7 +65,7 @@
 		<div class="head_img">
 			<!-- 头像 -->
 			<div class="img">
-				<img :src="headImg" >
+				<img :src="headImg" ref="img" @click="PreviewImage">
 			</div>
 			<p type="button" ref="changeHeadImg" @click="changeHeadImg">
 				点击更换头像
@@ -89,7 +92,7 @@
 			userData:[],
 			user_Id:"",   //用户id
 			userName:"",   //用户名
-			headImg:"",    //头像
+			headImg:"../../../img/0.jpg",    //头像
 			captureImgArr:"", //存放选择的照片
 			
 			finishBtn:false,
@@ -122,6 +125,19 @@
 		},
 		
 		methods:{
+			// 点击头像进行预览
+			PreviewImage(){
+				let src=this.$refs.img.src;
+				console.log(src)
+				mui.plusReady(function () {
+				    plus.nativeUI.previewImage([src],{
+						current:0,
+						indicator:"none",
+					})
+				})
+				
+			},
+			
 			// 页面刚加载时根据页面传递的用户id获取用户名称以及头像
 			getInformation(){
 				let that=this;
@@ -300,8 +316,11 @@
 						success:function(data){
 							// code=1表示数据已经把新的用户名放入数据库
 							if(data.code=="1"){  
+								if(that.headImg!==that.userData[0].headImg){
+									that.upLoadImg();   //保存头像
+								}
 								// 触发 我的 页面事件，让其自己刷新
-								mui.toast("修改成功")
+								// mui.toast("修改成功")
 								let aboutMe=plus.webview.getWebviewById("aboutMe")
 								mui.fire(aboutMe,"clearStorage",{
 									statu:true
@@ -310,9 +329,8 @@
 									mui.back()
 								},1000)
 								
-								// if(that.headImg!==that.userData[0].headImg){
-								// 	that.upLoadImg();   //保存头像
-								// }else{
+								
+								// else{
 									
 								// }
 							}else{

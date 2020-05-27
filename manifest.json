@@ -4,9 +4,9 @@
     "name" : "shop1", /*应用名称，程序桌面图标名称*/
     "version" : {
         "name" : "1.0.0", /*应用版本名称*/
-        "code" : "83"
+        "code" : 1
     },
-    "description" : "", /*应用描述信息*/
+    "description" : "测试用的app", /*应用描述信息*/
     "icons" : {
         "72" : "icon.png"
     },
@@ -156,5 +156,11 @@
             }
         }
     },
-    "screenOrientation" : [ "portrait-primary", "portrait-secondary" ]
+    "screenOrientation" : [
+        "portrait-primary",
+        "portrait-secondary",
+        "landscape-primary",
+        "landscape-secondary"
+    ],
+    "fullscreen" : false
 }

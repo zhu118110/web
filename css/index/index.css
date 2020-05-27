@@ -79,9 +79,10 @@ html,body,.box{
 }
 .my-table-view{
 	display: flex;
-	justify-content: space-around;
+	justify-content: space-between;
 	flex-wrap: wrap;
 	background-color: transparent;
+	padding: 0 5px;
 }
 .my-table-view>li{
 	width: 49%;
@@ -101,7 +102,7 @@ html,body,.box{
 }
 .my-table-view li img{
 	width: 100%;
-	height: auto;
+	height: 135px;
 	
 }
 .my-table-view .mui-media-body p{
