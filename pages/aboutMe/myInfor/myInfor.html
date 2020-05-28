@@ -270,12 +270,16 @@
 						wait.close();   //关闭等待框
 						mui.toast("修改成功");
 						// 触发 我的 页面事件，让其自己刷新
-						mui.plusReady(function () {
-							let aboutMe=plus.webview.getWebviewById("aboutMe")
-						    mui.fire(aboutMe,"clearStorage",{
-						    	statu:true
-						    })
+						let aboutMe=plus.webview.getWebviewById("aboutMe")
+						mui.fire(aboutMe,"clearStorage",{
+							statu:true
 						})
+						setTimeout(function(){
+							mui.back();
+							let self=plus.webview.currentWebview();
+							self.reload();
+							
+						},1000)
 						
 						
 					}else{
@@ -321,18 +325,6 @@
 								}
 								// 触发 我的 页面事件，让其自己刷新
 								// mui.toast("修改成功")
-								let aboutMe=plus.webview.getWebviewById("aboutMe")
-								mui.fire(aboutMe,"clearStorage",{
-									statu:true
-								})
-								setTimeout(function(){
-									mui.back()
-								},1000)
-								
-								
-								// else{
-									
-								// }
 							}else{
 								mui.toast("保存失败")
 							}

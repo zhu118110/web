@@ -185,8 +185,6 @@
 						
 					</div><!-- .main -->
 				</div><!-- #item1mobile -->
-				
-				
 				<!-- 详情 -->
 				<div id="item2mobile" class="mui-slider-item mui-control-content"> 
 					详情
@@ -223,23 +221,92 @@
 			
 			
 			<!-- 点击加入购物车或者立即购买时弹出商品的属性供客户选择 -->
-			<div id="sheet1" class="mui-popover mui-popover-bottom mui-popover-action ">
-			    <!-- 可选择菜单 -->
-			    <ul class="mui-table-view">
-			      <li class="mui-table-view-cell">
-			        <a href="#">菜单1</a>
-			      </li>
-			      <li class="mui-table-view-cell">
-			        <a href="#">菜单2</a>
-			      </li>
-			    </ul>
-			    <!-- 取消菜单 -->
-			    <ul class="mui-table-view">
-			      <li class="mui-table-view-cell">
-			        <a href="#sheet1"><b>取消</b></a>
-			      </li>
-			    </ul>
-			</div>
+			<dialog id="sheet1" class="mui-popover mui-popover-bottom mui-popover-action ">
+				<div class="popoverBox">
+					<div class="popoverHeader">
+						<div class="popoverHeader_img">
+							<img src="../../img/bd1.jpg" >
+						</div>
+						<div class="popoverHeader_choice">
+							<p><span>￥</span>10.00元</p>
+							<p>
+								库存11111件
+							</p>
+							<p>
+								颜色,尺码
+							</p>
+						</div>
+					</div>
+					
+					<div class="mui-scroll-wrapper">
+					    <div class="mui-scroll">
+							
+					        <div class="popoverColor">
+					        	<p>
+									颜色
+								</p>
+								<ul class="popoverColor_list">
+									<li>
+										<img src="../../img/0.jpg">
+										<span>白色</span>
+									</li>
+									<li>
+										<img src="../../img/0.jpg" >
+										<span>黑色</span>
+									</li>
+									<li>
+										<img src="../../img/0.jpg" >
+										<span>绿色</span>
+									</li>
+									<li>
+										<img src="../../img/0.jpg" >
+										<span>蓝色</span>
+									</li>
+									<li>
+										<img src="../../img/0.jpg" >
+										<span>紫色</span>
+									</li>
+									<li>
+										<img src="../../img/0.jpg" >
+										<span>黑色</span>
+									</li>
+								</ul>
+					        </div>
+					        <div class="popoverColor popoverSize">
+					        	<p>
+					        		尺码
+					        	</p>
+					        	<ul class="popoverColor_list">
+					        		<li>
+					        			
+					        			<span>L</span>
+					        		</li>
+					        		<li>
+					        			
+					        			<span>M</span>
+					        		</li>
+					        		<li>
+					        			
+					        			<span>XL</span>
+					        		</li>
+					        		
+					        	</ul>
+					        </div>
+					       
+					    </div>
+					</div>
+					
+				</div>
+				
+			    <!-- 确定按钮 -->
+				<div class="popover_btn">
+					<button type="button" style="width: 100%;" class="mui-btn">
+						确定
+					</button>
+				</div>
+				
+			  
+			</dialog>
 	</div>
 	
 	</body>
@@ -259,8 +326,16 @@
 				collect:{
 					collectData:[],     //收藏的数据
 					isCollect:false,   //控制是否收藏样式
+				},
+				options:{
+				 scrollY: true, //是否竖向滚动
+				 scrollX: false, //是否横向滚动
+				 startX: 0, //初始化时滚动至x
+				 startY: 0, //初始化时滚动至y
+				 indicators: true, //是否显示滚动条
+				 deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
+				 bounce: true, //是否启用回弹
 				}
-				
 			},
 			filters:{
 				// 过滤价格，保留两位小数
@@ -269,16 +344,22 @@
 					return num+"元"
 				}
 			},
-			beforeCreate() {
-				
-			},
 			created() {
 				this.getPrdId();
 				
 			},
 			mounted() {
 				mui.init();
-				
+				mui("#sheet1").popover('show');
+				mui('.mui-scroll-wrapper').scroll({
+				 scrollY: true, //是否竖向滚动
+				 scrollX: false, //是否横向滚动
+				 startX: 0, //初始化时滚动至x
+				 startY: 0, //初始化时滚动至y
+				 indicators: true, //是否显示滚动条
+				 deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
+				 bounce: true //是否启用回弹
+				})
 			},
 			methods:{
 				// 页面刚加载时获取商品的id
@@ -289,7 +370,6 @@
 						let that=this;
 						
 						mui.plusReady(function () {
-							
 							that.user_Id=plus.storage.getItem("account");  //得到本地存储的用户id
 							self=plus.webview.currentWebview();
 							
@@ -401,12 +481,11 @@
 				
 				// 点击加入购物车弹出商品属性菜单
 				joinCar(){
-					
+					mui("#sheet1").popover('show');
 				},
 				
 				// 点击立即购买跳转到购买页
 				buy(){
-					
 					let that=this;
 					mui.openWindow({
 						url:'../buy/buy.html',

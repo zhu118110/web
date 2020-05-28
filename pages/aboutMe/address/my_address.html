@@ -89,7 +89,7 @@
 			<h1 class="mui-title">我的收货地址</h1>
 		</header>
 		<div class="mui-content">
-			<div class="haveAddress">
+			<div class="haveAddress" v-if="haveAddress">
 				<dl class="mui-table-view my_table_view"  v-for="(item,index) in addressArray"  :key="index" >
 					 <dd class="mui-table-view-cell">
 						<p>
@@ -111,6 +111,11 @@
 					 </dd>
 				</dl>
 			</div>
+			
+			<div v-else>
+				暂无地址
+			</div>
+			
 			
 			<div id="sheet1" class="mui-popover mui-popover-bottom mui-popover-action">
 				<form class="mui-input-group">
@@ -142,6 +147,8 @@
 					<span>添加地址</span>
 				</div>				
 			</div>
+			
+			
 		</div>
 	</body>
 	<script src="../../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
@@ -243,7 +250,7 @@
 					});
 				},
 				
-				// 页面刚加载时查找用户有没有添加地址
+				// 页面刚加载时查找用户有没有地址
 				selectAddress(){
 					let that=this;
 					mui.plusReady(function () {
@@ -262,8 +269,7 @@
 							success:function(data){
 								if(data.code!=="0"&&data.data.length>0){
 									that.addressArray.push(...data.data);
-									// 设置默认选中
-									
+									// 保存默认选中的地址的下标
 									that.addressArray.forEach((val,i)=>{
 										if(val.isDefault==true){
 											that.radio=i;
@@ -343,20 +349,24 @@
 					let that=this;
 					let btn=["否","是"]
 					mui.confirm("确认删除?","",btn,function(e){
-						if(e.index==1){
+						//e.index是1表示点击的是,为0点击的否
+						if(e.index==1){    
+							// 判断要删除的地址是否是默认地址，如果是,则将存储的默认下标清除,否则下一个地址会默认选中
 							if(index==that.radio){
 								that.radio=""
 							}
+							
 							mui.ajax(that.api+"/delAddress",{
 								data:{
 									userId:that.userId,
 									// userId:"5eb7b553ee1d1a3988b5309a",
 									_id:that.addressArray[index]._id,
 								},
-								dataType:'json',//服务器返回json格式数据
-								type:'post',//HTTP请求类型
-								timeout:10000,//超时时间设置为10秒；
+								dataType:'json',
+								type:'post',
+								timeout:10000,
 								success:function(data){
+									// code为1表示服务器已经删除成功
 									if(data.code=="1"){
 										that.addressArray=[];
 										that.selectAddress();  //重新请求数据

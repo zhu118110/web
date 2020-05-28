@@ -36,8 +36,6 @@
 	
 	display: flex;
 	justify-content: space-between;
-	
-	
 }
 .main .main_price ul{
 	display: flex;
@@ -124,3 +122,111 @@
 }
 
 
+/* dialog */
+dialog{
+	border: none;
+	padding: 0;
+	
+}
+.popoverBox{
+	padding: 5px;
+	background-color: #efefef;
+	position: relative;
+	height: 300px;
+}
+.popoverHeader{
+	width: 100%;
+	display: flex;
+	justify-content:flex-start;
+}
+.popoverHeader .popoverHeader_img{
+	width: 110px;
+	height: 110px;
+	overflow: hidden;
+	border-radius: 5px;
+	font-size: 0;
+}
+.popoverHeader .popoverHeader_img img{
+	width: 100%;
+	height: 100%;
+}
+.popoverHeader_choice{
+	margin-left: 15px;
+	display: flex;
+	flex-direction: column;
+	
+	justify-content: center;
+}
+.popoverHeader_choice>p{
+	padding: 2px 0;
+	font-size: 12px;
+}
+.popoverHeader_choice>p:nth-child(1){
+	color: #FF0000;
+	font-size: 18px;
+}
+
+.popoverHeader_choice>p span{
+	font-size: 12px;
+}
+.popoverHeader_choice>p:nth-child(2){
+	color: #bbb;
+}
+
+/* 区域滚动 */
+.mui-scroll-wrapper{
+	top:130px;
+	
+}
+.popoverColor{
+	padding: 0 5px;
+	position: relative;
+}
+.popoverColor::after{
+	position: absolute;
+	height: 1px;
+	content: "";
+	left: 5px;
+	right: 5px;
+	background-color: #e5e4e8;
+}
+.popoverColor>p{
+	margin: 15px 0 10px;
+}
+.popoverColor_list{
+	display: flex;
+	justify-content: flex-start;
+	flex-wrap: wrap;
+	
+}
+.popoverColor_list li{
+	padding: 3px 0 3px 3px;
+	display: flex;
+	-webkit-display:flex;
+	justify-content: flex-start;
+	background-color: #ddd;
+	font-size: 14px;
+	align-items: center;
+	border-radius: 5px;
+	border: 1px solid inherit;
+	margin-right: 20px;
+	margin-bottom: 15px;
+}
+.popoverColor_list li img{
+	width: 20px;
+	height: 20px;
+}
+.popoverColor_list li span{
+	padding: 0 20px;
+}
+
+.popover_btn{
+	background-color: #EFEFEF;
+	padding: 5px;
+	position: relative;
+}
+.popover_btn button{
+	color: #fff;
+	border-radius: 15px;
+	background-image:linear-gradient(to right,#ff5300, #e24b02)
+}

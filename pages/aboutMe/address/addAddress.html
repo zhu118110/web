@@ -145,15 +145,18 @@
 									// 后端返回1表示保存成功
 									if(data.code=="1"){
 										//   触发 我的地址 页面的自定义事件，让其刷新并返回到我的地址页面
-										let myAddress=plus.webview.getWebviewById("my_address.html")
+										let myAddress=plus.webview.getWebviewById("my_address.html");
 										mui.fire(myAddress,'reload',{
 											reload:true
 										});
+										mui.toast("添加地址成功");
 										setTimeout(function(){
 											mui.back()
 										},1000)
+										plus.webview.currentWebview().reload()  //刷新此页面,否则下次再点进来会有上次填写的信息
+										
 									}else{
-										mui.toast("保存失败");
+										mui.toast("添加地址失败");
 									}
 									
 								},

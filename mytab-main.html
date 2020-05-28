@@ -71,27 +71,7 @@
 			   menubutton: false   //Boolean(默认true)关闭menu按键监听  
 			},
 			// 预加载页面，
-			preloadPages:[{
-				url:'pages/index/index.html',  
-				id:"index",
-				subpages:[{  //预加载页面的子页面
-					  url:"pages/index/top-tab/tabmain.html",
-					  id:"tabmain.html",
-					}],
-				styles,
-				},{
-					url:'pages/classify/classify.html',  
-					id:"classify",
-					styles
-				},{
-					url:'pages/shopCar/shopCar.html',  
-					id:"shopCar",
-					styles
-				},{
-					url:'pages/aboutMe/aboutMe.html',  
-					id:"aboutMe",
-					styles
-				}]
+			preloadPages:tabPages
 		});
 		mui.plusReady(function () {
 		    let wait=plus.nativeUI.showWaiting("加载中,客官请稍等");
@@ -106,7 +86,7 @@
 			})
 			setTimeout(function(){
 				wait.close()
-			},1000)
+			},500)
 		})
 		// 点击导航时切换页面，
 		mui('.mui-bar-tab').on('tap', 'a', function(e) {
@@ -125,6 +105,6 @@
 			var _self = plus.webview.currentWebview();
 			_self.close("auto");
 		}
-
+		
     </script>
 </html>
