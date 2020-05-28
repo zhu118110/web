@@ -230,6 +230,7 @@
 			// 点击产品时跳转至详情页面
 			// @prams {Srting} prd_id: 点击的产品的id
 			toDeatail(prd_id){
+			
 				mui.plusReady(function () {
 				    let accountStorage=plus.storage.getItem("account");
 					// 如果用户已经登录携带商品id跳转到详情页面
@@ -238,7 +239,8 @@
 							url:"../../detail/detail.html",
 							id:"detail",
 							extras:{
-								prd_id:prd_id
+								prd_id:prd_id,
+								userId:accountStorage
 							},
 						})
 					}else{

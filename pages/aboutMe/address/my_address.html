@@ -205,17 +205,17 @@
 						let self=plus.webview.currentWebview();
 						console.log(self.fromBuy)
 						if(self.fromBuy==true){
-							
 							that.fromBuyIsHide=false
 							mui(".haveAddress").on("tap","dl",function(){
-								
 								let sibings=this.parentNode.children;
 								let index=[].indexOf.call(sibings,this);   //获取到点击的下标
-								mui.fire(buyPage,"choiceAddress",{   //触发购买页面的,自定义事件，参数是选择的地址信息
+								mui.fire(buyPage,"choiceAddress",{   //触发购买页面的,自定义事件，参数是点击的地址信息
 									address:that.addressArray[index]
-								})
+								});
+								console.log("可以点击地址")
+								
 								mui.back()
-							},true)
+							})
 						}else{
 							console.log(self.fromBuy)
 							that.fromBuyIsHide=true

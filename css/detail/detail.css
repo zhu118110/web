@@ -123,16 +123,18 @@
 
 
 /* dialog */
+.mui-bar-backdrop.mui-backdrop, .mui-backdrop-action.mui-backdrop{
+	background-color: rgba(0, 0, 0, .9); 
+}
 dialog{
 	border: none;
 	padding: 0;
-	
 }
 .popoverBox{
 	padding: 5px;
 	background-color: #efefef;
 	position: relative;
-	height: 300px;
+	height: 350px;
 }
 .popoverHeader{
 	width: 100%;
@@ -219,7 +221,56 @@ dialog{
 .popoverColor_list li span{
 	padding: 0 20px;
 }
+/* 购买数量 */
+/* 购买数量 */
+.popoverBuy_number{
+	padding: 15px 5px;
+	display: flex;
+	justify-content: space-between;
+	font-size: 14px;
+	align-items: center;
+}
+.my_numbox{
+	display: flex;
+	border: 1px solid rgba(0,0,0,.2);
+	margin-right: 15px;
+}
+.my_numbox button{
+	border: none;
+	border-radius: 0;
+	padding: 3px 12px;
+}
+.my_numbox button[disabled=disabled]{
+	background-color:#ccc;
+}
+.my_numbox input{
+	width: 50px;
+	text-align: center;
+	margin-bottom: 0;
+	border: none;
+	border-left: 1px solid rgba(0,0,0,.2);
+	border-right: 1px solid rgba(0,0,0,.2);
+	border-radius: 0;
+	height: 30px;
+	padding: 0px 5px;
+}
 
+.my_numbox-input{
+	font-size: 14px;
+}
+
+
+
+/* 确定*/
+.popover_btn::before{
+	position: absolute;
+	height: 1px;
+	content: "";
+	left: 0px;
+	right: 0px;
+	top: 0;
+	background-color: #e5e4e8;
+}
 .popover_btn{
 	background-color: #EFEFEF;
 	padding: 5px;
@@ -228,5 +279,8 @@ dialog{
 .popover_btn button{
 	color: #fff;
 	border-radius: 15px;
+	padding: 12px;
 	background-image:linear-gradient(to right,#ff5300, #e24b02)
 }
+
+

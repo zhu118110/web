@@ -292,9 +292,20 @@
 					        		
 					        	</ul>
 					        </div>
-					       
-					    </div>
-					</div>
+							<!-- 购买数量 -->
+							<div class="popoverBuy_number">
+								<span>
+									购买数量
+								</span>
+								<div class="my_numbox">
+									<button type="button" class="mui-btn mui-btn-outlined" :disabled="subtractBtn" @click="buyNumber-=1">-</button>
+									<input type="number":value="buyNumber" readonly="readonly" v-model="buyNumber" @blur="blur"/>
+									<button type="button" class="mui-btn mui-btn-outlined" :disabled="addBtn" @click="buyNumber+=1">+</button>
+								</div>
+							</div>
+							
+					    </div><!-- .mui-scroll -->
+					</div><!-- .mui-scroll-wrapper -->
 					
 				</div>
 				
@@ -327,6 +338,7 @@
 					collectData:[],     //收藏的数据
 					isCollect:false,   //控制是否收藏样式
 				},
+				
 				options:{
 				 scrollY: true, //是否竖向滚动
 				 scrollX: false, //是否横向滚动
@@ -335,7 +347,10 @@
 				 indicators: true, //是否显示滚动条
 				 deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
 				 bounce: true, //是否启用回弹
-				}
+				},
+				buyNumber:1,   //购买数量
+				subtractBtn:true,  //控制减少按钮是否禁用
+				addBtn:false,   //控制添加按钮是否禁用
 			},
 			filters:{
 				// 过滤价格，保留两位小数
@@ -344,13 +359,29 @@
 					return num+"元"
 				}
 			},
+			watch:{
+				// 监听购买数量的变化
+				"buyNumber":function(newVal,oldVal){
+					if(newVal<=1){
+						this.buyNumber=1;  
+						this.subtractBtn=true
+						
+					}else if(newVal>=10){
+						this.addBtn=true;
+						this.subtractBtn=false
+					}else{
+						this.addBtn=false;
+						this.subtractBtn=false
+					}
+				}
+			},
 			created() {
 				this.getPrdId();
 				
 			},
 			mounted() {
 				mui.init();
-				mui("#sheet1").popover('show');
+				// mui("#sheet1").popover('show');
 				mui('.mui-scroll-wrapper').scroll({
 				 scrollY: true, //是否竖向滚动
 				 scrollX: false, //是否横向滚动
@@ -368,31 +399,20 @@
 				getPrdId(){
 						let self;
 						let that=this;
-						
 						mui.plusReady(function () {
-							that.user_Id=plus.storage.getItem("account");  //得到本地存储的用户id
 							self=plus.webview.currentWebview();
-							
 							that.prd_id=self.prd_id;// 获取上一个页面传过来的商品id
+							that.user_Id=self.userId; // 获取上一个页面传过来的用户id
+							
 							ajax(that.prd_id);   //通过商品id请求后台获取到商品价格等信息
 							that.findCollect(that.prd_id,that.user_Id)   //通过商品id请求后台查找该商品是否已经被此用户收藏
 						})
-						// 请求数据库
-						function ajax(id){
-							mui.ajax(that.apiUrl+"/detail",{
-								data:{
-									prd_id:id
-								},
-								type:"POST",
-								dataType:"json",
-								timeout:10000,//超时时间设置为10秒；  
-								success:function(data){
-									// that.prd.push(...data.data);
-									that.prd=that.prd.concat(data.data);
-								},
-								error:function(xhr,type,errorThrown){
-									mui.toast("数据请求失败,原因"+type);
-								}
+						// 请求数据库查找商品信息
+						function ajax(prdId){
+							console.log(prdId)
+							that.ajax({prd_id:prdId},that.apiUrl+"/detail","POST",function(data){
+								// that.prd.push(...data.data);
+								that.prd=that.prd.concat(data.data);
 							})
 						}
 
@@ -402,27 +422,19 @@
 				findCollect(prd_id,user_Id){
 					
 					let that=this;
-					mui.ajax(that.apiUrl+"/findCollect",{
-						data:{
-							user_id:user_Id,
-							prd_id:prd_id,
-						},
-						type:"post",
-						dataType:"json",
-						timeout:10000,//超时时间设置为10秒；  
-						success:function(data){
-							// 后端返回的字段为1表示已收藏，将收藏样式改为实心
-							if(data.code=="1"){
-								that.collect.isCollect=true;
-							}else{
-								that.collect.isCollect=false;
-							}
-						
-						},
-						error:function(xhr,type,errorThrown){
-							mui.toast("数据请求失败,原因"+type);
+					let data={
+						user_id:user_Id,
+						prd_id:prd_id,
+					}
+					that.ajax(data,that.apiUrl+"/findCollect","post",function(data){
+						// 后端返回的字段为1表示已收藏，将收藏样式改为实心
+						if(data.code=="1"){
+							that.collect.isCollect=true;
+						}else{
+							that.collect.isCollect=false;
 						}
 					})
+				
 				},
 				
 				// 点击收藏根据商品id和用户id加入收藏表中
@@ -434,47 +446,29 @@
 					
 					// 如果样式=false,说明没有被收藏过,则将商品信息和用户id存到收藏表中
 					if(that.collect.isCollect==false){
-						mui.ajax(that.apiUrl+"/addCollect",{
-							data:{
-								user_id:that.user_Id,   //用户id
-								// prd_id:that.prd_id,   //商品id
-								// prd_img:that.prd[0].img,  //收藏的商品的主图
-								// prd_price:that.prd[0].price,   //商品的价格
-								prd:JSON.stringify(that.prd),
-								collect_date:newDate,
-							},
-							type:"post",
-							dataType:"json",
-							timeout:10000,//超时时间设置为10秒；  
-							success:function(data){
-								mui.toast("收藏成功");
-								that.collect.isCollect=true;  //改变收藏样式
-								// 数据库收藏成功改变样式
-							},
-							error:function(xhr,type,errorThrown){
-								mui.toast("收藏失败,原因"+type);
-							}
+						let data={
+							user_id:that.user_Id,   //用户id
+							prd:JSON.stringify(that.prd),
+							collect_date:newDate,
+						}
+						that.ajax(data,that.apiUrl+"/addCollect","post",function(data){
+							mui.toast("收藏成功");
+							that.collect.isCollect=true;  //改变收藏样式
 						})
+						
 					}else{
 						// 如果样式等于=true说明被收藏过，取消收藏
 						
 						// 取消收藏
-						mui.ajax(that.apiUrl+"/cancelCollect",{
-							data:{
+						let data={
 								user_id:that.user_Id,
 								prd_id:that.prd_id
-							},
-							type:"post",
-							dataType:"json",
-							timeout:10000,//超时时间设置为10秒；  
-							success:function(data){
-								that.collect.isCollect=false;  //改变收藏样式
-								mui.toast("已取消收藏");
-							},
-							error:function(xhr,type,errorThrown){
-								mui.toast("数据请求失败,原因"+type);
 							}
+						that.ajax(data,that.apiUrl+"/cancelCollect","post",function(data){
+							that.collect.isCollect=false;  //改变收藏样式
+							mui.toast("已取消收藏");
 						})
+						
 					}
 				},
 				
@@ -496,7 +490,25 @@
 						}
 					})
 					
+				},
+				// 封装ajax
+				// @params{Object} data:请求后台携带的数据,
+				// @params{String} url:后台的地址,
+				// @params{String} type:请求类型,
+				// @params{Function} success:请求成功的回调函数
+				ajax(data,url,type,success){
+					mui.ajax(url,{
+						data:data||null,
+						type:type,
+						dataType:"json",
+						timeout:10000,//超时时间设置为10秒；  
+						success:success,
+						error:function(xhr,type,errorThrown){
+							mui.toast("数据请求失败,原因"+type);
+						}
+					})
 				}
+				
 			}
 		})
 	</script>
