@@ -1,23 +1,328 @@
-<!Doctype html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8" />
-	<title>购物车</title>
-	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-	<link rel="stylesheet" type="text/css" href="../../css/public.css"/>
-	<link rel="stylesheet" type="text/css" href="../../fonts/font.css"/>
-	<link href="../../css/mui.min.css" rel="stylesheet"/>
-</head>
-<body>
-	<header class="mui-bar mui-bar-nav">
-		<h1 class="mui-title">我的购物车</h1>
-	</header>
-	<div class="mui-content">
-		购物车
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>我的收藏</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+		<meta charset="GB2312"/>
+		<link rel="stylesheet" type="text/css" href="../../css/mui.min.css"/>
+		<link rel="stylesheet" type="text/css" href="../../fonts/font.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/public.css"/>
+		<link rel="stylesheet" type="text/css" href="../../css/aboutMe/my_collect.css"/>
+		<style type="text/css">
+			.mui-bar .mui-btn-link:active {
+				color: #d01c27;
+			}
+			.mui-table-view-cell{
+				padding:11px 10px;
+			}
+			.my_checkbox{
+				width: 30px;
+			}
+			.my_checkbox input[type=checkbox]{
+				top: 50%;
+				transform: translateY(-50%);
+			}
+			.collect_body .collect_body_img img{
+				max-width: 100px;
+				height: 100px;
+			}
+			.collect_body_infor>p{
+				font-size: 12px;
+			}
+			.collect_body_infor_price div:nth-child(1){
+				align-self: flex-end;
+			}
+			.buy_number{
+				display: flex;
+				justify-content: space-between;
+				font-size: 14px;
+				align-items: center;
+			}
+			.my_numbox{
+				display: flex;
+				border: 1px solid rgba(0,0,0,.2);
+			}
+			.my_numbox button{
+				border: none;
+				border-radius: 0;
+				padding: 0px 10px;
+			}
+			.my_numbox button[disabled=disabled]{
+				background-color:#ccc;
+			}
+			.my_numbox input{
+				width: 30px;
+				text-align: center;
+				margin-bottom: 0;
+				border: none;
+				border-left: 1px solid rgba(0,0,0,.2);
+				border-right: 1px solid rgba(0,0,0,.2);
+				border-radius: 0;
+				height: 22px;
+				padding: 0px 5px;
+				font-size: 14px;
+			}
+			
+			.my_numbox-input{
+				font-size: 14px;
+			}
+			
+		</style>
+	</head>
+	
+	<body>
+	<div class="body">
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">我的购物车</h1>
+			<a class="mui-btn-link mui-pull-right" @click="toggle">
+				管理
+			</a>
+		</header>
+		
+		<div class="mui-content myContent" :class="{'toggle':toggleAllChecked}">
+			<!-- <div style="text-align: center;" v-if="my_collect.length<=0">
+				购物车暂无内容；快去逛逛吧！
+			</div> -->
+				<!-- 购物车内容 -->
+			<div class="collect">
+							
+				<dl class="mui-table-view" v-for="(val,ind) in shopCarList" :key="ind" @click.prevent="singleChecked(ind)">
+					<dt class="mui-table-view-cell clear collct_dt">
+						<!-- 复选按钮 -->
+						<div class="mui-input-row mui-checkbox mui-left my_checkbox">
+							<input name="checkbox" :value="ind" v-model="singleCheckArr" type="checkbox" class="checkbox">
+						</div>
+					
+						<!--商品展示区域-->
+						<div class="mui-slider-handle collect_body">
+							
+							<!-- 商品图片 -->
+							<div class="collect_body_img clear">
+								<img class="mui-media-object mui-pull-left" :src="val.src">
+							</div>
+							<!-- 商品描述 -->
+							<div class="mui-media-body collect_body_infor">
+								<p class="collect_body_infor_title">
+									{{val.title}}
+								</p>
+								<p class="collect_body_infor_type">
+									颜色
+								</p>
+								<div class="collect_body_infor_price">
+									<div style="color: #d01c27;">
+										<span style="font-size: 10px;">￥</span>
+										
+										<span>{{val.prd_price|price(2)}}</span>
+									</div>
+									
+									
+										
+									<div class="my_numbox">
+										<button type="button" class="mui-btn mui-btn-outlined" :disabled="val.number<=1" @click.stop="val.number--">-</button>
+										<input type="number" :value="val.number" v-model="val.number" readonly="readonly"/>
+										<button type="button" class="mui-btn mui-btn-outlined" :disabled="val.number>=val.max_num" @click.stop="val.number++">+</button>
+									</div>
+									
+								</div>
+							</div>
+						</div><!--商品展示结束-->
+						
+					</dt>
+					
+				</dl>
+			</div><!-- 收藏内容 -->
+
+		</div><!-- .mui-content -->
+		
+		
+		<footer class="mui-bar mui-bar-tab my-mui-bar">
+			<div class="tableft clear" @click="checkAll()">
+				<!-- 全选按钮 -->
+				<div class="mui-input-row mui-checkbox mui-left my_checkbox" style="width: 35px;">
+					
+					<input name="checkbox" :disabled="shopCarList.length<=0" :value="1" v-model="allChecked"  type="checkbox" class="checkbox">
+				</div>
+				<div>
+					全选
+				</div>
+			</div>
+			<div class="tabright" v-if="toggleAllChecked">
+				<div style="text-align: center;">
+					总价:<span style="color:#d01c27"> {{totle|price(2)}} </span>
+				</div>
+				<!-- <div>
+					总价:100元
+				</div> -->
+				<button type="button" class="mui-btn mui-btn-red" :disabled="payBtnDisabled">
+					付款
+				</button>
+			</div>
+			
+			<div class="tabright" v-else>
+				<div style="text-align: center;">
+					选中了{{singleCheckArr.length}}件商品
+				</div>
+				<!-- <div>
+					总价:100元
+				</div> -->
+				<button type="button" class="mui-btn mui-btn-red" @click="deletePrd" :disabled="deleteBtn">
+					删除
+				</button>
+			</div>
+		</footer>
 	</div>
-</body>
-<script src="../../js/mui.min.js"></script>
-<script type="text/javascript">
-	mui.init()
-</script>
+	</body>
+	<script src="../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../js/vue.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+	
+		const vue=new Vue({
+			el:".body",
+			data:{
+				api:"http://192.168.88.69:3200",
+				shopCarList:[{
+					title:"标题标题标题标题标题标题标题标题标题标题标题标题",
+					prd_price:100,
+					src:"../../img/bd1.jpg",
+					buy:100,
+					number:1,
+					max_num:10,  //商品最大购买数量
+				},{
+					title:"标题标题标题标题标题标题标题标题标题标题标题标题",
+					prd_price:110,
+					src:"../../img/bd2.jpg",
+					buy:150,
+					number:5,
+					max_num:15,  //商品最大购买数量
+				}],   //购物车的商品信息
+				user_Id:"",   //用户id
+				
+				singleCheckArr:[],   //存放选中的单个商品的下标
+				toggleAllChecked:true,   //点击导航 ‘管理’按钮,切换支付功能和删除商品功能
+				allChecked:[],   //存放点击全选按钮时的下标
+				allDisabled:false, //禁用全选按钮
+				payBtnDisabled:true,    //控制底部付款按钮是否可被点击.没有选择商品时不可以点击
+				deleteBtn:true,
+			},
+			filters:{
+				
+				/*
+					过滤价格，
+					@params{String}num,进行过滤的数据,通过|连接
+					@params{Number} n,可选,要保留几位小数,不传值保留1
+				*/
+				price(num,n=1){
+					num=Number(num).toFixed(n);
+					return num+"元";
+				}
+			},
+			
+			computed:{
+				totle(){
+					let that=this;
+					// 如果没有选择商品，singleCheckArr的长度是0，商品总价显示0
+					if(that.singleCheckArr.length<=0){
+						return 0
+					}else{
+						// singleCheckArr长度不是0则表示有选中的商品,根据选中的商品的下标去商品信息里单价*数量求出总价
+						let sum=0;
+						that.singleCheckArr.forEach(val=>{
+							sum+=that.shopCarList[val].prd_price*that.shopCarList[val].number;
+						})
+						return sum;
+					}
+					
+				}
+			},
+			mounted() {
+				mui.init();
+			},
+			methods:{
+				// 点击右上角管理按钮,显示每个商品前面的选择框和底部全选按钮;
+				// 
+				toggle(){
+					this.toggleAllChecked=!this.toggleAllChecked;
+					this.allChecked=[];
+					this.singleCheckArr=[];
+					this.payBtnDisabled=true;
+					this.deleteBtn=true;
+				},
+				
+				
+				/*  
+				功能:
+					点击每行商品根据点击的下标先在singleCheckArr判断这个商品是否已经被选中(根据下标判断);
+					如果singleCheckArr有这个下标,表示已经被选中,则从singleCheckArr删除这个下标;取消全选
+					如果没有这个下标,则表示未选中,将点击的下标存入singleCheckArr中;
+					存入的时候判断存储的数量与商品数量是否一致，如果相等表示全部选择,选中全选;
+				@params{Number} index 选中的商品的下标
+				*/ 
+				singleChecked(index){
+					// 1.先判断是否有这个下标==-1表示没有,则保存这个下标
+					if(this.singleCheckArr.indexOf(index)==-1){
+						this.singleCheckArr.push(index);
+						//存入的时候判断存储的数量与商品数量是否一致，如果相等表示全部选择,激活全选按钮
+						if(this.singleCheckArr.length==this.shopCarList.length){
+							this.allChecked.push(1);
+						};
+						this.payBtnDisabled=false;
+						this.deleteBtn=false;
+					}else{
+						// 有的话删除掉将这个下标删除掉,取消全选
+						this.singleCheckArr.splice(this.singleCheckArr[index],1);
+						this.allChecked=[];
+						
+						// 判断是否有选中的商品,没有则禁用付款和删除按钮
+						if(this.singleCheckArr.length<=0){
+							this.payBtnDisabled=true;
+							this.deleteBtn=true;
+						};
+					}
+				},
+				
+				
+				/*
+				功能:
+					点击全选按钮,选中所有的商品----循环把每个商品的下标存储起来;
+					再点击取消选中  --将存储的下标清空;
+				*/
+				checkAll(){
+					// 选中所有商品
+					if(this.allChecked.indexOf(1)==-1){
+						this.allChecked.push(1);  //选中全选按钮
+						this.singleCheckArr=[];   //清空之前选择的单个商品,否则下标会重复放入
+						this.shopCarList.forEach((val,i)=>{
+							this.singleCheckArr.push(i);
+						});
+						this.payBtnDisabled=false;  //可以点击付款按钮
+						this.deleteBtn=false;
+					}else{
+						// 取消选中所有商品
+						this.allChecked=[];   
+						this.singleCheckArr=[];
+						this.payBtnDisabled=true;  //禁用付款按钮
+						this.deleteBtn=true;
+					}
+				},
+				
+				
+				/*
+					点击删除按钮,删除选中的商品
+				*/
+				deletePrd(){
+					
+					let delArr=[];
+					this.singleCheckArr.sort(function(a,b){return b-a});  //让数组内的存储的下标进行倒叙排列
+					// console.log(delArr)
+					this.singleCheckArr.forEach((v,i)=>{
+						this.shopCarList.splice(this.singleCheckArr[i],1)
+					})
+				}
+			},
+			
+			
+		})
+	</script>
 </html>
