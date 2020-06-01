@@ -32,6 +32,10 @@
 			color: #ff5000;
 			border-color: #ff5000;
 		}
+		.selectLi{
+			background-color: #ff0000 !important;
+			color: #fff;
+		}
 	</style>
 	<body>
 	<header id="header" class="mui-bar mui-bar-transparent" style="height: 40px;">
@@ -233,64 +237,25 @@
 								库存11111件
 							</p>
 							<p>
-								颜色,尺码
+								<span v-for="(attr,index) in prdAttr">
+									{{attr.name}}
+								</span>
 							</p>
 						</div>
 					</div>
 					
 					<div class="mui-scroll-wrapper">
 					    <div class="mui-scroll">
-							
-					        <div class="popoverColor">
+					        <div class="popoverColor" v-for="(attr,index) in prdAttr">
 					        	<p>
-									颜色
+									{{attr.name}}
 								</p>
-								<ul class="popoverColor_list">
-									<li>
-										<img src="../../img/0.jpg">
-										<span>白色</span>
-									</li>
-									<li>
-										<img src="../../img/0.jpg" >
-										<span>黑色</span>
-									</li>
-									<li>
-										<img src="../../img/0.jpg" >
-										<span>绿色</span>
-									</li>
-									<li>
-										<img src="../../img/0.jpg" >
-										<span>蓝色</span>
-									</li>
-									<li>
-										<img src="../../img/0.jpg" >
-										<span>紫色</span>
-									</li>
-									<li>
-										<img src="../../img/0.jpg" >
-										<span>黑色</span>
+								<ul class="popoverColor_list" >
+									<li v-for="(i,ind) in attr.item" @click="selectAttr(index,ind)" :class="{'selectLi':ind == xuantype[index]}">
+										
+										<span>{{i.attr_val}}</span>
 									</li>
 								</ul>
-					        </div>
-					        <div class="popoverColor popoverSize">
-					        	<p>
-					        		尺码
-					        	</p>
-					        	<ul class="popoverColor_list">
-					        		<li>
-					        			
-					        			<span>L</span>
-					        		</li>
-					        		<li>
-					        			
-					        			<span>M</span>
-					        		</li>
-					        		<li>
-					        			
-					        			<span>XL</span>
-					        		</li>
-					        		
-					        	</ul>
 					        </div>
 							<!-- 购买数量 -->
 							<div class="popoverBuy_number">
@@ -298,9 +263,9 @@
 									购买数量
 								</span>
 								<div class="my_numbox">
-									<button type="button" class="mui-btn mui-btn-outlined" :disabled="subtractBtn" @click="buyNumber-=1">-</button>
+									<button type="button" class="mui-btn mui-btn-outlined" :disabled="buyNumber<=1" @click="buyNumber-=1">-</button>
 									<input type="number":value="buyNumber" readonly="readonly" v-model="buyNumber" @blur="blur"/>
-									<button type="button" class="mui-btn mui-btn-outlined" :disabled="addBtn" @click="buyNumber+=1">+</button>
+									<button type="button" class="mui-btn mui-btn-outlined" :disabled="buyNumber>=10" @click="buyNumber+=1">+</button>
 								</div>
 							</div>
 							
@@ -332,6 +297,8 @@
 				apiUrl:"http://192.168.88.69:3200",
 				prd_id:"",  //商品的id
 				prd:[],   //根据id查找到的商品
+				prdAttr:[],   //根据商品id查找到的商品的属性
+				
 				user_Id:"",   //本地存储的用户id
 				// 收藏
 				collect:{
@@ -339,6 +306,7 @@
 					isCollect:false,   //控制是否收藏样式
 				},
 				
+				// 区域滚动默认值,
 				options:{
 				 scrollY: true, //是否竖向滚动
 				 scrollX: false, //是否横向滚动
@@ -349,8 +317,7 @@
 				 bounce: true, //是否启用回弹
 				},
 				buyNumber:1,   //购买数量
-				subtractBtn:true,  //控制减少按钮是否禁用
-				addBtn:false,   //控制添加按钮是否禁用
+				xuantype:[-1,-1],
 			},
 			filters:{
 				// 过滤价格，保留两位小数
@@ -360,20 +327,7 @@
 				}
 			},
 			watch:{
-				// 监听购买数量的变化
-				"buyNumber":function(newVal,oldVal){
-					if(newVal<=1){
-						this.buyNumber=1;  
-						this.subtractBtn=true
-						
-					}else if(newVal>=10){
-						this.addBtn=true;
-						this.subtractBtn=false
-					}else{
-						this.addBtn=false;
-						this.subtractBtn=false
-					}
-				}
+				
 			},
 			created() {
 				this.getPrdId();
@@ -404,19 +358,34 @@
 							that.prd_id=self.prd_id;// 获取上一个页面传过来的商品id
 							that.user_Id=self.userId; // 获取上一个页面传过来的用户id
 							
-							ajax(that.prd_id);   //通过商品id请求后台获取到商品价格等信息
+							// ajax(that.prd_id);   //通过商品id请求后台获取到商品价格等信息
 							that.findCollect(that.prd_id,that.user_Id)   //通过商品id请求后台查找该商品是否已经被此用户收藏
 						})
+						ajax(that.prd_id);
 						// 请求数据库查找商品信息
 						function ajax(prdId){
-							console.log(prdId)
-							that.ajax({prd_id:prdId},that.apiUrl+"/detail","POST",function(data){
-								// that.prd.push(...data.data);
-								that.prd=that.prd.concat(data.data);
+							// console.log(prdId)
+							that.ajax({prd_id:"5eb3bbfa929ffe2036ca8ebb"},that.apiUrl+"/detail","post",function(data){
+								that.prdAttr.push(...data.data);
+								// that.prdAttr=that.prdAttr.concat(data.data);
+								console.log(that.prdAttr)
 							})
 						}
 
 				},
+				
+				// 点击属性值添加样式
+				selectAttr(index,ind){
+					var color = index == 0 ? ind : this.xuantype[0];
+					var size = index == 1 ? ind : this.xuantype[1];
+					var cur_xuantype = this.xuantype;
+					cur_xuantype[index] = ind;
+					// console.log(cur_xuantype)
+					this.xuantype = cur_xuantype;
+					this.xuantype = [color,size];
+					
+				},
+				
 				
 				// 页面刚加载时先根据商品id和用户id查找这个商品是否被此用户收藏
 				findCollect(prd_id,user_Id){
@@ -498,7 +467,7 @@
 				// @params{Function} success:请求成功的回调函数
 				ajax(data,url,type,success){
 					mui.ajax(url,{
-						data:data||null,
+						data:data,
 						type:type,
 						dataType:"json",
 						timeout:10000,//超时时间设置为10秒；  

@@ -87,7 +87,7 @@
 .tabright {
 	flex: 2;
 	text-align: center;
-	display: inline-table;
+	display:flex;
 	align-self: center;
 }
 
@@ -206,13 +206,13 @@ dialog{
 	display: flex;
 	-webkit-display:flex;
 	justify-content: flex-start;
-	background-color: #ddd;
-	font-size: 14px;
+	background-color: #e4e4e4;
+	font-size: 12px;
 	align-items: center;
 	border-radius: 5px;
 	border: 1px solid inherit;
-	margin-right: 20px;
-	margin-bottom: 15px;
+	margin-right: 15px;
+	margin-bottom: 10px;
 }
 .popoverColor_list li img{
 	width: 20px;

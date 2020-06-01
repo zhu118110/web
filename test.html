@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			input {
+			       display: none;
+			 }
+			  
+			input[type="radio"]+label {
+				/* 默认label的样式 */
+				 /* content: "\a0"; */
+				 display: inline-block;
+				 padding: 10px 20px;
+				background-color: #666;
+				margin-left: 20px;
+				 color: #fff;
+				border-radius: 10px;
+			 }
+			    
+			input[type="radio"]:checked+label {
+				/* 当点击label的时候背景颜色发生改变 */
+				 background-color: aqua;
+		    }
+			    
+			.row {
+				display: inline-block;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="box">
+			<div class="attr" v-for="(items,index) in options">
+				<p>
+					{{items.name}}
+				</p>
+				<div class="row"  v-for="(item,ind) in items.items" @click="select(index,ind)">
+					<input type="radio" :name="index" :id="item.id" value=""/>
+					<label :for="item.id">{{item.msg}}</label>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="./js/vue.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		// {
+		// 	items: [{
+		// 		'msg': "XXX",
+		// 		"id": "13"
+		// 	}, {
+		// 		'msg': "L",
+		// 		"id": "14"
+		// 	}, {
+		// 		'msg': "XXL",
+		// 		"id": "15"
+		// 	}],
+		// 	name: "型号"
+		// }, {
+		// 	items: [{
+		// 		'msg': "32G",
+		// 		"id": "16"
+		// 	}, {
+		// 		'msg': "8G",
+		// 		"id": "17"
+		// 	}, {
+		// 		'msg': "4G",
+		// 		"id": "18"
+		// 	}],
+		// 	name: "版本"
+		// }
+		const vue = new Vue({
+			el:".box",
+			data:{
+				id: ['', '', ''],
+				options: [
+					{
+						items: [{
+							'msg': '绿色',
+							"id": "11"
+						}, {
+							'msg': "红色",
+							"id": "12"
+						}],
+						name: "颜色"
+					},
+				]
+			},
+			methods:{
+				select(index, ind) {
+					// console.log(index,ind);
+				    var itemId = this.options[index].items[ind].id; //获取选中的id号
+					this.id.splice(index, 1, itemId); //替换数组id[]中对应的元素，获得所有选中的id
+				    console.log(index,ind,this.id);
+				}
+			}
+			
+		})
+	</script>
+</html>
