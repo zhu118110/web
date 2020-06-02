@@ -213,10 +213,10 @@
 					</a>
 				</div>
 				<div class="tabright">
-					<button type="button" class="mui-btn" ref="joinCar" @click="joinCar">
+					<button type="button" class="mui-btn" ref="joinCar" @click="joinCarBtn">
 						加入购物车
 					</button>
-					<button type="button" class="mui-btn" @click="buy">
+					<button type="button" class="mui-btn" @click="buyBtn">
 						立即购买
 					</button>
 				</div>
@@ -227,23 +227,25 @@
 			<!-- 点击加入购物车或者立即购买时弹出商品的属性供客户选择 -->
 			<dialog id="sheet1" class="mui-popover mui-popover-bottom mui-popover-action ">
 				<div class="popoverBox">
+					<!-- 顶部商品图片以及商品价格 -->
 					<div class="popoverHeader">
 						<div class="popoverHeader_img">
 							<img src="../../img/bd1.jpg" >
 						</div>
-						<div class="popoverHeader_choice">
-							<p><span>￥</span>10.00元</p>
+						<div class="popoverHeader_choice" v-for="i in prd">
+							<p><span>￥</span>{{i.price|prd_price}}</p>
 							<p>
-								库存11111件
+								库存:{{i.number}}
 							</p>
 							<p>
-								<span v-for="(attr,index) in prdAttr">
-									{{attr.name}}
+								<span v-for="(attr,index) in showAttr">
+									{{attr}};
 								</span>
 							</p>
 						</div>
 					</div>
 					
+					<!-- 中间商品属性 -->
 					<div class="mui-scroll-wrapper">
 					    <div class="mui-scroll">
 					        <div class="popoverColor" v-for="(attr,index) in prdAttr">
@@ -257,6 +259,7 @@
 									</li>
 								</ul>
 					        </div>
+							
 							<!-- 购买数量 -->
 							<div class="popoverBuy_number">
 								<span>
@@ -274,9 +277,9 @@
 					
 				</div>
 				
-			    <!-- 确定按钮 -->
+			    <!-- 底部确定按钮 -->
 				<div class="popover_btn">
-					<button type="button" style="width: 100%;" class="mui-btn">
+					<button type="button" style="width: 100%;" class="mui-btn" @click="dialogBtn">
 						确定
 					</button>
 				</div>
@@ -298,26 +301,18 @@
 				prd_id:"",  //商品的id
 				prd:[],   //根据id查找到的商品
 				prdAttr:[],   //根据商品id查找到的商品的属性
-				
+				showAttr:[],  //展示选中的属性
 				user_Id:"",   //本地存储的用户id
+				attr_id:"",   //选中的属性id
+				val_id:"",    //选中的属性值的id
 				// 收藏
 				collect:{
 					collectData:[],     //收藏的数据
 					isCollect:false,   //控制是否收藏样式
 				},
-				
-				// 区域滚动默认值,
-				options:{
-				 scrollY: true, //是否竖向滚动
-				 scrollX: false, //是否横向滚动
-				 startX: 0, //初始化时滚动至x
-				 startY: 0, //初始化时滚动至y
-				 indicators: true, //是否显示滚动条
-				 deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
-				 bounce: true, //是否启用回弹
-				},
 				buyNumber:1,   //购买数量
 				xuantype:[-1,-1],
+				btnStyle:false,   //点击加入购物车变为true，点击立即购买变为false
 			},
 			filters:{
 				// 过滤价格，保留两位小数
@@ -326,24 +321,21 @@
 					return num+"元"
 				}
 			},
-			watch:{
-				
-			},
+			
 			created() {
 				this.getPrdId();
-				
 			},
 			mounted() {
 				mui.init();
 				// mui("#sheet1").popover('show');
 				mui('.mui-scroll-wrapper').scroll({
-				 scrollY: true, //是否竖向滚动
-				 scrollX: false, //是否横向滚动
-				 startX: 0, //初始化时滚动至x
-				 startY: 0, //初始化时滚动至y
-				 indicators: true, //是否显示滚动条
-				 deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
-				 bounce: true //是否启用回弹
+					 scrollY: true, //是否竖向滚动
+					 scrollX: false, //是否横向滚动
+					 startX: 0, //初始化时滚动至x
+					 startY: 0, //初始化时滚动至y
+					 indicators: true, //是否显示滚动条
+					 deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
+					 bounce: true //是否启用回弹
 				})
 			},
 			methods:{
@@ -357,18 +349,25 @@
 							self=plus.webview.currentWebview();
 							that.prd_id=self.prd_id;// 获取上一个页面传过来的商品id
 							that.user_Id=self.userId; // 获取上一个页面传过来的用户id
-							
-							// ajax(that.prd_id);   //通过商品id请求后台获取到商品价格等信息
+							getAttr(that.prd_id,that.apiUrl+"/getAttr");   //通过商品id请求后台获取到商品属性
+							getPrdInfor(that.prd_id,that.apiUrl+"/getPrdInfor")  //通过商品id请求后台获取到商品信息
 							that.findCollect(that.prd_id,that.user_Id)   //通过商品id请求后台查找该商品是否已经被此用户收藏
 						})
-						ajax(that.prd_id);
-						// 请求数据库查找商品信息
-						function ajax(prdId){
-							// console.log(prdId)
-							that.ajax({prd_id:"5eb3bbfa929ffe2036ca8ebb"},that.apiUrl+"/detail","post",function(data){
+						// 根据商品的id请求数据库,得到这个商品的属性
+						function getAttr(data,url){
+							console.log(data)
+							that.ajax({prd_id:data},url,"post",function(data){
 								that.prdAttr.push(...data.data);
-								// that.prdAttr=that.prdAttr.concat(data.data);
-								console.log(that.prdAttr)
+								that.prdAttr.forEach(val=>{
+									that.showAttr.push(val.name)
+								})
+							})
+						};
+						// 根据商品的id请求数据库,得到这个商品的价格等信息
+						function getPrdInfor(data,url){
+							that.ajax({prd_id:data},url,"post",function(data){
+								that.prd.push(...data.data)
+								
 							})
 						}
 
@@ -376,13 +375,16 @@
 				
 				// 点击属性值添加样式
 				selectAttr(index,ind){
+					
 					var color = index == 0 ? ind : this.xuantype[0];
 					var size = index == 1 ? ind : this.xuantype[1];
-					var cur_xuantype = this.xuantype;
-					cur_xuantype[index] = ind;
-					// console.log(cur_xuantype)
-					this.xuantype = cur_xuantype;
-					this.xuantype = [color,size];
+					this.xuantype = [color,size];			
+					var selectColor=this.prdAttr[index].item[ind].attr_val;
+					this.showAttr[index]=selectColor;   //展示选中的属性名和属性值
+					
+					this.attr_id=this.prdAttr[index].id;   //属性id 
+					this.val_id=this.prdAttr[index].item[ind]._id;   //属性值id
+					
 					
 				},
 				
@@ -443,11 +445,37 @@
 				
 				
 				// 点击加入购物车弹出商品属性菜单
-				joinCar(){
+				joinCarBtn(){
+					this.btnStyle=true;
 					mui("#sheet1").popover('show');
 				},
-				
-				// 点击立即购买跳转到购买页
+				joinCar(){
+					
+						let that=this
+						let sendData={
+							userId:"5eb7b553ee1d1a3988b5309a",
+							prd_id:"5eb3bbfa929ffe2036ca8ebb",
+							buyNumber:that.buyNumber,
+							attr:JSON.stringify(that.showAttr),
+						}
+						that.ajax(sendData,that.apiUrl+"/joinCar","post",function(data){
+							if(data.code=="1"){
+								mui("#sheet1").popover('hide');
+								// plus.nativeUI.closeWaiting();
+								mui.toast("加入购物车成功")
+							}else{
+								mui.toast("加入购物车失败");
+								mui("#sheet1").popover('hide');
+								// plus.nativeUI.closeWaiting();
+							}
+						})
+					
+				},
+				// 点击立即购买按钮，弹出属性框		
+				buyBtn(){
+					this.btnStyle=false;
+					mui("#sheet1").popover('show');
+				},
 				buy(){
 					let that=this;
 					mui.openWindow({
@@ -455,11 +483,41 @@
 						id:'buy.html',
 						extras:{
 							userId:that.user_Id,
-							prdId:that.prd[0]._id
+							prdId:that.prd[0]._id,
+							prd:that.prd,
+							attr:that.showAttr,
+							buyNumber:that.buyNumber
 						}
 					})
-					
 				},
+				
+				
+				// 点击属性框的确定
+				dialogBtn(){
+					let flag =true;
+					let that=this;
+					that.xuantype.forEach(val=>{
+						if(val==-1){
+							mui.toast("请选择属性");
+							flag=false;
+							return false;
+						}
+					});
+					// 如果flag=true,表示勾选了属性，可以存入服务器
+					if(flag){
+						// plus.nativeUI.showWaiting();
+						if(that.btnStyle==true){
+							that.joinCar();
+						}else{
+							that.buy()
+						}
+					}
+				},
+				
+				
+				
+				
+				
 				// 封装ajax
 				// @params{Object} data:请求后台携带的数据,
 				// @params{String} url:后台的地址,

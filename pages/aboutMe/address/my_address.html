@@ -89,7 +89,7 @@
 			<h1 class="mui-title">我的收货地址</h1>
 		</header>
 		<div class="mui-content">
-			<div class="haveAddress" v-if="haveAddress">
+			<div class="myAddress">
 				<dl class="mui-table-view my_table_view"  v-for="(item,index) in addressArray"  :key="index" >
 					 <dd class="mui-table-view-cell">
 						<p>
@@ -112,9 +112,9 @@
 				</dl>
 			</div>
 			
-			<div v-else>
+			<!-- <div v-else>
 				暂无地址
-			</div>
+			</div> -->
 			
 			
 			<div id="sheet1" class="mui-popover mui-popover-bottom mui-popover-action">
@@ -203,21 +203,21 @@
 					mui.plusReady(function () {
 					    let buyPage=plus.webview.getWebviewById("buy.html");
 						let self=plus.webview.currentWebview();
-						console.log(self.fromBuy)
+						
 						if(self.fromBuy==true){
-							that.fromBuyIsHide=false
-							mui(".haveAddress").on("tap","dl",function(){
+							that.fromBuyIsHide=false;
+							
+							mui(".myAddress").on("tap","dl",function(){
 								let sibings=this.parentNode.children;
 								let index=[].indexOf.call(sibings,this);   //获取到点击的下标
 								mui.fire(buyPage,"choiceAddress",{   //触发购买页面的,自定义事件，参数是点击的地址信息
 									address:that.addressArray[index]
 								});
-								console.log("可以点击地址")
 								
 								mui.back()
 							})
 						}else{
-							console.log(self.fromBuy)
+							
 							that.fromBuyIsHide=true
 						}
 					})

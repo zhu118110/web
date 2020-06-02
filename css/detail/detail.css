@@ -40,7 +40,7 @@
 .main .main_price ul{
 	display: flex;
 	justify-content: flex-start;
-	color: #d01c27;
+	color: #FF0000;
 }
 
 .main .main_price li:last-child{
@@ -238,26 +238,28 @@ dialog{
 .my_numbox button{
 	border: none;
 	border-radius: 0;
-	padding: 3px 12px;
+	padding: 0px 12px;
 }
 .my_numbox button[disabled=disabled]{
 	background-color:#ccc;
 }
 .my_numbox input{
-	width: 50px;
+	width: 35px;
 	text-align: center;
 	margin-bottom: 0;
 	border: none;
 	border-left: 1px solid rgba(0,0,0,.2);
 	border-right: 1px solid rgba(0,0,0,.2);
 	border-radius: 0;
-	height: 30px;
+	height: 22px;
 	padding: 0px 5px;
-}
-
-.my_numbox-input{
 	font-size: 14px;
 }
+/* 
+.my_numbox-input{
+	
+	font-size: 14px;
+} */
 
 
 

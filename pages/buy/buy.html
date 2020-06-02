@@ -61,14 +61,17 @@
 							{{val.title}}
 							<!-- 商品描述商品描述商品描述商品描述商品描述 -->
 						</p>
-						<p class="collect_body_infor_type">
-							颜色:
+						<p class="collect_body_infor_type" >
+							已选:
+							<span v-for="i in attr">
+								{{i}};
+							</span>
 						</p>
-						<p class="collect_body_infor_type">
+						<!-- <p class="collect_body_infor_type">
 							尺码:
-						</p>
+						</p> -->
 						<div class="collect_body_infor_price">
-							<div style="color: #d01c27;">
+							<div style="color:#FF0000;">
 								<span style="font-size: 12px;">￥</span>
 								<span>
 								
@@ -102,7 +105,7 @@
 	<footer class="mui-bar mui-bar-tab my-mui-bar">
 		<div class="tab">
 			<div>
-				实付款:<span style="color:#d01c27">￥{{this.totle|price}}</span>
+				实付款:<span style="color:#FF0000;">￥{{this.totle|price}}</span>
 			</div>
 			<button type="button" class="mui-btn mui-btn-red" @click="pay">
 				立即支付
@@ -123,8 +126,8 @@
 			api:"http://192.168.88.69:3200",
 			address:[],   //地址
 			prdInfor:[],    //存放产品信息
+			attr:[],
 			buyNumber:1,   //购买数量
-			
 			payStyle:"",  //付款方式
 			subtractBtn:true,  //控制减少按钮是否禁用
 			addBtn:false,   //控制添加按钮是否禁用
@@ -164,9 +167,12 @@
 				    let self=plus.webview.currentWebview();
 					that.userId=self.userId;
 					that.prd_id=self.prdId;
+					that.buyNumber= self.buyNumber;
+					that.attr=self.attr;
+					that.prdInfor.push(...self.prd);  //产品信息
 					// that.getAddress("5eb7b553ee1d1a3988b5309a")
 					that.getAddress(that.userId,that.prd_id);   //通过id得到地址
-					that.getProduct(that.prd_id);
+					console.log(that.prdInfor)
 				})
 			},
 			
@@ -189,8 +195,7 @@
 							that.address=that.address.filter(val=>{     //得到默认地址
 								return val.isDefault==true;
 							})
-							// 根据商品id得到商品信息
-							
+						
 						}
 					},
 					error:function(xhr,type,errorThrown){
@@ -199,28 +204,7 @@
 				});
 			},
 			
-			// 根据商品id 得到商品信息，在得到地址成功后调用
-			getProduct(prdId){
-				let that=this;
-				mui.ajax(that.api+'/detail',{
-					data:{
-						prd_id:prdId
-					},
-					dataType:'json',//服务器返回json格式数据
-					type:'post',//HTTP请求类型
-					timeout:10000,//超时时间设置为10秒；
-					success:function(data){
-						
-						if(data.statu=="success"){
-							that.prdInfor.push(data.data);
-							
-						}
-					},
-					error:function(xhr,type,errorThrown){
-						mui.toast("服务器错误"+errorThrown)
-					}
-				});
-			},
+		
 			// 点击地址跳转到地址页面选择地址
 			chooseAddres(){
 				mui.plusReady(function () {

@@ -220,6 +220,7 @@
 			},
 			
 			computed:{
+				// 总价
 				totle(){
 					let that=this;
 					// 如果没有选择商品，singleCheckArr的长度是0，商品总价显示0
@@ -249,7 +250,27 @@
 					this.payBtnDisabled=true;
 					this.deleteBtn=true;
 				},
-				
+				/*
+					页面刚加载时获取购物车里的所有内容
+				*/
+				getShopCarList(){
+					
+					let that=this;
+					mui.plusReady(function () {
+					    that.user_Id=plus.storage.getItem("account");
+						mui.ajax(that.api+"/findshopCar",{
+							data:{
+								userId:that.user_Id
+							},
+							type:"post",
+							timeout:"10000",
+							success:function(data){
+								
+							}
+						})
+					})
+					
+				},
 				
 				/*  
 				功能:

@@ -84,13 +84,13 @@
 .my_numbox button{
 	border: none;
 	border-radius: 0;
-	padding: 3px 12px;
+	padding: 0px 12px;
 }
 .my_numbox button[disabled=disabled]{
 	background-color:#ccc;
 }
 .my_numbox input{
-	width: 50px;
+	width: 35px;
 	text-align: center;
 	margin-bottom: 0;
 	border: none;
@@ -99,11 +99,9 @@
 	border-radius: 0;
 	height: 25px;
 	padding: 0px 5px;
-}
-
-.my_numbox-input{
 	font-size: 14px;
 }
+
 
 
 
