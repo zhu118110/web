@@ -349,10 +349,12 @@
 							self=plus.webview.currentWebview();
 							that.prd_id=self.prd_id;// 获取上一个页面传过来的商品id
 							that.user_Id=self.userId; // 获取上一个页面传过来的用户id
-							getAttr(that.prd_id,that.apiUrl+"/getAttr");   //通过商品id请求后台获取到商品属性
-							getPrdInfor(that.prd_id,that.apiUrl+"/getPrdInfor")  //通过商品id请求后台获取到商品信息
+							// getAttr(that.prd_id,that.apiUrl+"/getAttr");   //通过商品id请求后台获取到商品属性
+							// getPrdInfor(that.prd_id,that.apiUrl+"/getPrdInfor")  //通过商品id请求后台获取到商品信息
 							that.findCollect(that.prd_id,that.user_Id)   //通过商品id请求后台查找该商品是否已经被此用户收藏
 						})
+						getAttr("5eb3bbfa929ffe2036ca8ebb",that.apiUrl+"/getAttr");   //通过商品id请求后台获取到商品属性
+						getPrdInfor("5eb3bbfa929ffe2036ca8ebb",that.apiUrl+"/getPrdInfor")  //通过商品id请求后台获取到商品信息
 						// 根据商品的id请求数据库,得到这个商品的属性
 						function getAttr(data,url){
 							console.log(data)
@@ -450,13 +452,15 @@
 					mui("#sheet1").popover('show');
 				},
 				joinCar(){
-					
+						
 						let that=this
+						// that.prd.push(that.buyNumber,that.showAttr);
+						that.prd[0].buyNumber=that.buyNumber;
+						that.prd[0].attr=that.showAttr;
+					
 						let sendData={
 							userId:"5eb7b553ee1d1a3988b5309a",
-							prd_id:"5eb3bbfa929ffe2036ca8ebb",
-							buyNumber:that.buyNumber,
-							attr:JSON.stringify(that.showAttr),
+							prd:JSON.stringify(that.prd),
 						}
 						that.ajax(sendData,that.apiUrl+"/joinCar","post",function(data){
 							if(data.code=="1"){
@@ -478,15 +482,18 @@
 				},
 				buy(){
 					let that=this;
+					that.prd.push()
+					that.prd.forEach(val=>{
+						val.attr=that.showAttr;
+						val.buyNumber=that.buyNumber
+					})
+					
 					mui.openWindow({
 						url:'../buy/buy.html',
 						id:'buy.html',
 						extras:{
 							userId:that.user_Id,
-							prdId:that.prd[0]._id,
 							prd:that.prd,
-							attr:that.showAttr,
-							buyNumber:that.buyNumber
 						}
 					})
 				},

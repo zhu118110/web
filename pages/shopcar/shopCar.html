@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>我的收藏</title>
+		<title>购物车</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
 		<meta charset="GB2312"/>
 		<link rel="stylesheet" type="text/css" href="../../css/mui.min.css"/>
@@ -88,8 +88,8 @@
 				<!-- 购物车内容 -->
 			<div class="collect">
 							
-				<dl class="mui-table-view" v-for="(val,ind) in shopCarList" :key="ind" @click.prevent="singleChecked(ind)">
-					<dt class="mui-table-view-cell clear collct_dt">
+				<dl class="mui-table-view" v-for="(val,ind) in shopCarList"  >
+					<dt class="mui-table-view-cell clear collct_dt" v-for="prd in val.prd" :key="ind" @click.prevent="singleChecked(ind)">
 						<!-- 复选按钮 -->
 						<div class="mui-input-row mui-checkbox mui-left my_checkbox">
 							<input name="checkbox" :value="ind" v-model="singleCheckArr" type="checkbox" class="checkbox">
@@ -100,29 +100,31 @@
 							
 							<!-- 商品图片 -->
 							<div class="collect_body_img clear">
-								<img class="mui-media-object mui-pull-left" :src="val.src">
+								<img class="mui-media-object mui-pull-left" :src="prd.img">
 							</div>
 							<!-- 商品描述 -->
 							<div class="mui-media-body collect_body_infor">
 								<p class="collect_body_infor_title">
-									{{val.title}}
+									{{prd.title}}
 								</p>
 								<p class="collect_body_infor_type">
-									颜色
+									<span v-for="i in prd.attr">
+										{{i}}
+									</span>
 								</p>
 								<div class="collect_body_infor_price">
 									<div style="color: #d01c27;">
 										<span style="font-size: 10px;">￥</span>
 										
-										<span>{{val.prd_price|price(2)}}</span>
+										<span>{{prd.price|price(2)}}</span>
 									</div>
 									
 									
 										
 									<div class="my_numbox">
-										<button type="button" class="mui-btn mui-btn-outlined" :disabled="val.number<=1" @click.stop="val.number--">-</button>
-										<input type="number" :value="val.number" v-model="val.number" readonly="readonly"/>
-										<button type="button" class="mui-btn mui-btn-outlined" :disabled="val.number>=val.max_num" @click.stop="val.number++">+</button>
+										<button type="button" class="mui-btn mui-btn-outlined" :disabled="prd.buyNumber<=1" @click.stop="prd.buyNumber--">-</button>
+										<input type="number" :value="prd.buyNumber" v-model="prd.buyNumber" readonly="readonly"/>
+										<button type="button" class="mui-btn mui-btn-outlined" :disabled="prd.buyNumber>=10" @click.stop="prd.buyNumber++">+</button>
 									</div>
 									
 								</div>
@@ -155,7 +157,7 @@
 				<!-- <div>
 					总价:100元
 				</div> -->
-				<button type="button" class="mui-btn mui-btn-red" :disabled="payBtnDisabled">
+				<button type="button" class="mui-btn mui-btn-red" :disabled="payBtnDisabled" @click="paymentBtn">
 					付款
 				</button>
 			</div>
@@ -182,21 +184,7 @@
 			el:".body",
 			data:{
 				api:"http://192.168.88.69:3200",
-				shopCarList:[{
-					title:"标题标题标题标题标题标题标题标题标题标题标题标题",
-					prd_price:100,
-					src:"../../img/bd1.jpg",
-					buy:100,
-					number:1,
-					max_num:10,  //商品最大购买数量
-				},{
-					title:"标题标题标题标题标题标题标题标题标题标题标题标题",
-					prd_price:110,
-					src:"../../img/bd2.jpg",
-					buy:150,
-					number:5,
-					max_num:15,  //商品最大购买数量
-				}],   //购物车的商品信息
+				shopCarList:[],   //购物车的商品信息
 				user_Id:"",   //用户id
 				
 				singleCheckArr:[],   //存放选中的单个商品的下标
@@ -230,16 +218,20 @@
 						// singleCheckArr长度不是0则表示有选中的商品,根据选中的商品的下标去商品信息里单价*数量求出总价
 						let sum=0;
 						that.singleCheckArr.forEach(val=>{
-							sum+=that.shopCarList[val].prd_price*that.shopCarList[val].number;
+							sum+=that.shopCarList[val].prd[0].price*that.shopCarList[val].prd[0].buyNumber;
 						})
 						return sum;
 					}
 					
 				}
 			},
+			created() {
+				this.getShopCarList()
+			},
 			mounted() {
 				mui.init();
 			},
+			
 			methods:{
 				// 点击右上角管理按钮,显示每个商品前面的选择框和底部全选按钮;
 				// 
@@ -250,6 +242,7 @@
 					this.payBtnDisabled=true;
 					this.deleteBtn=true;
 				},
+				
 				/*
 					页面刚加载时获取购物车里的所有内容
 				*/
@@ -258,17 +251,21 @@
 					let that=this;
 					mui.plusReady(function () {
 					    that.user_Id=plus.storage.getItem("account");
-						mui.ajax(that.api+"/findshopCar",{
-							data:{
-								userId:that.user_Id
-							},
-							type:"post",
-							timeout:"10000",
-							success:function(data){
-								
-							}
-						})
+						// ajax( that.user_Id);
 					})
+					
+					that.ajax({userId:"5eb7b553ee1d1a3988b5309a"},that.api+"/findshopCar","post",function(data){
+						if(data.code=="1"){
+							
+							that.shopCarList.push(...data.data);
+							
+							that.shopCarList.forEach((val,i,arr)=>{
+							   val.prd=JSON.parse(val.prd)
+							})
+							console.log(that.shopCarList)
+							
+						}
+					});
 					
 				},
 				
@@ -342,8 +339,41 @@
 					this.singleCheckArr=[];
 					this.allChecked=[];
 					if(this.shopCarList.length<=0){
-						this.deleteBtn=true
+						this.deleteBtn=true;
 					}
+				},
+				
+				/*
+					点击结算按钮，把跳转到 结算页面
+				*/
+				paymentBtn(){
+					let arr=[];
+					let that=this;
+					that.singleCheckArr.forEach((val,i)=>{
+						// console.log(this.shopCarList[i].prd);
+						arr.push(...that.shopCarList[i].prd)
+					});
+					console.log(arr)
+					mui.openWindow({
+						url:'../buy/buy.html',
+						id:'buy.html',
+						extras:{
+							userId:that.user_Id,
+							prd:arr
+						}
+					})
+				},
+				
+				/*
+					封装ajax
+				*/
+			    ajax(data,url,type,success){
+					mui.ajax(url,{
+						data:data,
+						type:type,
+						timeout:"10000",
+						success:success
+					})
 				}
 			},
 			

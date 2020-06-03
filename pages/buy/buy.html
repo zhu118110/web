@@ -48,22 +48,22 @@
 			</li>
 		</ul>
 			<!--商品展示区域-->
-		<div class="collect">  
-			<dl class="mui-table-view" v-for="(val,index) in prdInfor">
-				<dt class="mui-table-view-cell collect_body">
+		<div class="collect" v-for="(val,index) in prdInfor">  
+			<dl class="mui-table-view" v-for="(value,i) in val">
+				<dt class="mui-table-view-cell collect_body" >
 					<!-- 商品图片 -->
 					<div class="collect_body_img clear">
-						<img class="mui-media-object mui-pull-left" :src="val.img">
+						<img class="mui-media-object mui-pull-left" :src="value.img">
 					</div>
 					<!-- 商品描述 -->
 					<div class="mui-media-body collect_body_infor">
 						<p class="collect_body_infor_title">
-							{{val.title}}
+							{{value.title}}
 							<!-- 商品描述商品描述商品描述商品描述商品描述 -->
 						</p>
 						<p class="collect_body_infor_type" >
 							已选:
-							<span v-for="i in attr">
+							<span v-for="i in value.attr">
 								{{i}};
 							</span>
 						</p>
@@ -75,7 +75,7 @@
 								<span style="font-size: 12px;">￥</span>
 								<span>
 								
-									{{val.price|price}}
+									{{value.price|price}}
 								</span>
 								<!-- <span>{{val.prd_price|price}}</span> -->
 							</div>
@@ -92,9 +92,9 @@
 						购买数量
 					</span>
 					<div class="my_numbox">
-						<button type="button" class="mui-btn mui-btn-outlined" :disabled="subtractBtn" @click="buyNumber-=1">-</button>
-						<input type="number":value="buyNumber" readonly="readonly" v-model="buyNumber" @blur="blur"/>
-						<button type="button" class="mui-btn mui-btn-outlined" :disabled="addBtn" @click="buyNumber+=1">+</button>
+						<button type="button" class="mui-btn mui-btn-outlined" :disabled="subtractBtn" @click="value.buyNumber-=1">-</button>
+						<input type="number" :value="value.buyNumber" readonly="readonly" v-model="value.buyNumber" @blur="blur"/>
+						<button type="button" class="mui-btn mui-btn-outlined" :disabled="addBtn" @click="value.buyNumber+=1">+</button>
 					</div>
 				</dt>
 				
@@ -126,7 +126,7 @@
 			api:"http://192.168.88.69:3200",
 			address:[],   //地址
 			prdInfor:[],    //存放产品信息
-			attr:[],
+			attr:[],    
 			buyNumber:1,   //购买数量
 			payStyle:"",  //付款方式
 			subtractBtn:true,  //控制减少按钮是否禁用
@@ -135,8 +135,8 @@
 		filters:{
 			price:function(num){
 				num=Number(num).toFixed(2);
-				return num+"元"
-			}
+				return num+"元";
+			},
 		},
 		mounted() {
 			mui.init();
@@ -166,19 +166,17 @@
 				mui.plusReady(function () {
 				    let self=plus.webview.currentWebview();
 					that.userId=self.userId;
-					that.prd_id=self.prdId;
-					that.buyNumber= self.buyNumber;
-					that.attr=self.attr;
-					that.prdInfor.push(...self.prd);  //产品信息
-					// that.getAddress("5eb7b553ee1d1a3988b5309a")
-					that.getAddress(that.userId,that.prd_id);   //通过id得到地址
+					that.prdInfor.push(self.prd);
+					
+					that.getAddress(that.userId);   //通过id得到地址
 					console.log(that.prdInfor)
 				})
+				
 			},
 			
 			
 			//通过用户id获得默认的地址
-			getAddress(userId,prdId){
+			getAddress(userId){
 				let that=this;
 				mui.ajax(that.api+'/selectAddress',{
 					data:{
@@ -194,7 +192,7 @@
 							
 							that.address=that.address.filter(val=>{     //得到默认地址
 								return val.isDefault==true;
-							})
+							});                     
 						
 						}
 					},
