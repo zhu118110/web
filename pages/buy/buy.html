@@ -49,7 +49,7 @@
 		</ul>
 			<!--商品展示区域-->
 		<div class="collect" v-for="(val,index) in prdInfor">  
-			<dl class="mui-table-view" v-for="(value,i) in val">
+			<dl class="mui-table-view my_table_view" v-for="(value,i) in val">
 				<dt class="mui-table-view-cell collect_body" >
 					<!-- 商品图片 -->
 					<div class="collect_body_img clear">
@@ -71,30 +71,32 @@
 							尺码:
 						</p> -->
 						<div class="collect_body_infor_price">
-							<div style="color:#FF0000;">
+							<div>
 								<span style="font-size: 12px;">￥</span>
 								<span>
-								
 									{{value.price|price}}
 								</span>
 								<!-- <span>{{val.prd_price|price}}</span> -->
 							</div>
 								
-							<div style="border: 1px solid green; padding: 0px 4px;">
-								免运费
+							<div>
+								x{{value.buyNumber}}
 							</div>
 						</div>
 					</div>
 				</dt>
 				
 				<dt class="mui-table-view-cell collect_body buy_number">
-					<span>
-						购买数量
-					</span>
+					<!-- <span>
+						小计
+					</span> -->
 					<div class="my_numbox">
-						<button type="button" class="mui-btn mui-btn-outlined" :disabled="subtractBtn" @click="value.buyNumber-=1">-</button>
+						<p>
+							小计：<span style="color: #FF0000;">{{value.totle|price}}</span>
+						</p>
+						<!-- <button type="button" class="mui-btn mui-btn-outlined" :disabled="subtractBtn" @click="value.buyNumber-=1">-</button>
 						<input type="number" :value="value.buyNumber" readonly="readonly" v-model="value.buyNumber" @blur="blur"/>
-						<button type="button" class="mui-btn mui-btn-outlined" :disabled="addBtn" @click="value.buyNumber+=1">+</button>
+						<button type="button" class="mui-btn mui-btn-outlined" :disabled="addBtn" @click="value.buyNumber+=1">+</button> -->
 					</div>
 				</dt>
 				
@@ -158,6 +160,7 @@
 					}
 				})
 			},
+			
 			// 页面刚加载的时候获取到详情页传递过来的用户id和商品id，
 			// 根据 用户id得到默认的地址
 			// 根据 商品id得到要购买的商品
@@ -166,15 +169,12 @@
 				mui.plusReady(function () {
 				    let self=plus.webview.currentWebview();
 					that.userId=self.userId;
-					that.prdInfor.push(self.prd);
-					
+					that.prdInfor.push(self.prd);   //[ [],[] ]
 					that.getAddress(that.userId);   //通过id得到地址
-					console.log(that.prdInfor)
+					console.log(that.prdInfor);
 				})
-				
 			},
-			
-			
+				
 			//通过用户id获得默认的地址
 			getAddress(userId){
 				let that=this;
@@ -201,8 +201,7 @@
 					}
 				});
 			},
-			
-		
+					
 			// 点击地址跳转到地址页面选择地址
 			chooseAddres(){
 				mui.plusReady(function () {
@@ -297,6 +296,7 @@
 				});
 				
 			},
+			
 			// 模拟 支付成功后 调用，
 			// 给后台发送下单时间、收件人地址信息、购买的数量、总价、用户id、商品id、支付方式等字段
 			buySuccess(payStyle){
@@ -349,7 +349,15 @@
 			// 计算总价
 			totle:function(){
 				if(this.prdInfor.length>0){
-					return this.buyNumber*this.prdInfor[0].price;
+					let sum=0;
+					this.prdInfor.forEach((val,i)=>{
+						val.forEach((v,j)=>{
+							sum+=v.totle;
+						})
+					})
+					return sum;
+				}else{
+					return 0
 				}
 				
 			}

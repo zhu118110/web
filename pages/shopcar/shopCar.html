@@ -154,11 +154,9 @@
 				<div style="text-align: center;">
 					总价:<span style="color:#d01c27"> {{totle|price(2)}} </span>
 				</div>
-				<!-- <div>
-					总价:100元
-				</div> -->
+				
 				<button type="button" class="mui-btn mui-btn-red" :disabled="payBtnDisabled" @click="paymentBtn">
-					付款
+					结算{{singleCheckArr.length}}
 				</button>
 			</div>
 			
@@ -262,7 +260,7 @@
 							that.shopCarList.forEach((val,i,arr)=>{
 							   val.prd=JSON.parse(val.prd)
 							})
-							console.log(that.shopCarList)
+							// console.log(that.shopCarList)
 							
 						}
 					});
@@ -350,10 +348,10 @@
 					let arr=[];
 					let that=this;
 					that.singleCheckArr.forEach((val,i)=>{
-						// console.log(this.shopCarList[i].prd);
-						arr.push(...that.shopCarList[i].prd)
+						that.shopCarList[val].prd[0].totle=that.shopCarList[val].prd[0].price*that.shopCarList[val].prd[0].buyNumber;   //每件物品的总价
+						arr.push(...that.shopCarList[val].prd);
 					});
-					console.log(arr)
+					
 					mui.openWindow({
 						url:'../buy/buy.html',
 						id:'buy.html',

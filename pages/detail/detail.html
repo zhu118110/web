@@ -466,7 +466,7 @@
 							if(data.code=="1"){
 								mui("#sheet1").popover('hide');
 								// plus.nativeUI.closeWaiting();
-								mui.toast("加入购物车成功")
+								mui.toast("加入购物车成功");
 							}else{
 								mui.toast("加入购物车失败");
 								mui("#sheet1").popover('hide');
@@ -482,12 +482,13 @@
 				},
 				buy(){
 					let that=this;
-					that.prd.push()
+					that.prd.push();
 					that.prd.forEach(val=>{
 						val.attr=that.showAttr;
-						val.buyNumber=that.buyNumber
-					})
-					
+						val.buyNumber=that.buyNumber;
+						val.totle=that.buyNumber*val.price;
+					});
+					console.log(that.prd);
 					mui.openWindow({
 						url:'../buy/buy.html',
 						id:'buy.html',
@@ -495,7 +496,7 @@
 							userId:that.user_Id,
 							prd:that.prd,
 						}
-					})
+					});
 				},
 				
 				

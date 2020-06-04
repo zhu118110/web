@@ -19,13 +19,17 @@
 
 
 /* 商品展示区域 */
-
+.collect{
+	margin-bottom: 44px;
+}
 .collect_body {
 	width: 100%;
 	display: flex;
 	max-height: 140px;
 }
-
+.my_table_view{
+	margin-top: 5px;
+}
 .collect_body .collect_body_img {
 	font-size: 0;
 	flex: 1;
@@ -73,34 +77,11 @@
 /* 购买数量 */
 .buy_number{
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-end;
 	font-size: 14px;
 	align-items: center;
 }
-.my_numbox{
-	display: flex;
-	border: 1px solid rgba(0,0,0,.2);
-}
-.my_numbox button{
-	border: none;
-	border-radius: 0;
-	padding: 0px 12px;
-}
-.my_numbox button[disabled=disabled]{
-	background-color:#ccc;
-}
-.my_numbox input{
-	width: 35px;
-	text-align: center;
-	margin-bottom: 0;
-	border: none;
-	border-left: 1px solid rgba(0,0,0,.2);
-	border-right: 1px solid rgba(0,0,0,.2);
-	border-radius: 0;
-	height: 25px;
-	padding: 0px 5px;
-	font-size: 14px;
-}
+
 
 
 
