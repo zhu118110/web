@@ -94,9 +94,7 @@
 						<p>
 							小计：<span style="color: #FF0000;">{{value.totle|price}}</span>
 						</p>
-						<!-- <button type="button" class="mui-btn mui-btn-outlined" :disabled="subtractBtn" @click="value.buyNumber-=1">-</button>
-						<input type="number" :value="value.buyNumber" readonly="readonly" v-model="value.buyNumber" @blur="blur"/>
-						<button type="button" class="mui-btn mui-btn-outlined" :disabled="addBtn" @click="value.buyNumber+=1">+</button> -->
+						
 					</div>
 				</dt>
 				
@@ -131,8 +129,7 @@
 			attr:[],    
 			buyNumber:1,   //购买数量
 			payStyle:"",  //付款方式
-			subtractBtn:true,  //控制减少按钮是否禁用
-			addBtn:false,   //控制添加按钮是否禁用
+			
 		},
 		filters:{
 			price:function(num){
@@ -362,22 +359,7 @@
 				
 			}
 		},
-		watch:{
-			// 监听购买数量的变化
-			"buyNumber":function(newVal,oldVal){
-				if(newVal<=1){
-					this.buyNumber=1;  
-					this.subtractBtn=true
-					
-				}else if(newVal>=10){
-					this.addBtn=true;
-					this.subtractBtn=false
-				}else{
-					this.addBtn=false;
-					this.subtractBtn=false
-				}
-			}
-		}
+		
 	})
 </script>
 </html>
