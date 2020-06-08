@@ -38,7 +38,8 @@
 	</nav>
 	
 </body>
-	<script type="text/javascript" charset="utf-8">
+<script type="text/javascript" charset="utf-8">
+	function init(){
 		var styles = {
 			top: '0',  
 			bottom: '50px',
@@ -100,11 +101,13 @@
 			});
 			page.show()
 		})
+	}	
+	init();
 		
-		mui.back = function() {
-			var _self = plus.webview.currentWebview();
-			_self.close("auto");
-		}
+	mui.back = function() {
+		var _self = plus.webview.currentWebview();
+		_self.close("auto");
+	}
 		
     </script>
 </html>

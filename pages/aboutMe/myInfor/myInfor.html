@@ -238,7 +238,6 @@
 				let gallery=plus.gallery;
 				gallery.pick(function(path){
 					that.captureImgArr=path;   //要往服务器发送的头像路径
-					
 					that.headImg=path;  //更改头像路径
 				},function(err){
 					mui.toast("相册打开失败")
@@ -273,18 +272,16 @@
 						let aboutMe=plus.webview.getWebviewById("aboutMe")
 						mui.fire(aboutMe,"clearStorage",{
 							statu:true
-						})
+						});
 						setTimeout(function(){
 							mui.back();
 							let self=plus.webview.currentWebview();
 							self.reload();
 							
 						},1000)
-						
-						
 					}else{
 						mui.toast("修改失败,稍后再试");
-						wait.close()
+						wait.close();
 					}
 				})
 				// addFile(要上传的文件路径,{key:...})  key必须写，默认是上传文件路径名称

@@ -377,7 +377,6 @@
 				
 				// 点击属性值添加样式
 				selectAttr(index,ind){
-					
 					var color = index == 0 ? ind : this.xuantype[0];
 					var size = index == 1 ? ind : this.xuantype[1];
 					this.xuantype = [color,size];			
@@ -386,8 +385,6 @@
 					
 					this.attr_id=this.prdAttr[index].id;   //属性id 
 					this.val_id=this.prdAttr[index].item[ind]._id;   //属性值id
-					
-					
 				},
 				
 				
@@ -425,21 +422,38 @@
 							collect_date:newDate,
 						}
 						that.ajax(data,that.apiUrl+"/addCollect","post",function(data){
-							mui.toast("收藏成功");
-							that.collect.isCollect=true;  //改变收藏样式
+							// 后端返回1表示收藏成功,刷新收藏页面
+							if(data.code=="1"){
+								mui.toast("收藏成功");
+								that.collect.isCollect=true;  //改变收藏样式
+								//刷新收藏页面
+								var detailPage = plus.webview.getWebviewById('my_collect.html');
+								mui.fire(detailPage,"pageReload",{
+									statu:true
+								});
+							}else{
+								mui.toast("收藏失败,稍后再试");
+							}
 						})
-						
+
 					}else{
 						// 如果样式等于=true说明被收藏过，取消收藏
-						
-						// 取消收藏
+						// 取消收藏后刷新收藏页面
 						let data={
 								user_id:that.user_Id,
 								prd_id:that.prd_id
 							}
 						that.ajax(data,that.apiUrl+"/cancelCollect","post",function(data){
-							that.collect.isCollect=false;  //改变收藏样式
-							mui.toast("已取消收藏");
+							
+							if(data.code=="1"){
+								that.collect.isCollect=false;  //改变收藏样式
+								//刷新收藏页面
+								var detailPage = plus.webview.getWebviewById('my_collect.html');
+								mui.fire(detailPage,"pageReload",{
+									statu:true
+								});
+							}
+						
 						})
 						
 					}

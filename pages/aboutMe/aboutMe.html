@@ -319,13 +319,7 @@
 <script src="../../js/mui.min.js"></script>
 <script src="../../js/vue.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
-	// 监听登录页面的back事件,刷新页面
-	window.addEventListener('clearStorage',function(event){
-	  var statu = event.detail.statu;   //  true|false
-	  let current=plus.webview.currentWebview();
-	   current.reload();//页面刷新 
-	});
-	
+
 	// 阻止主页面滑动触发侧滑导航
 	document.querySelector(".mui-inner-wrap").addEventListener("drag",function(){
 		  event.stopPropagation();
@@ -353,12 +347,22 @@
 					menubutton: true   //Boolean(默认true)关闭menu按键监听  
 				}  
 			});
-			
+			this.listenOtherPage();
 			this.myOrder();
 			this.myaside();
-			this.mysc()
+			this.mysc();
 		},
 		methods:{
+			// 其他页面触发此事件刷新页面
+			listenOtherPage(){
+				// 监听登录页面的back事件,刷新页面
+				window.addEventListener('clearStorage',function(event){
+				  var statu = event.detail.statu;   //  true|false
+				  let current=plus.webview.currentWebview();
+				   current.reload();//页面刷新 
+				});
+			},
+			
 			// 获取本地存储的用户id，
 			// 请求后台查找到昵称
 			getStorage(){
@@ -422,11 +426,11 @@
 			// 点击退出登录跳转到登录页面
 			// 清除本地存储的用户id
 			toLogin(){
-					console.log("跳到登录页面");
+					// console.log("跳到登录页面");
 					
 					//退出登录时清除本地存储的用户id
 					plus.storage.removeItem("account");
-					console.log(this.preloadArr);
+					// console.log(this.preloadArr);
 					for(var i=0;i<this.preloadArr.length;i++){
 						plus.webview.close(this.preloadArr[i])
 					}

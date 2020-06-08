@@ -130,8 +130,20 @@
 			},
 			mounted() {
 				mui.init();
+				this.fromDetail();
 			},
 			methods:{
+				// 商品详情页面点击收藏时触发此事件,页面重新加载
+				fromDetail(){
+					window.addEventListener("pageReload",function(e){
+						var statu = event.detail.statu;   //  true|false
+						console.log("出发了我的收藏页面刷新"+statu);
+						let current=plus.webview.currentWebview();
+						current.reload();//页面刷新 
+					})
+				},
+				
+				
 				// 页面刚加载时获取上一个页面传递的用户的id
 				getUserId(){
 					let that=this;

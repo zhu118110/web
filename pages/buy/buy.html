@@ -267,27 +267,24 @@
 							let index=e.index;
 							switch(index){
 								case 0:
-									mui.toast("取消支付")
+									mui.toast("取消支付");
 								break;
 								case 1:
 									// mui.toast("支付宝支付");
 									// that.payRequest(payChannels[0]);
-								
 									that.buySuccess("支付宝");
 								break;
 								case 2:
 									// that.payRequest(payChannels[1])
 									// mui.toast("微信支付");
-								
-									that.buySuccess("微信")
-									
+									that.buySuccess("微信");
 								break;
 							}
 							
 						})
 					},function(err){
 						
-						mui.toast("获取支付方式失败"+err.message)
+						mui.toast("获取支付方式失败"+err.message);
 					})
 					
 				});
@@ -329,8 +326,15 @@
 					type:'post',
 					timeout:10000,
 					success:function(data){
+						// 后端返回1表示购买成功,刷新'我的' 页面
 						if(data.code=="1"){
-							mui.toast("购买成功，购买方式是"+that.payStyle);
+							mui.toast("购买成功,购买方式是"+that.payStyle);
+							// 刷新'我的' 页面
+							var aboutMe = plus.webview.getWebviewById('aboutMe');
+							mui.fire(aboutMe,"clearStorage",{
+								statu:true
+							});
+							
 						}else{
 							mui.toast("购买失败");
 						}
