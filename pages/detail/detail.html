@@ -228,11 +228,12 @@
 			<dialog id="sheet1" class="mui-popover mui-popover-bottom mui-popover-action ">
 				<div class="popoverBox">
 					<!-- 顶部商品图片以及商品价格 -->
-					<div class="popoverHeader">
+					<div class="popoverHeader" v-for="i in prd">
 						<div class="popoverHeader_img">
-							<img src="../../img/bd1.jpg" >
+							<img :src="i.img" v-if="i.img">
+							<!-- <img src="../../img/0.jpg" v-else> -->
 						</div>
-						<div class="popoverHeader_choice" v-for="i in prd">
+						<div class="popoverHeader_choice">
 							<p><span>￥</span>{{i.price|prd_price}}</p>
 							<p>
 								库存:{{i.number}}
@@ -349,15 +350,15 @@
 							self=plus.webview.currentWebview();
 							that.prd_id=self.prd_id;// 获取上一个页面传过来的商品id
 							that.user_Id=self.userId; // 获取上一个页面传过来的用户id
-							// getAttr(that.prd_id,that.apiUrl+"/getAttr");   //通过商品id请求后台获取到商品属性
-							// getPrdInfor(that.prd_id,that.apiUrl+"/getPrdInfor")  //通过商品id请求后台获取到商品信息
+							getAttr(that.prd_id,that.apiUrl+"/getAttr");   //通过商品id请求后台获取到商品属性
+							getPrdInfor(that.prd_id,that.apiUrl+"/getPrdInfor")  //通过商品id请求后台获取到商品信息
 							that.findCollect(that.prd_id,that.user_Id)   //通过商品id请求后台查找该商品是否已经被此用户收藏
 						})
-						getAttr("5eb3bbfa929ffe2036ca8ebb",that.apiUrl+"/getAttr");   //通过商品id请求后台获取到商品属性
-						getPrdInfor("5eb3bbfa929ffe2036ca8ebb",that.apiUrl+"/getPrdInfor")  //通过商品id请求后台获取到商品信息
+						// getAttr("5eb3bbfa929ffe2036ca8ebb",that.apiUrl+"/getAttr");   //通过商品id请求后台获取到商品属性
+						// getPrdInfor("5eb3bbfa929ffe2036ca8ebb",that.apiUrl+"/getPrdInfor")  //通过商品id请求后台获取到商品信息
 						// 根据商品的id请求数据库,得到这个商品的属性
 						function getAttr(data,url){
-							console.log(data)
+							
 							that.ajax({prd_id:data},url,"post",function(data){
 								that.prdAttr.push(...data.data);
 								that.prdAttr.forEach(val=>{
@@ -369,9 +370,8 @@
 						function getPrdInfor(data,url){
 							that.ajax({prd_id:data},url,"post",function(data){
 								that.prd.push(...data.data)
-								
 							})
-						}
+						};
 
 				},
 				
@@ -496,11 +496,12 @@
 				},
 				buy(){
 					let that=this;
-					that.prd.push();
+					
 					that.prd.forEach(val=>{
 						val.attr=that.showAttr;
 						val.buyNumber=that.buyNumber;
 						val.totle=that.buyNumber*val.price;
+						val.remark="";
 					});
 					console.log(that.prd);
 					mui.openWindow({

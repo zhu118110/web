@@ -27,7 +27,8 @@
 				max-width: 100px;
 				height: 100px;
 			}
-			.collect_body_infor>p{
+			.collect_body_infor_type{
+				color: #aaa;
 				font-size: 12px;
 			}
 			.collect_body_infor_price div:nth-child(1){
@@ -108,6 +109,7 @@
 									{{prd.title}}
 								</p>
 								<p class="collect_body_infor_type">
+									已选:
 									<span v-for="i in prd.attr">
 										{{i}}
 									</span>
@@ -156,7 +158,7 @@
 				</div>
 				
 				<button type="button" class="mui-btn mui-btn-red" :disabled="payBtnDisabled" @click="paymentBtn">
-					结算{{singleCheckArr.length}}
+					结算( {{singleCheckArr.length}} )
 				</button>
 			</div>
 			
@@ -164,9 +166,7 @@
 				<div style="text-align: center;">
 					选中了{{singleCheckArr.length}}件商品
 				</div>
-				<!-- <div>
-					总价:100元
-				</div> -->
+			
 				<button type="button" class="mui-btn mui-btn-red" @click="deletePrd" :disabled="deleteBtn">
 					删除
 				</button>
@@ -256,12 +256,10 @@
 						if(data.code=="1"){
 							
 							that.shopCarList.push(...data.data);
-							
 							that.shopCarList.forEach((val,i,arr)=>{
 							   val.prd=JSON.parse(val.prd)
 							})
 							// console.log(that.shopCarList)
-							
 						}
 					});
 					
@@ -289,7 +287,6 @@
 						// 有的话删除掉将这个下标删除掉,取消全选
 						this.singleCheckArr.splice(this.singleCheckArr[index],1);
 						this.allChecked=[];
-						
 						// 判断是否有选中的商品,没有则禁用付款和删除按钮
 						if(this.singleCheckArr.length<=0){
 							this.payBtnDisabled=true;

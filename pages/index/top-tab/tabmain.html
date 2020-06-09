@@ -75,7 +75,8 @@
 	<script type="text/javascript">
 		mui.init({
 			keyEventBind: {
-				backbutton: false  //关闭back按键监听
+				backbutton: false,//关闭back按键监听
+				menubutton: false 
 			},
 			
 		});
@@ -129,10 +130,9 @@
 				
 				group.switchTab(wid);
 			});
-			mui.back = function() {
-				var _self = plus.webview.currentWebview();
-				_self.close("auto");
-			}
+			
+			
+			
 		});
 	</script>
 </html>

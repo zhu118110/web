@@ -67,10 +67,7 @@
 				styles
 		}];
 		mui.init({
-			keyEventBind: {
-			   backbutton: false,  //Boolean(默认true)关闭back按键监听  
-			   menubutton: false   //Boolean(默认true)关闭menu按键监听  
-			},
+			
 			// 预加载页面，
 			// preloadPages:tabPages
 		});
@@ -104,10 +101,8 @@
 	}	
 	init();
 		
-	mui.back = function() {
-		var _self = plus.webview.currentWebview();
-		_self.close("auto");
-	}
-		
+	
+	
+	
     </script>
 </html>

@@ -19,6 +19,10 @@
 
 
 /* 商品展示区域 */
+.mui-table-view-cell.mui-active{
+	background-color: inherit;
+}
+
 .collect{
 	margin-bottom: 44px;
 }
@@ -26,6 +30,9 @@
 	width: 100%;
 	display: flex;
 	max-height: 140px;
+}
+.collect_body::after{
+	height: 0;
 }
 .my_table_view{
 	margin-top: 5px;
@@ -35,6 +42,8 @@
 	flex: 1;
 	margin-right: 10px;
 }
+
+
 .mui-table-view .mui-media-object{
 	max-width: none;
 }
@@ -73,14 +82,42 @@
 	align-items: center;
 	justify-content: space-between;
 }
+/* 备注 */
+.remark{
+	align-items: center;
+	padding: 5px 15px;
+}
+.remark::after{
+	height: 1px;
+}
+.remark_left{
+	flex: 1;
+	margin-right: 10px;
+	font-size: 12px;
+	text-align: right;
+}
+.remark_right{
+	
+	flex: 2;
+}
+.remark_right input{
+	height: 30px;
+	margin-bottom: 0;
+	padding: 0;
+	font-size: 12px;
+	border: none;
+	line-height: 30px;
+}
+
 
 /* 购买数量 */
 .buy_number{
 	display: flex;
 	justify-content: flex-end;
-	font-size: 14px;
+	font-size: 12px;
 	align-items: center;
 }
+
 
 
 

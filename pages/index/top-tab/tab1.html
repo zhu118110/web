@@ -159,7 +159,6 @@
 		},
 		mounted() {
 			this.muiInit()
-			
 		},
 		methods:{
 			// 下拉刷新以及上拉加载控件
@@ -167,7 +166,12 @@
 				let that=this;
 				let loadNum=0
 				mui.init({
+					keyEventBind: {
+						backbutton: false,  //Boolean(默认true)关闭back按键监听  
+						menubutton: false   //Boolean(默认true)关闭menu按键监听  
+					},
 					pullRefresh:{
+						
 						container:".main",
 						down :{
 							style:'circle',//必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式

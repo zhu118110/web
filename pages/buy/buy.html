@@ -86,6 +86,16 @@
 					</div>
 				</dt>
 				
+				<!-- 备注 -->
+				<dt class="mui-table-view-cell collect_body remark">
+					<div class="remark_left">
+						备注
+					</div>
+					<div class="remark_right">
+						<input type="text" class="mui-input-clear" :value="value.remark" v-model="value.remark" placeholder="输入备注">
+					</div>
+				</dt>
+				
 				<dt class="mui-table-view-cell collect_body buy_number">
 					<!-- <span>
 						小计
@@ -126,7 +136,8 @@
 			api:"http://192.168.88.69:3200",
 			address:[],   //地址
 			prdInfor:[],    //存放产品信息
-			attr:[],    
+			remark:"",
+			attr:[],    //商品属性
 			buyNumber:1,   //购买数量
 			payStyle:"",  //付款方式
 			
@@ -168,7 +179,7 @@
 					that.userId=self.userId;
 					that.prdInfor.push(self.prd);   //[ [],[] ]
 					that.getAddress(that.userId);   //通过id得到地址
-					console.log(that.prdInfor);
+					
 				})
 			},
 				
@@ -236,7 +247,7 @@
 				}else{
 					setTimeout(function(){
 						that.getPayChannels()  //获取支付通道
-					},2000)
+					},2000);
 					
 					plus.nativeUI.showWaiting("正在获取支付方式");
 				}
@@ -297,52 +308,55 @@
 			
 				let that=this;
 				that.payStyle=payStyle;   //付款方式
-				let orderNumber;  //订单号
+				
 				 //购买日期
 				let date=new Date();
 				var year=date.getFullYear();
 					// 月，日 , 时，分，秒小于10时前面+0补齐
 				var month=date.getMonth()<10?'0'+(Number(date.getMonth())+1):(Number(date.getMonth())+1);  //月(0-11)
-				var day=date.getDate()<10?'0'+date.getDate:date.getDate();    //日(0-23)
+				// var day=date.getDate()<10?'0'+date.getDate:date.getDate(); 
+				var day=date.getDate()<10?'0'+date.getDate():date.getDate();    //日(0-23)
 				var hours=date.getHours()<10?'0'+date.getHours():date.getHours();  
 				var minutes=date.getMinutes()<10?'0'+date.getMinutes():date.getMinutes();
 				var seconds=date.getSeconds()<10?'0'+date.getSeconds():date.getSeconds();
-				let dateStr=year + "-" +month + "-" + day +" "+ hours + ":" + minutes + ":"+ seconds;
-				orderNumber=year+month+day+hours+minutes+Math.ceil(Math.random()*1000000)
-				
-	            mui.ajax(that.api+'/buySingle',{
-					data:{
-						user_id:that.userId,   //用户id
-						prd_id:that.prd_id,  //商品id
-						singlePrice:that.prdInfor[0].price,   //商品单价
-						buy_date:dateStr,  //购买的时间
-						buy_number:that.buyNumber,  //购买的数量
-						totle:that.totle,   //商品总价
-						payStyle:that.payStyle,
-						orderNumber:orderNumber,    //订单号  
-						address:JSON.stringify(that.address)   //收货地址信息
-					},
-					dataType:'json',
-					type:'post',
-					timeout:10000,
-					success:function(data){
-						// 后端返回1表示购买成功,刷新'我的' 页面
-						if(data.code=="1"){
-							mui.toast("购买成功,购买方式是"+that.payStyle);
-							// 刷新'我的' 页面
-							var aboutMe = plus.webview.getWebviewById('aboutMe');
-							mui.fire(aboutMe,"clearStorage",{
-								statu:true
-							});
+				that.prdInfor.forEach(val=>{
+					val.forEach(key=>{
+						let dateStr=year + "-" +month + "-" + day +" "+ hours + ":" + minutes + ":"+ seconds;   //下单日期--年月日 时分秒
+						let orderNumber=year+month+day+hours+minutes+Math.ceil(Math.random()*1000000);   //订单号--下单日期+随机数
+						key.dateStr=dateStr;
+						key.orderNumber=orderNumber;
+						key.totle=key.buyNumber*key.price;    //购买的 商品的总价
+						key.address=that.address;   //地址
+						
+					})
+				})
+				console.log(that.prdInfor);
+	//             mui.ajax(that.api+'/buySingle',{
+	// 				data:{
+	// 					user_id:that.userId,   //用户id
+	// 					prdInfor:JSON.stringify(that.prdInfor)   //收货地址信息
+	// 				},
+	// 				dataType:'json',
+	// 				type:'post',
+	// 				timeout:10000,
+	// 				success:function(data){
+	// 					// 后端返回1表示购买成功,刷新'我的' 页面
+	// 					if(data.code=="1"){
+	// 						mui.toast("购买成功,购买方式是"+that.payStyle);
+	// 						// 刷新'我的' 页面
+	// 						var aboutMe = plus.webview.getWebviewById('aboutMe');
+	// 						mui.fire(aboutMe,"clearStorage",{
+	// 							statu:true
+	// 						});
 							
-						}else{
-							mui.toast("购买失败");
-						}
-					},
-					error:function(xhr,type,errorThrown){
-						mui.toast("网络连接失败"+type);
-					}
-				});
+	// 					}else{
+	// 						mui.toast("购买失败");
+	// 					}
+	// 				},
+	// 				error:function(xhr,type,errorThrown){
+	// 					mui.toast("网络连接失败"+type);
+	// 				}
+				// });
 				
 			},
 		},
