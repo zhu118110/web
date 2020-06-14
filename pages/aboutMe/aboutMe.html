@@ -62,7 +62,7 @@
 				</a>
 			</ul>
 			<ul class="mui-table-view">
-				<a href="#">
+				<a>
 					<li class="mui-table-view-cell">
 						<span>
 							音效与通知
@@ -70,7 +70,7 @@
 						<span class="iconfont icon-tongzhi"></span>
 					</li>
 				</a>
-				<a href="#">
+				<a>
 					<li class="mui-table-view-cell">
 						<span>
 							设置
@@ -78,7 +78,7 @@
 						<span class="iconfont icon-shezhi"></span>
 					</li>
 				</a>
-				<a href="#">
+				<a>
 					<li class="mui-table-view-cell">
 						<span>
 							关于我们
@@ -484,16 +484,19 @@
 				mui(that.$refs.myaside).on("tap",".mui-table-view a",function(){
 					let url=this.getAttribute("data-url");
 					let id=this.getAttribute("data-id");
-					that.preloadArr.push(id)
-					let extras={
-						userId:that.userId,
-					};
-					let prePage=mui.preload({
-						url,
-						id,
-						extras
-					});
-					prePage.show()
+					if(url&&id){
+						that.preloadArr.push(id)
+						let extras={
+							userId:that.userId,
+						};
+						let prePage=mui.preload({
+							url,
+							id,
+							extras
+						});
+						prePage.show()
+					}
+					
 				})	
 			},
 			
