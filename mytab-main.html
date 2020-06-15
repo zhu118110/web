@@ -27,7 +27,7 @@
 			<span class="mui-icon mui-icon-list"></span>
 			<span class="mui-tab-label">分类</span>
 		</a>
-		<a class="mui-tab-item" href="pages/shopCar/shopCar.html" data-id="shopCar">
+		<a class="mui-tab-item" href="pages/shopcar/shopCar.html" data-id="shopCar">
 			<span class="mui-icon iconfont icon-gouwuchekong"></span>
 			<span class="mui-tab-label"> 购物车</span>
 		</a>
@@ -58,7 +58,7 @@
 				id:"classify",
 				styles
 			},{
-				url:'pages/shopCar/shopCar.html',  
+				url:'pages/shopcar/shopCar.html',  
 				id:"shopCar",
 				styles
 			},{
@@ -72,6 +72,7 @@
 			// preloadPages:tabPages
 		});
 		mui.plusReady(function () {
+			
 		    let wait=plus.nativeUI.showWaiting("加载中请稍等");
 			mui.openWindow({
 				url: 'pages/index/index.html',
@@ -97,9 +98,12 @@
 			    styles,//窗口参数
 			});
 			page.show()
-		})
+		});
+		
+		
 	}	
 	init();
+	
 		
 	
 	

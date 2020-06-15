@@ -90,14 +90,14 @@
 			<div class="collect">
 							
 				<dl class="mui-table-view" v-for="(val,ind) in shopCarList"  >
-					<dt class="mui-table-view-cell clear collct_dt" v-for="prd in val.prd" :key="ind" @click.prevent="singleChecked(ind)">
+					<dt class="mui-table-view-cell clear collct_dt" v-for="prd in val.prd" :key="ind">
 						<!-- 复选按钮 -->
-						<div class="mui-input-row mui-checkbox mui-left my_checkbox">
+						<div class="mui-input-row mui-checkbox mui-left my_checkbox"  @click="singleChecked(ind)" >
 							<input name="checkbox" :value="ind" v-model="singleCheckArr" type="checkbox" class="checkbox">
 						</div>
 					
 						<!--商品展示区域-->
-						<div class="mui-slider-handle collect_body">
+						<div class="mui-slider-handle collect_body" @click="toDeatail(prd._id)">
 							
 							<!-- 商品图片 -->
 							<div class="collect_body_img clear">
@@ -117,18 +117,14 @@
 								<div class="collect_body_infor_price">
 									<div style="color: #d01c27;">
 										<span style="font-size: 10px;">￥</span>
-										
 										<span>{{prd.price|price(2)}}</span>
 									</div>
-									
-									
-										
+				
 									<div class="my_numbox">
 										<button type="button" class="mui-btn mui-btn-outlined" :disabled="prd.buyNumber<=1" @click.stop="prd.buyNumber--">-</button>
 										<input type="number" :value="prd.buyNumber" v-model="prd.buyNumber" readonly="readonly"/>
 										<button type="button" class="mui-btn mui-btn-outlined" :disabled="prd.buyNumber>=10" @click.stop="prd.buyNumber++">+</button>
 									</div>
-									
 								</div>
 							</div>
 						</div><!--商品展示结束-->
@@ -250,23 +246,25 @@
 					页面刚加载时获取购物车里的所有内容
 				*/
 				getShopCarList(){
-					
+					// 从本地获取存储的用户id
 					let that=this;
 					mui.plusReady(function () {
 					    that.user_Id=plus.storage.getItem("account");
 						// ajax( that.user_Id);
+						//根据用户id请求 数据库查找购物车的商品信息
+						that.ajax({userId:that.user_Id},that.api+"/findshopCar","post",function(data){
+							if(data.code=="1"){
+								
+								that.shopCarList.push(...data.data);
+								that.shopCarList.forEach((val,i,arr)=>{
+								   val.prd=JSON.parse(val.prd)
+								})
+								// console.log(that.shopCarList)
+							}
+						});
 					})
 					
-					that.ajax({userId:"5eb7b553ee1d1a3988b5309a"},that.api+"/findshopCar","post",function(data){
-						if(data.code=="1"){
-							
-							that.shopCarList.push(...data.data);
-							that.shopCarList.forEach((val,i,arr)=>{
-							   val.prd=JSON.parse(val.prd)
-							})
-							// console.log(that.shopCarList)
-						}
-					});
+					
 					
 				},
 				
@@ -364,9 +362,35 @@
 					})
 				},
 				
-				/*
-					封装ajax
-				*/
+				
+			   // 点击产品时跳转至详情页面
+			   // @prams {Srting} prd_id: 点击的产品的id
+				toDeatail(prd_id){
+					let that=this;
+					mui.plusReady(function () {
+						// 如果用户已经登录携带商品id跳转到详情页面
+						if(that.user_Id){
+							mui.openWindow({
+								url:"../detail/detail.html",
+								id:"detail",
+								extras:{
+									prd_id:prd_id,
+									userId:that.user_Id
+								},
+							})
+						}else{
+							// 用户没有登录跳转到登录页面
+							mui.openWindow({
+								url:"../../login/login.html",
+								id:"login.html",
+							})
+						}
+					})
+				},
+			   
+			    /*
+				  封装的ajax
+			    */
 			    ajax(data,url,type,success){
 					mui.ajax(url,{
 						data:data,

@@ -13,10 +13,13 @@
 				box-shadow: none;
 			}
 			.mui-segmented-control.mui-scroll-wrapper .mui-scroll{
-				
+				width: 100%;
 				display: flex;
 				justify-content: space-around;
 				background-color: #fff;
+			}
+			.mui-segmented-control.mui-scroll-wrapper .mui-control-item{
+				padding: 0;
 			}
 			.mui-slider .mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active{
 				 color: red;
@@ -26,7 +29,6 @@
 				 line-height: 36px;
 			 }
 			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item{
-				
 				border-bottom:2px solid #fff;
 			}
 		</style>
@@ -74,33 +76,44 @@
 		mui.init({});
 		mui.plusReady(function() {
 			var _self = plus.webview.currentWebview();
-			
+			let userId=_self.userId;
+		
 			var group = new webviewGroup("OrderState.html", {
 				items:[{
 					id:"all.html",
 					url:"orderList/all.html",
-					extras: {},
+					extras: {
+						userId
+					},
 					styles
 				},{
 					url:"orderList/waitPay.html",
 					id:"waitPay.html",
 					styles,
-					extras: {}
+					extras: {
+						userId
+					}
 				},{
 					url:"orderList/waitSend.html",
 					id:"waitSend.html",
 					styles,
-					extras: {}
+					extras: {
+						userId
+					}
 				},{
 					url:"orderList/waitGet.html",
 					id:"waitGet.html",
 					styles,
-					extras: {}
+					extras: {
+						userId
+					}
 				},{
 					url:"orderList/waitComment.html",
 					id:"waitComment.html",
 					styles,
-					extras: {}
+					extras: {
+						userId
+					}
 				}],
 				
 				onChange: function(obj) {
@@ -117,7 +130,7 @@
 			});
 			setTimeout(function(){
 				group.switchTab(_self.wid);
-				console.log(_self.wid)
+				
 			},10)
 			
 			mui(".mui-scroll").on("tap", ".mui-control-item", function(e) {
@@ -125,13 +138,6 @@
 				group.switchTab(wid);
 				
 			});
-			
-			
-				
-			
-			
-			
-			
 		});
 		
 		mui.back = function() {

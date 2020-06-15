@@ -6,20 +6,104 @@
 	<title>待发货</title>
 	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 	<link rel="stylesheet" type="text/css" href="../../../../css/mui.min.css"/>
+	<link rel="stylesheet" type="text/css" href="../../../../fonts/font.css"/>
+	<link rel="stylesheet" type="text/css" href="../../../../css/public.css"/>
+	<link rel="stylesheet" type="text/css" href="../../../../css/aboutMe/my_collect.css"/>
+	<style type="text/css">
+		.mui-content>.mui-table-view:first-child{
+			margin-top: 0;
+		}
+		.collect_body_infor_type{
+			color: #aaa;
+			font-size: 12px;
+		}
+		/* 购买数量 */
+		.buy_number{
+			display: flex;
+			justify-content: flex-end;
+			font-size: 12px;
+			align-items: center;
+		}
+		.collct_dt::after{
+			height: 1px;
+		}
+	</style>
 </head>
 
 <body>
-
-	<div class="mui-content">
-		待发货
+	<div class="mui-content box">
+		<dl class="mui-table-view">
+			<dt class="mui-table-view-cell clear collct_dt" @click="checkDeatail()">
+				<!--商品展示区域-->
+				<div class="mui-slider-handle collect_body">
+					<!-- 商品图片 -->
+					<div class="collect_body_img clear">
+						<img class="mui-media-object mui-pull-left" src="../../../../img/bd1.jpg">
+					</div>
+					<!-- 商品描述 -->
+					<div class="mui-media-body collect_body_infor">
+						<p class="collect_body_infor_title">
+							标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题
+						</p>
+						<p class="collect_body_infor_type">
+							已选:
+							<span >
+								红色
+							</span>
+						</p>
+						<div class="collect_body_infor_price">
+							<div style="color: #d01c27;">
+								<span style="font-size: 10px;">￥</span>
+								<span>100元</span>
+							</div>
+		
+							<div class="my_numbox">
+								x3
+							</div>
+						</div>
+					</div>
+				</div><!--商品展示结束-->
+				
+			</dt>
+			<dt class="mui-table-view-cell collect_body buy_number">
+				<div class="my_numbox">
+					<p>
+						<span>查看详情</span>
+					</p>
+				</div>
+			</dt>
+		</dl>
 	</div>
 </body>
 <script src="../../../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../../../js/vue.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
-	mui.init({
-		// keyEventBind: {
-		// 	backbutton: false  //关闭back按键监听
-		// },
-	});
+	
+	const vue=new Vue({
+		el:".box",
+		data:{
+			userId:"",
+			waitSend:[],
+		},
+		created(){
+			
+		},
+		mounted(){
+			mui.init();
+			mui.plusReady(function () {
+			    let slef=plus.webview.currentWebview();
+				
+			})
+		},
+		methods:{
+			/*
+				点击查看详情，根据点击的商品Id进入订单详情页
+			*/
+			checkDeatail(prdId){
+				console.log(111)
+			}
+		}
+		
+	})
 </script>
 </html>

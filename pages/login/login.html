@@ -289,14 +289,18 @@
 					// plus.storage.setItemAsync(key,value,successFallback,errorFallback)
 				    plus.storage.setItem("account",id);
 					let  user_id=plus.storage.getItem("account");
-					// 如果手机号或者账号验证已经通过，刷新 关于我的  页面
+					// 如果手机号或者账号验证已经通过，刷新 '关于我的'  页面
 					if(user_id){
 						that.isLogin=true;
 						var aboutMe = plus.webview.getWebviewById('aboutMe');
+						
+						
 						mui.fire(aboutMe,"clearStorage",{
 							statu:that.isLogin
 						});
+						
 						setTimeout(function(){
+							
 							mui.back();
 						},1000)
 						

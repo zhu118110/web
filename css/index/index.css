@@ -122,7 +122,10 @@ html,body,.box{
 	
 }
 .price li span:first-child{
-	font-size: 10px;
+	font-size: 12px;
+}
+.price li span:last-child{
+	font-size: 14px;
 }
 .price li:first-child{
 	color: red;

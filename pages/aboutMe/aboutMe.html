@@ -434,11 +434,15 @@
 					for(var i=0;i<this.preloadArr.length;i++){
 						plus.webview.close(this.preloadArr[i])
 					}
+					
+					
 					// 跳转到登录页面
 					mui.openWindow({
 						url:"../login/login.html",
 						id:"login.html",
 					});
+					var mainTab = plus.webview.getWebviewById('HBuilder');
+					
 				
 			},
 			
