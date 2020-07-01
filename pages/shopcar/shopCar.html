@@ -87,7 +87,7 @@
 				购物车暂无内容；快去逛逛吧！
 			</div>
 				<!-- 购物车内容 -->
-			<div class="collect">
+			<div class="collect" id="downLoad">
 							
 				<dl class="mui-table-view" v-for="(val,ind) in shopCarList"  >
 					<dt class="mui-table-view-cell clear collct_dt" v-for="prd in val.prd" :key="ind">
@@ -177,7 +177,7 @@
 		const vue=new Vue({
 			el:".body",
 			data:{
-				api:"http://192.168.88.69:3200",
+				api:"http://192.168.43.26:3200",
 				shopCarList:[],   //购物车的商品信息
 				user_Id:"",   //用户id
 				
@@ -223,11 +223,27 @@
 				this.getShopCarList()
 			},
 			mounted() {
+				let that=this;
 				mui.init({
 					keyEventBind: {
 						backbutton: false,  //Boolean(默认true)关闭back按键监听  
 						menubutton: false   //Boolean(默认true)关闭menu按键监听  
 					},
+					pullRefresh : {
+					    container:"#downLoad",//下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+					    down : {
+					      style:'circle',//必选，下拉刷新样式，目前支持原生5+ ‘circle’ 样式
+					      color:'#d01c27', //可选，默认“#2BD009” 下拉刷新控件颜色
+					      height:'50px',//可选,默认50px.下拉刷新控件的高度,
+					      range:'50px', //可选 默认100px,控件可下拉拖拽的范围
+					      offset:'0px', //可选 默认0px,下拉刷新控件的起始位置
+					      
+					      callback :function(){  //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+							 that.getShopCarList();
+							  
+						  } 
+					    }
+					  }
 				});
 			},
 			
@@ -248,20 +264,28 @@
 				getShopCarList(){
 					// 从本地获取存储的用户id
 					let that=this;
+					that.shopCarList=[];
 					mui.plusReady(function () {
 					    that.user_Id=plus.storage.getItem("account");
 						// ajax( that.user_Id);
 						//根据用户id请求 数据库查找购物车的商品信息
-						that.ajax({userId:that.user_Id},that.api+"/findshopCar","post",function(data){
-							if(data.code=="1"){
-								
-								that.shopCarList.push(...data.data);
-								that.shopCarList.forEach((val,i,arr)=>{
-								   val.prd=JSON.parse(val.prd)
-								})
-								// console.log(that.shopCarList)
-							}
-						});
+						if(that.user_Id){
+							that.ajax({userId:that.user_Id},that.api+"/findshopCar","post",function(data){
+								if(data.code=="1"){
+									
+									that.shopCarList.push(...data.data);
+									that.shopCarList.forEach((val,i,arr)=>{
+									   val.prd=JSON.parse(val.prd)
+									})
+									mui('#downLoad').pullRefresh().endPulldown();
+									// console.log(that.shopCarList)
+								}
+							});
+						}else{
+							mui.toast('请先登录')
+						}
+						
+						
 					})
 					
 					

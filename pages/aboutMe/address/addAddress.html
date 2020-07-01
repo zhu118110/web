@@ -68,7 +68,7 @@
 		const vue=new Vue({
 			el:".box",
 			data:{
-				dataApi:"http://192.168.88.69:3200",
+				dataApi:"http://192.168.43.26:3200",
 				user_Id:"",
 				recipients:"",  //收件人
 				phone:"",   //手机号
@@ -149,10 +149,8 @@
 										mui.fire(myAddress,'reload',{
 											reload:true
 										});
-										mui.toast("添加地址成功");
-										setTimeout(function(){
-											mui.back()
-										},1000)
+										mui.toast("添加成功");
+										
 										plus.webview.currentWebview().reload()  //刷新此页面,否则下次再点进来会有上次填写的信息
 										
 									}else{
@@ -161,7 +159,7 @@
 									
 								},
 								error:function(xhr,type){
-									console.log(type)
+									mui.toast("网络错误");
 								}
 							})
 						}

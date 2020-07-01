@@ -65,6 +65,7 @@
 	var login=new Vue({
 		el:".box",
 		data:{
+			api:"http://192.168.43.26:3200",
 			userName:"", //用户名
 			account:"",   //账号
 			passWorld:"",   //密码
@@ -125,7 +126,7 @@
 			
 					mui(that.$refs.regist).button('loading');//切换为loading状态
 					setTimeout(()=>{
-						mui.ajax("http://192.168.88.69:3200/regist",{
+						mui.ajax(that.api+"/regist",{
 							data:{
 								account:that.account,
 								passWorld:that.passWorld,

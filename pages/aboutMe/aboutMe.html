@@ -329,7 +329,7 @@
 		el:".box",
 		data:{
 			userId:"",
-			api:"http://192.168.88.69:3200",
+			api:"http://192.168.43.26:3200",
 			userName:"请先登录",
 			heade_img:"../../img/0.jpg",
 			waitSendNum:null,    //没有发货的数量
@@ -431,6 +431,8 @@
 					//退出登录时清除本地存储的用户id
 					plus.storage.removeItem("account");
 					// console.log(this.preloadArr);
+					let pageArr=plus.webview.all();
+					// console.log(pageArr)
 					for(var i=0;i<this.preloadArr.length;i++){
 						plus.webview.close(this.preloadArr[i])
 					}

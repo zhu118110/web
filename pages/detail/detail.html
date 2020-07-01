@@ -298,7 +298,7 @@
 		const myVue=new Vue({
 			el:".mui-content",
 			data:{
-				apiUrl:"http://192.168.88.69:3200",
+				apiUrl:"http://192.168.43.26:3200",
 				prd_id:"",  //商品的id
 				prd:[],   //根据id查找到的商品
 				prdAttr:[],   //根据商品id查找到的商品的属性
@@ -312,7 +312,7 @@
 					isCollect:false,   //控制是否收藏样式
 				},
 				buyNumber:1,   //购买数量
-				xuantype:[-1,-1],
+				xuantype:[],
 				btnStyle:false,   //点击加入购物车变为true，点击立即购买变为false
 			},
 			filters:{
@@ -376,6 +376,7 @@
 				
 				// 点击属性值添加样式
 				selectAttr(index,ind){
+					console.log(index,ind)
 					var color = index == 0 ? ind : this.xuantype[0];
 					var size = index == 1 ? ind : this.xuantype[1];
 					this.xuantype = [color,size];			
@@ -472,7 +473,7 @@
 						that.prd[0].attr=that.showAttr;
 					
 						let sendData={
-							userId:"5eb7b553ee1d1a3988b5309a",
+							userId:that.user_Id,
 							prd:JSON.stringify(that.prd),
 						}
 						that.ajax(sendData,that.apiUrl+"/joinCar","post",function(data){
@@ -517,8 +518,10 @@
 				dialogBtn(){
 					let flag =true;
 					let that=this;
-					that.xuantype.forEach(val=>{
-						if(val==-1){
+					console.log(that.xuantype)
+					that.xuantype.forEach((val,i,arr)=>{
+						
+						if(that.xuantype.length!==that.prdAttr.length){
 							mui.toast("请选择属性");
 							flag=false;
 							return false;

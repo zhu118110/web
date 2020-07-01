@@ -91,7 +91,7 @@
 		<div class="mui-content">
 			<div class="myAddress">
 				<dl class="mui-table-view my_table_view"  v-for="(item,index) in addressArray"  :key="index" >
-					 <dd class="mui-table-view-cell">
+					 <dd class="mui-table-view-cell" @click="giveBuyIndex(index)">
 						<p>
 							{{item.recipients}},{{item.phone}}
 						</p>
@@ -163,7 +163,7 @@
 			el:".mui-content",
 			data:{
 				userId:"",
-				api:"http://192.168.88.69:3200",
+				api:"http://192.168.43.26:3200",
 				AddAddressPage:null, 
 				haveAddress:false,  //控制是否有地址显示的内容
 				addressArray:[],   //从后台获取到的地址的数据
@@ -179,6 +179,7 @@
 				detailAddress:""   ,//详细地址
 				
 				fromBuyIsHide:true,   //如果通过购买页面进来的页面将 编辑、默认、删除地址 隐藏。
+				fromBuyFlag:false
 			},
 			created() {
 				
@@ -190,7 +191,7 @@
 			mounted() {
 				// let that=this;
 				mui.init();
-				this.formBuyPage();    //购买页面 进来时执行的业务逻辑
+				    //购买页面 进来时执行的业务逻辑
 				this.fromAddAddress();   //监听 添加地址 页面业务逻辑
 			},
 			
@@ -202,27 +203,40 @@
 					let that=this;
 					mui.plusReady(function () {
 					    let buyPage=plus.webview.getWebviewById("buy.html");
-						let self=plus.webview.currentWebview();
+					    let self=plus.webview.currentWebview();
+						let open=self.opener();
 						
-						if(self.fromBuy==true){
-							that.fromBuyIsHide=false;
+						if(open.id=="buy.html"){
 							
-							mui(".myAddress").on("tap","dl",function(){
-								let sibings=this.parentNode.children;
-								let index=[].indexOf.call(sibings,this);   //获取到点击的下标
-								mui.fire(buyPage,"choiceAddress",{   //触发购买页面的,自定义事件，参数是点击的地址信息
-									address:that.addressArray[index]
-								});
-								
-								mui.back()
-							})
+							that.fromBuyFlag=true;
+							// that.fromBuyIsHide=false;
 						}else{
 							
 							that.fromBuyIsHide=true
 						}
 					})
 				},
-				
+				// 给购买页面传递点击的地址信息
+				giveBuyIndex(index){
+					let that=this;
+					if(that.fromBuyFlag){
+						console.log(index);
+						mui.plusReady(function () {
+							let buyPage=plus.webview.getWebviewById("buy.html");
+							let self=plus.webview.currentWebview();
+							
+							mui.fire(buyPage,"choiceAddress",{   //触发购买页面的,自定义事件，参数是点击的地址信息
+								address:that.addressArray[index]
+							});
+							mui.back()
+						})
+						
+					}else{
+						return false; 
+					}
+					
+					
+				},
 				// 设置地址选择器
 				chooseCity(){
 					this.cityPicker = new mui.PopPicker({
@@ -253,9 +267,15 @@
 				// 页面刚加载时查找用户有没有地址
 				selectAddress(){
 					let that=this;
+					that.addressArray=[];
+					let loading=null;
 					mui.plusReady(function () {
+						loading=plus.nativeUI.showWaiting();
 						that.userId=plus.storage.getItem("account");
-						ajax(that.userId);
+						setTimeout(function(){
+							ajax(that.userId);
+						},1000)
+						
 					})
 					// ajax("5eb7b553ee1d1a3988b5309a")
 					function ajax(userId){
@@ -268,6 +288,10 @@
 							timeout:10000,//超时时间设置为10秒；
 							success:function(data){
 								if(data.code!=="0"&&data.data.length>0){
+									
+									loading.close()
+									
+									
 									that.addressArray.push(...data.data);
 									// 保存默认选中的地址的下标
 									that.addressArray.forEach((val,i)=>{
@@ -276,6 +300,7 @@
 										}
 									})
 									that.haveAddress=true;
+									that.formBuyPage();
 								}else{
 									that.haveAddress=false;
 								}
@@ -434,10 +459,12 @@
 				// 自定义监听事件，
 				// 添加地址 页面点击完成后刷新本页面
 				fromAddAddress(){
+					let that=this;
 					window.addEventListener("reload",function(e){
 						if(e.detail.reload){
-							let self=plus.webview.currentWebview();
-							self.reload()
+							// let self=plus.webview.currentWebview();
+							// self.reload();
+							that.selectAddress(); 
 						}
 						
 					})

@@ -10,6 +10,9 @@
 	<link rel="stylesheet" type="text/css" href="../../../../css/public.css"/>
 	<link rel="stylesheet" type="text/css" href="../../../../css/aboutMe/my_collect.css"/>
 	<style type="text/css">
+		.box{
+			padding-bottom: 90px;
+		}
 		.mui-content>.mui-table-view:first-child{
 			margin-top: 0;
 		}
@@ -27,38 +30,44 @@
 		.collct_dt::after{
 			height: 1px;
 		}
+		.mui-table-view{
+			margin-top: 5px;
+		}
 	</style>
 </head>
 
 <body>
-	<div class="mui-content box">
-		<dl class="mui-table-view">
-			<dt class="mui-table-view-cell clear collct_dt" @click="checkDeatail()">
+<div class="box">
+		
+	
+	<div class="mui-content " v-if="prdData.length>0">
+		<dl class="mui-table-view" v-for="(item,i) in prdData" @click="checkDeatail(item._id)">
+			<dt class="mui-table-view-cell clear collct_dt">
 				<!--商品展示区域-->
 				<div class="mui-slider-handle collect_body">
 					<!-- 商品图片 -->
 					<div class="collect_body_img clear">
-						<img class="mui-media-object mui-pull-left" src="../../../../img/bd1.jpg">
+						<img class="mui-media-object mui-pull-left" :src="item.img">
 					</div>
 					<!-- 商品描述 -->
 					<div class="mui-media-body collect_body_infor">
 						<p class="collect_body_infor_title">
-							标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题
+							{{item.title}}
 						</p>
 						<p class="collect_body_infor_type">
 							已选:
 							<span >
-								红色
+								{{ item.attr }}
 							</span>
 						</p>
 						<div class="collect_body_infor_price">
 							<div style="color: #d01c27;">
 								<span style="font-size: 10px;">￥</span>
-								<span>100元</span>
+								<span>{{item.singlePrice|price}}</span>
 							</div>
 		
 							<div class="my_numbox">
-								x3
+								x{{ item.buy_number }}
 							</div>
 						</div>
 					</div>
@@ -74,6 +83,11 @@
 			</dt>
 		</dl>
 	</div>
+	
+	<div class="mui-content" v-else>
+		暂无数据
+	</div>
+</div>
 </body>
 <script src="../../../../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="../../../../js/vue.js" type="text/javascript" charset="utf-8"></script>
@@ -82,26 +96,70 @@
 	const vue=new Vue({
 		el:".box",
 		data:{
+			api:"http://192.168.43.26:3200",
 			userId:"",
-			waitSend:[],
+			prdData:[],
+		},
+		filters:{
+			price(num){
+				return Number(num).toFixed(2)
+			}
 		},
 		created(){
-			
+			this.getData()
 		},
 		mounted(){
 			mui.init();
-			mui.plusReady(function () {
-			    let slef=plus.webview.currentWebview();
-				
-			})
+			
 		},
 		methods:{
 			/*
 				点击查看详情，根据点击的商品Id进入订单详情页
 			*/
-			checkDeatail(prdId){
-				console.log(111)
-			}
+			checkDeatail(orderId){
+				let that=this;
+				mui.openWindow({
+					url:"../orderDetail.html",
+					id:"orderDetail.html",
+					extras:{
+						orderId:orderId,
+						userId:that.userId
+					},
+				})
+			},
+			/*
+				页面刚加载时获取没有发货的商品的数据
+			*/
+		   getData(){
+			   let that=this;
+			  
+			   mui.plusReady(function () {
+			       let self=plus.webview.currentWebview();
+				   that.userId=self.userId;
+				   mui.ajax(that.api+'/waitSendInfor',{
+				   	data:{
+				   		userId:that.userId,
+						
+				   	},
+				   	dataType:'json',//服务器返回json格式数据
+				   	type:'post',//HTTP请求类型
+				   	timeout:10000,//超时时间设置为10秒；
+				   	success:function(data){
+				   					
+				   		if(data.code=="1"){
+							// console.log(data.data);
+							that.prdData.push(...data.data);
+							
+						}
+				   	},
+				   	error:function(xhr,type,errorThrown){
+				   		mui.toast('请求发生错误,原因:'+type)
+				   	}
+				   });
+			   })
+			   
+		   },
+		   
 		}
 		
 	})

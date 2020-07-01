@@ -63,8 +63,10 @@
 						</p>
 						<p class="collect_body_infor_type" >
 							已选:
-							<span v-for="i in value.attr">
-								{{i}};
+							
+							<span v-for="attr in value.attr">
+								{{attr}};
+								
 							</span>
 						</p>
 						<!-- <p class="collect_body_infor_type">
@@ -133,7 +135,7 @@
 		data:{
 			userId:"",
 			prd_id:"",
-			api:"http://192.168.88.69:3200",
+			api:"http://192.168.43.26:3200",
 			address:[],   //地址
 			prdInfor:[],    //存放产品信息
 			remark:"",
@@ -178,6 +180,12 @@
 				    let self=plus.webview.currentWebview();
 					that.userId=self.userId;
 					that.prdInfor.push(self.prd);   //[ [],[] ]
+					// that.prdInfor.forEach(val=>{
+					// 	val.forEach(i=>{
+					// 		i.attr=i.attr.join(";")
+					// 	})
+					// })
+					// console.log(that.prdInfor)
 					that.getAddress(that.userId);   //通过id得到地址
 					
 				})
@@ -221,7 +229,8 @@
 					//     },
 						
 					// });
-					plus.nativeUI.showWaiting()
+					plus.nativeUI.showWaiting();
+					plus.webview.close("my_address.html");
 					setTimeout(function(){
 						mui.openWindow({
 							url:'../aboutMe/address/my_address.html',
@@ -327,9 +336,10 @@
 						key.orderNumber=orderNumber;
 						key.totle=key.buyNumber*key.price;    //购买的 商品的总价
 						key.address=that.address;   //地址
+						
 					})
 				})
-			
+				
 	            mui.ajax(that.api+'/buySingle',{
 					data:{
 						user_id:that.userId,   //用户id

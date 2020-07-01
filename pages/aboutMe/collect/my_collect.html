@@ -107,7 +107,7 @@
 		const vue=new Vue({
 			el:".body",
 			data:{
-				api:"http://192.168.88.69:3200",
+				api:"http://192.168.43.26:3200",
 				my_collect:[],   //收藏的商品信息
 				user_Id:"",   //用户id
 				dateArr:[],  //去掉重复的收藏时间
@@ -250,6 +250,7 @@
 						
 						// 如果选择了'是'
 						if(e.index==1){
+							
 							 var del_arr = that.singleCheckArr.sort(s);  //将选中的商品下标倒序
 							 function s(a,b){
 								 return b-a
@@ -260,7 +261,7 @@
 							 })
 							// 请求数据，
 							that.delAjax(prd_idArr)
-
+							
 						}
 					})
 				},
@@ -270,6 +271,7 @@
 				// 删除收藏的商品;参数是个数组，里边放着选中的商品的id
 				delAjax(prd_idArr){
 					let that=this;
+					let loading=plus.nativeUI.showWaiting();
 					mui.ajax(that.api+'/delCollect',{
 						data:{
 							userId:that.user_Id,
@@ -281,6 +283,7 @@
 						timeout:10000,//超时时间设置为10秒；
 						success:function(data){
 							if(data.code==1){
+								loading.close()
 								mui.toast("删除商品成功");
 								that.my_collect=[];
 								

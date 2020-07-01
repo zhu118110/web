@@ -92,11 +92,12 @@
 			id:"regist",
 			
 		})
-	})
+	});
 	
 	const login=new Vue({
 		el:".box",
 		data:{
+			api:"http://192.168.43.26:3200",
 			account:"",   //账号
 			passWorld:"",   //密码
 			phone:"",  //手机号
@@ -160,7 +161,7 @@
 				let that=this;
 				mui(that.$refs.account).button('loading');//切换为loading状态
 				setTimeout(()=>{
-					mui.ajax('http://192.168.88.69:3200/accountLogin',{
+					mui.ajax(that.api+'accountLogin',{
 						data:{
 							account:that.account,
 							passWord:that.passWorld,
@@ -231,7 +232,7 @@
 				if(that.yzm==that.roundNum){
 					mui(that.$refs.account).button('loading');//切换为loading状态
 					setTimeout(()=>{
-						mui.ajax('http://192.168.88.69:3200/phoneLogin',{
+						mui.ajax(that.api+'/phoneLogin',{
 							data:{
 								phone:that.phone
 							},

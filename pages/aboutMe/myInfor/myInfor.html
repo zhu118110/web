@@ -88,7 +88,7 @@
 	const vue=new Vue({
 		el:".box",
 		data:{
-			api:"http://192.168.88.69:3200",
+			api:"http://192.168.43.26:3200",
 			userData:[],
 			user_Id:"",   //用户id
 			userName:"",   //用户名
@@ -252,8 +252,8 @@
 			// 选到照片后,使用原生uploader模块，用于把本地文件上传到服务器
 			upLoadImg(){
 				let that=this;
-				let wait=plus.nativeUI.showWaiting("修改中");   //显示系统原生的类似loading的等待框，使用wait.close()关闭
-				console.log(that.captureImgArr)
+				let loading=plus.nativeUI.showWaiting("修改中");   //显示系统原生的类似loading的等待框，使用wait.close()关闭
+			
 				// plus.uploader.createUpload(url,options,finish())
 				let upload=plus.uploader.createUpload(that.api+"/uploadHeadImg",{
 					method:"POST",  //上传方式,只有POST
@@ -266,19 +266,25 @@
 					let responseText=JSON.parse(uploadObj.responseText);
 					if(responseText.code=="1"&&statu==200){
 						
-						wait.close();   //关闭等待框
-						mui.toast("修改成功");
+						loading.close();   //关闭等待框
+						
 						// 触发 我的 页面事件，让其自己刷新
 						let aboutMe=plus.webview.getWebviewById("aboutMe")
 						mui.fire(aboutMe,"clearStorage",{
 							statu:true
 						});
-						setTimeout(function(){
-							mui.back();
-							let self=plus.webview.currentWebview();
-							self.reload();
+						let self=plus.webview.currentWebview();
+						console.log(self)
+						self.reload();
+						mui.toast("修改成功");
+						
+						
+						// setTimeout(function(){
+						// 	mui.back();
+						// 	let self=plus.webview.currentWebview();
+						// 	self.reload();
 							
-						},1000)
+						// },2000)
 					}else{
 						mui.toast("修改失败,稍后再试");
 						wait.close();
